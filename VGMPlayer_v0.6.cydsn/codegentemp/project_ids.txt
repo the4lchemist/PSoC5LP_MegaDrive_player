@@ -1,0 +1,15 @@
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\SoundTest.cydsn\SoundTest.cyprj|323da336-74ae-45c5-b479-12b178cee7da
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|3a5655bc-f4c6-49ed-be7d-8f0a166e139d
+C:\Users\ingan\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|ee7c5e51-ad8b-4940-8d2f-362fb8928ea9
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|c141ed5a-fb75-4e4e-852f-a4decc54a9bf
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|ae886f2b-7daa-4927-ac47-743086cef442
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|bc352049-10eb-4486-9d74-ce354cec5a78
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.1.cydsn\VGMPlayer_v0.1.cyprj|57e517f0-ec0c-4bfa-be7a-8d4b95864db2
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.2.cydsn\VGMPlayer_v0.2.cyprj|425a1f00-0410-4c72-b713-e545032f57d6
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\USBFS_UART01.cydsn\USBFS_UART01.cyprj|14b2990e-3a4e-4c2c-8d20-820850897480
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|fc4a5eb4-540f-4fc0-bf64-3208bba7e2ab
+C:\Users\ingan\Downloads\USBUART.cydsn\USBUART.cydsn\USBUART.cyprj|82636a24-ed90-4045-a10f-056baf80902c
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.3.cydsn\VGMPlayer_v0.3.cyprj|7a03b127-edbc-4fad-aad9-b2d978f83562
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.4.cydsn\VGMPlayer_v0.4.cyprj|7b3ff91f-b4e3-4573-a6cd-549e804f9c97
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.5.cydsn\VGMPlayer_v0.5.cyprj|e5b9c632-972a-4b4c-8cba-dcbba3711067
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.6.cydsn\VGMPlayer_v0.6.cyprj|0c8d47ed-6777-4a94-9b3b-26b5ebe95039

@@ -1,0 +1,837 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"YM_Data.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.YM_Data_Write,"ax",%progbits
+  20              		.align	2
+  21              		.global	YM_Data_Write
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	YM_Data_Write, %function
+  25              	YM_Data_Write:
+  26              	.LFB0:
+  27              		.file 1 "Generated_Source\\PSoC5\\YM_Data.c"
+   1:Generated_Source\PSoC5/YM_Data.c **** /*******************************************************************************
+   2:Generated_Source\PSoC5/YM_Data.c **** * File Name: YM_Data.c  
+   3:Generated_Source\PSoC5/YM_Data.c **** * Version 2.20
+   4:Generated_Source\PSoC5/YM_Data.c **** *
+   5:Generated_Source\PSoC5/YM_Data.c **** * Description:
+   6:Generated_Source\PSoC5/YM_Data.c **** *  This file contains API to enable firmware control of a Pins component.
+   7:Generated_Source\PSoC5/YM_Data.c **** *
+   8:Generated_Source\PSoC5/YM_Data.c **** * Note:
+   9:Generated_Source\PSoC5/YM_Data.c **** *
+  10:Generated_Source\PSoC5/YM_Data.c **** ********************************************************************************
+  11:Generated_Source\PSoC5/YM_Data.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
+  12:Generated_Source\PSoC5/YM_Data.c **** * You may use this file only in accordance with the license, terms, conditions, 
+  13:Generated_Source\PSoC5/YM_Data.c **** * disclaimers, and limitations in the end user license agreement accompanying 
+  14:Generated_Source\PSoC5/YM_Data.c **** * the software package with which this file was provided.
+  15:Generated_Source\PSoC5/YM_Data.c **** *******************************************************************************/
+  16:Generated_Source\PSoC5/YM_Data.c **** 
+  17:Generated_Source\PSoC5/YM_Data.c **** #include "cytypes.h"
+  18:Generated_Source\PSoC5/YM_Data.c **** #include "YM_Data.h"
+  19:Generated_Source\PSoC5/YM_Data.c **** 
+  20:Generated_Source\PSoC5/YM_Data.c **** /* APIs are not generated for P15[7:6] on PSoC 5 */
+  21:Generated_Source\PSoC5/YM_Data.c **** #if !(CY_PSOC5A &&\
+  22:Generated_Source\PSoC5/YM_Data.c **** 	 YM_Data__PORT == 15 && ((YM_Data__MASK & 0xC0) != 0))
+  23:Generated_Source\PSoC5/YM_Data.c **** 
+  24:Generated_Source\PSoC5/YM_Data.c **** 
+  25:Generated_Source\PSoC5/YM_Data.c **** /*******************************************************************************
+  26:Generated_Source\PSoC5/YM_Data.c **** * Function Name: YM_Data_Write
+  27:Generated_Source\PSoC5/YM_Data.c **** ****************************************************************************//**
+  28:Generated_Source\PSoC5/YM_Data.c **** *
+  29:Generated_Source\PSoC5/YM_Data.c **** * \brief Writes the value to the physical port (data output register), masking
+  30:Generated_Source\PSoC5/YM_Data.c **** *  and shifting the bits appropriately. 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 2
+
+
+  31:Generated_Source\PSoC5/YM_Data.c **** *
+  32:Generated_Source\PSoC5/YM_Data.c **** * The data output register controls the signal applied to the physical pin in 
+  33:Generated_Source\PSoC5/YM_Data.c **** * conjunction with the drive mode parameter. This function avoids changing 
+  34:Generated_Source\PSoC5/YM_Data.c **** * other bits in the port by using the appropriate method (read-modify-write or
+  35:Generated_Source\PSoC5/YM_Data.c **** * bit banding).
+  36:Generated_Source\PSoC5/YM_Data.c **** *
+  37:Generated_Source\PSoC5/YM_Data.c **** * <b>Note</b> This function should not be used on a hardware digital output pin 
+  38:Generated_Source\PSoC5/YM_Data.c **** * as it is driven by the hardware signal attached to it.
+  39:Generated_Source\PSoC5/YM_Data.c **** *
+  40:Generated_Source\PSoC5/YM_Data.c **** * \param value
+  41:Generated_Source\PSoC5/YM_Data.c **** *  Value to write to the component instance.
+  42:Generated_Source\PSoC5/YM_Data.c **** *
+  43:Generated_Source\PSoC5/YM_Data.c **** * \return 
+  44:Generated_Source\PSoC5/YM_Data.c **** *  None 
+  45:Generated_Source\PSoC5/YM_Data.c **** *
+  46:Generated_Source\PSoC5/YM_Data.c **** * \sideeffect
+  47:Generated_Source\PSoC5/YM_Data.c **** *  If you use read-modify-write operations that are not atomic; the Interrupt 
+  48:Generated_Source\PSoC5/YM_Data.c **** *  Service Routines (ISR) can cause corruption of this function. An ISR that 
+  49:Generated_Source\PSoC5/YM_Data.c **** *  interrupts this function and performs writes to the Pins component data 
+  50:Generated_Source\PSoC5/YM_Data.c **** *  register can cause corrupted port data. To avoid this issue, you should 
+  51:Generated_Source\PSoC5/YM_Data.c **** *  either use the Per-Pin APIs (primary method) or disable interrupts around 
+  52:Generated_Source\PSoC5/YM_Data.c **** *  this function.
+  53:Generated_Source\PSoC5/YM_Data.c **** *
+  54:Generated_Source\PSoC5/YM_Data.c **** * \funcusage
+  55:Generated_Source\PSoC5/YM_Data.c **** *  \snippet YM_Data_SUT.c usage_YM_Data_Write
+  56:Generated_Source\PSoC5/YM_Data.c **** *******************************************************************************/
+  57:Generated_Source\PSoC5/YM_Data.c **** void YM_Data_Write(uint8 value)
+  58:Generated_Source\PSoC5/YM_Data.c **** {
+  28              		.loc 1 58 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  59:Generated_Source\PSoC5/YM_Data.c ****     uint8 staticBits = (YM_Data_DR & (uint8)(~YM_Data_MASK));
+  34              		.loc 1 59 0
+  35 0000 014B     		ldr	r3, .L2
+  36 0002 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+  37              	.LVL1:
+  60:Generated_Source\PSoC5/YM_Data.c ****     YM_Data_DR = staticBits | ((uint8)(value << YM_Data_SHIFT) & YM_Data_MASK);
+  38              		.loc 1 60 0
+  39 0004 1870     		strb	r0, [r3]
+  40 0006 7047     		bx	lr
+  41              	.L3:
+  42              		.align	2
+  43              	.L2:
+  44 0008 C0510040 		.word	1073762752
+  45              		.cfi_endproc
+  46              	.LFE0:
+  47              		.size	YM_Data_Write, .-YM_Data_Write
+  48              		.section	.text.YM_Data_SetDriveMode,"ax",%progbits
+  49              		.align	2
+  50              		.global	YM_Data_SetDriveMode
+  51              		.thumb
+  52              		.thumb_func
+  53              		.type	YM_Data_SetDriveMode, %function
+  54              	YM_Data_SetDriveMode:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 3
+
+
+  55              	.LFB1:
+  61:Generated_Source\PSoC5/YM_Data.c **** }
+  62:Generated_Source\PSoC5/YM_Data.c **** 
+  63:Generated_Source\PSoC5/YM_Data.c **** 
+  64:Generated_Source\PSoC5/YM_Data.c **** /*******************************************************************************
+  65:Generated_Source\PSoC5/YM_Data.c **** * Function Name: YM_Data_SetDriveMode
+  66:Generated_Source\PSoC5/YM_Data.c **** ****************************************************************************//**
+  67:Generated_Source\PSoC5/YM_Data.c **** *
+  68:Generated_Source\PSoC5/YM_Data.c **** * \brief Sets the drive mode for each of the Pins component's pins.
+  69:Generated_Source\PSoC5/YM_Data.c **** * 
+  70:Generated_Source\PSoC5/YM_Data.c **** * <b>Note</b> This affects all pins in the Pins component instance. Use the
+  71:Generated_Source\PSoC5/YM_Data.c **** * Per-Pin APIs if you wish to control individual pin's drive modes.
+  72:Generated_Source\PSoC5/YM_Data.c **** *
+  73:Generated_Source\PSoC5/YM_Data.c **** * \param mode
+  74:Generated_Source\PSoC5/YM_Data.c **** *  Mode for the selected signals. Valid options are documented in 
+  75:Generated_Source\PSoC5/YM_Data.c **** *  \ref driveMode.
+  76:Generated_Source\PSoC5/YM_Data.c **** *
+  77:Generated_Source\PSoC5/YM_Data.c **** * \return
+  78:Generated_Source\PSoC5/YM_Data.c **** *  None
+  79:Generated_Source\PSoC5/YM_Data.c **** *
+  80:Generated_Source\PSoC5/YM_Data.c **** * \sideeffect
+  81:Generated_Source\PSoC5/YM_Data.c **** *  If you use read-modify-write operations that are not atomic, the ISR can
+  82:Generated_Source\PSoC5/YM_Data.c **** *  cause corruption of this function. An ISR that interrupts this function 
+  83:Generated_Source\PSoC5/YM_Data.c **** *  and performs writes to the Pins component Drive Mode registers can cause 
+  84:Generated_Source\PSoC5/YM_Data.c **** *  corrupted port data. To avoid this issue, you should either use the Per-Pin
+  85:Generated_Source\PSoC5/YM_Data.c **** *  APIs (primary method) or disable interrupts around this function.
+  86:Generated_Source\PSoC5/YM_Data.c **** *
+  87:Generated_Source\PSoC5/YM_Data.c **** * \funcusage
+  88:Generated_Source\PSoC5/YM_Data.c **** *  \snippet YM_Data_SUT.c usage_YM_Data_SetDriveMode
+  89:Generated_Source\PSoC5/YM_Data.c **** *******************************************************************************/
+  90:Generated_Source\PSoC5/YM_Data.c **** void YM_Data_SetDriveMode(uint8 mode)
+  91:Generated_Source\PSoC5/YM_Data.c **** {
+  56              		.loc 1 91 0
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60              		@ link register save eliminated.
+  61              	.LVL2:
+  92:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_0, mode);
+  62              		.loc 1 92 0
+  63 0000 1649     		ldr	r1, .L5
+  64 0002 00F00E00 		and	r0, r0, #14
+  65              	.LVL3:
+  66 0006 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+  93:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_1, mode);
+  67              		.loc 1 93 0
+  68 0008 154A     		ldr	r2, .L5+4
+  92:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_0, mode);
+  69              		.loc 1 92 0
+  70 000a 03F0F103 		and	r3, r3, #241
+  71 000e 0343     		orrs	r3, r3, r0
+  72 0010 0B70     		strb	r3, [r1]
+  73              		.loc 1 93 0
+  74 0012 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  75 0014 03F0F103 		and	r3, r3, #241
+  76 0018 0343     		orrs	r3, r3, r0
+  77 001a 1370     		strb	r3, [r2]
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 4
+
+
+  94:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_2, mode);
+  78              		.loc 1 94 0
+  79 001c 8B78     		ldrb	r3, [r1, #2]	@ zero_extendqisi2
+  80 001e 03F0F103 		and	r3, r3, #241
+  81 0022 0343     		orrs	r3, r3, r0
+  82 0024 8B70     		strb	r3, [r1, #2]
+  95:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_3, mode);
+  83              		.loc 1 95 0
+  84 0026 9378     		ldrb	r3, [r2, #2]	@ zero_extendqisi2
+  85 0028 03F0F103 		and	r3, r3, #241
+  86 002c 0343     		orrs	r3, r3, r0
+  87 002e 9370     		strb	r3, [r2, #2]
+  96:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_4, mode);
+  88              		.loc 1 96 0
+  89 0030 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+  90 0032 03F0F103 		and	r3, r3, #241
+  91 0036 0343     		orrs	r3, r3, r0
+  92 0038 0B71     		strb	r3, [r1, #4]
+  97:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_5, mode);
+  93              		.loc 1 97 0
+  94 003a 1379     		ldrb	r3, [r2, #4]	@ zero_extendqisi2
+  95 003c 03F0F103 		and	r3, r3, #241
+  96 0040 0343     		orrs	r3, r3, r0
+  97 0042 1371     		strb	r3, [r2, #4]
+  98:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_6, mode);
+  98              		.loc 1 98 0
+  99 0044 8B79     		ldrb	r3, [r1, #6]	@ zero_extendqisi2
+ 100 0046 03F0F103 		and	r3, r3, #241
+ 101 004a 0343     		orrs	r3, r3, r0
+ 102 004c 8B71     		strb	r3, [r1, #6]
+  99:Generated_Source\PSoC5/YM_Data.c **** 	CyPins_SetPinDriveMode(YM_Data_7, mode);
+ 103              		.loc 1 99 0
+ 104 004e 9379     		ldrb	r3, [r2, #6]	@ zero_extendqisi2
+ 105 0050 03F0F103 		and	r3, r3, #241
+ 106 0054 1843     		orrs	r0, r0, r3
+ 107 0056 9071     		strb	r0, [r2, #6]
+ 108 0058 7047     		bx	lr
+ 109              	.L6:
+ 110 005a 00BF     		.align	2
+ 111              	.L5:
+ 112 005c 60500040 		.word	1073762400
+ 113 0060 61500040 		.word	1073762401
+ 114              		.cfi_endproc
+ 115              	.LFE1:
+ 116              		.size	YM_Data_SetDriveMode, .-YM_Data_SetDriveMode
+ 117              		.section	.text.YM_Data_Read,"ax",%progbits
+ 118              		.align	2
+ 119              		.global	YM_Data_Read
+ 120              		.thumb
+ 121              		.thumb_func
+ 122              		.type	YM_Data_Read, %function
+ 123              	YM_Data_Read:
+ 124              	.LFB2:
+ 100:Generated_Source\PSoC5/YM_Data.c **** }
+ 101:Generated_Source\PSoC5/YM_Data.c **** 
+ 102:Generated_Source\PSoC5/YM_Data.c **** 
+ 103:Generated_Source\PSoC5/YM_Data.c **** /*******************************************************************************
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 5
+
+
+ 104:Generated_Source\PSoC5/YM_Data.c **** * Function Name: YM_Data_Read
+ 105:Generated_Source\PSoC5/YM_Data.c **** ****************************************************************************//**
+ 106:Generated_Source\PSoC5/YM_Data.c **** *
+ 107:Generated_Source\PSoC5/YM_Data.c **** * \brief Reads the associated physical port (pin status register) and masks 
+ 108:Generated_Source\PSoC5/YM_Data.c **** *  the required bits according to the width and bit position of the component
+ 109:Generated_Source\PSoC5/YM_Data.c **** *  instance. 
+ 110:Generated_Source\PSoC5/YM_Data.c **** *
+ 111:Generated_Source\PSoC5/YM_Data.c **** * The pin's status register returns the current logic level present on the 
+ 112:Generated_Source\PSoC5/YM_Data.c **** * physical pin.
+ 113:Generated_Source\PSoC5/YM_Data.c **** *
+ 114:Generated_Source\PSoC5/YM_Data.c **** * \return 
+ 115:Generated_Source\PSoC5/YM_Data.c **** *  The current value for the pins in the component as a right justified number.
+ 116:Generated_Source\PSoC5/YM_Data.c **** *
+ 117:Generated_Source\PSoC5/YM_Data.c **** * \funcusage
+ 118:Generated_Source\PSoC5/YM_Data.c **** *  \snippet YM_Data_SUT.c usage_YM_Data_Read  
+ 119:Generated_Source\PSoC5/YM_Data.c **** *******************************************************************************/
+ 120:Generated_Source\PSoC5/YM_Data.c **** uint8 YM_Data_Read(void)
+ 121:Generated_Source\PSoC5/YM_Data.c **** {
+ 125              		.loc 1 121 0
+ 126              		.cfi_startproc
+ 127              		@ args = 0, pretend = 0, frame = 0
+ 128              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129              		@ link register save eliminated.
+ 122:Generated_Source\PSoC5/YM_Data.c ****     return (YM_Data_PS & YM_Data_MASK) >> YM_Data_SHIFT;
+ 130              		.loc 1 122 0
+ 131 0000 014B     		ldr	r3, .L8
+ 132 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 123:Generated_Source\PSoC5/YM_Data.c **** }
+ 133              		.loc 1 123 0
+ 134 0004 7047     		bx	lr
+ 135              	.L9:
+ 136 0006 00BF     		.align	2
+ 137              	.L8:
+ 138 0008 C1510040 		.word	1073762753
+ 139              		.cfi_endproc
+ 140              	.LFE2:
+ 141              		.size	YM_Data_Read, .-YM_Data_Read
+ 142              		.section	.text.YM_Data_ReadDataReg,"ax",%progbits
+ 143              		.align	2
+ 144              		.global	YM_Data_ReadDataReg
+ 145              		.thumb
+ 146              		.thumb_func
+ 147              		.type	YM_Data_ReadDataReg, %function
+ 148              	YM_Data_ReadDataReg:
+ 149              	.LFB3:
+ 124:Generated_Source\PSoC5/YM_Data.c **** 
+ 125:Generated_Source\PSoC5/YM_Data.c **** 
+ 126:Generated_Source\PSoC5/YM_Data.c **** /*******************************************************************************
+ 127:Generated_Source\PSoC5/YM_Data.c **** * Function Name: YM_Data_ReadDataReg
+ 128:Generated_Source\PSoC5/YM_Data.c **** ****************************************************************************//**
+ 129:Generated_Source\PSoC5/YM_Data.c **** *
+ 130:Generated_Source\PSoC5/YM_Data.c **** * \brief Reads the associated physical port's data output register and masks 
+ 131:Generated_Source\PSoC5/YM_Data.c **** *  the correct bits according to the width and bit position of the component 
+ 132:Generated_Source\PSoC5/YM_Data.c **** *  instance. 
+ 133:Generated_Source\PSoC5/YM_Data.c **** *
+ 134:Generated_Source\PSoC5/YM_Data.c **** * The data output register controls the signal applied to the physical pin in 
+ 135:Generated_Source\PSoC5/YM_Data.c **** * conjunction with the drive mode parameter. This is not the same as the 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 6
+
+
+ 136:Generated_Source\PSoC5/YM_Data.c **** * preferred YM_Data_Read() API because the 
+ 137:Generated_Source\PSoC5/YM_Data.c **** * YM_Data_ReadDataReg() reads the data register instead of the status 
+ 138:Generated_Source\PSoC5/YM_Data.c **** * register. For output pins this is a useful function to determine the value 
+ 139:Generated_Source\PSoC5/YM_Data.c **** * just written to the pin.
+ 140:Generated_Source\PSoC5/YM_Data.c **** *
+ 141:Generated_Source\PSoC5/YM_Data.c **** * \return 
+ 142:Generated_Source\PSoC5/YM_Data.c **** *  The current value of the data register masked and shifted into a right 
+ 143:Generated_Source\PSoC5/YM_Data.c **** *  justified number for the component instance.
+ 144:Generated_Source\PSoC5/YM_Data.c **** *
+ 145:Generated_Source\PSoC5/YM_Data.c **** * \funcusage
+ 146:Generated_Source\PSoC5/YM_Data.c **** *  \snippet YM_Data_SUT.c usage_YM_Data_ReadDataReg 
+ 147:Generated_Source\PSoC5/YM_Data.c **** *******************************************************************************/
+ 148:Generated_Source\PSoC5/YM_Data.c **** uint8 YM_Data_ReadDataReg(void)
+ 149:Generated_Source\PSoC5/YM_Data.c **** {
+ 150              		.loc 1 149 0
+ 151              		.cfi_startproc
+ 152              		@ args = 0, pretend = 0, frame = 0
+ 153              		@ frame_needed = 0, uses_anonymous_args = 0
+ 154              		@ link register save eliminated.
+ 150:Generated_Source\PSoC5/YM_Data.c ****     return (YM_Data_DR & YM_Data_MASK) >> YM_Data_SHIFT;
+ 155              		.loc 1 150 0
+ 156 0000 014B     		ldr	r3, .L11
+ 157 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 151:Generated_Source\PSoC5/YM_Data.c **** }
+ 158              		.loc 1 151 0
+ 159 0004 7047     		bx	lr
+ 160              	.L12:
+ 161 0006 00BF     		.align	2
+ 162              	.L11:
+ 163 0008 C0510040 		.word	1073762752
+ 164              		.cfi_endproc
+ 165              	.LFE3:
+ 166              		.size	YM_Data_ReadDataReg, .-YM_Data_ReadDataReg
+ 167              		.text
+ 168              	.Letext0:
+ 169              		.file 2 "Generated_Source\\PSoC5\\cytypes.h"
+ 170              		.section	.debug_info,"",%progbits
+ 171              	.Ldebug_info0:
+ 172 0000 18010000 		.4byte	0x118
+ 173 0004 0400     		.2byte	0x4
+ 174 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 175 000a 04       		.byte	0x4
+ 176 000b 01       		.uleb128 0x1
+ 177 000c 0E000000 		.4byte	.LASF20
+ 178 0010 0C       		.byte	0xc
+ 179 0011 F8000000 		.4byte	.LASF21
+ 180 0015 20010000 		.4byte	.LASF22
+ 181 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 182 001d 00000000 		.4byte	0
+ 183 0021 00000000 		.4byte	.Ldebug_line0
+ 184 0025 02       		.uleb128 0x2
+ 185 0026 01       		.byte	0x1
+ 186 0027 06       		.byte	0x6
+ 187 0028 D4010000 		.4byte	.LASF0
+ 188 002c 02       		.uleb128 0x2
+ 189 002d 01       		.byte	0x1
+ 190 002e 08       		.byte	0x8
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 7
+
+
+ 191 002f C0000000 		.4byte	.LASF1
+ 192 0033 02       		.uleb128 0x2
+ 193 0034 02       		.byte	0x2
+ 194 0035 05       		.byte	0x5
+ 195 0036 BB010000 		.4byte	.LASF2
+ 196 003a 02       		.uleb128 0x2
+ 197 003b 02       		.byte	0x2
+ 198 003c 07       		.byte	0x7
+ 199 003d E5000000 		.4byte	.LASF3
+ 200 0041 02       		.uleb128 0x2
+ 201 0042 04       		.byte	0x4
+ 202 0043 05       		.byte	0x5
+ 203 0044 CB010000 		.4byte	.LASF4
+ 204 0048 02       		.uleb128 0x2
+ 205 0049 04       		.byte	0x4
+ 206 004a 07       		.byte	0x7
+ 207 004b D3000000 		.4byte	.LASF5
+ 208 004f 02       		.uleb128 0x2
+ 209 0050 08       		.byte	0x8
+ 210 0051 05       		.byte	0x5
+ 211 0052 A8010000 		.4byte	.LASF6
+ 212 0056 02       		.uleb128 0x2
+ 213 0057 08       		.byte	0x8
+ 214 0058 07       		.byte	0x7
+ 215 0059 8C010000 		.4byte	.LASF7
+ 216 005d 03       		.uleb128 0x3
+ 217 005e 04       		.byte	0x4
+ 218 005f 05       		.byte	0x5
+ 219 0060 696E7400 		.ascii	"int\000"
+ 220 0064 02       		.uleb128 0x2
+ 221 0065 04       		.byte	0x4
+ 222 0066 07       		.byte	0x7
+ 223 0067 7F010000 		.4byte	.LASF8
+ 224 006b 04       		.uleb128 0x4
+ 225 006c C5010000 		.4byte	.LASF12
+ 226 0070 02       		.byte	0x2
+ 227 0071 9201     		.2byte	0x192
+ 228 0073 2C000000 		.4byte	0x2c
+ 229 0077 02       		.uleb128 0x2
+ 230 0078 04       		.byte	0x4
+ 231 0079 04       		.byte	0x4
+ 232 007a BA000000 		.4byte	.LASF9
+ 233 007e 02       		.uleb128 0x2
+ 234 007f 08       		.byte	0x8
+ 235 0080 04       		.byte	0x4
+ 236 0081 19010000 		.4byte	.LASF10
+ 237 0085 02       		.uleb128 0x2
+ 238 0086 01       		.byte	0x1
+ 239 0087 08       		.byte	0x8
+ 240 0088 B6010000 		.4byte	.LASF11
+ 241 008c 04       		.uleb128 0x4
+ 242 008d CE000000 		.4byte	.LASF13
+ 243 0091 02       		.byte	0x2
+ 244 0092 3C02     		.2byte	0x23c
+ 245 0094 98000000 		.4byte	0x98
+ 246 0098 05       		.uleb128 0x5
+ 247 0099 6B000000 		.4byte	0x6b
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 8
+
+
+ 248 009d 06       		.uleb128 0x6
+ 249 009e 00000000 		.4byte	.LASF14
+ 250 00a2 01       		.byte	0x1
+ 251 00a3 39       		.byte	0x39
+ 252 00a4 00000000 		.4byte	.LFB0
+ 253 00a8 0C000000 		.4byte	.LFE0-.LFB0
+ 254 00ac 01       		.uleb128 0x1
+ 255 00ad 9C       		.byte	0x9c
+ 256 00ae CC000000 		.4byte	0xcc
+ 257 00b2 07       		.uleb128 0x7
+ 258 00b3 9C000000 		.4byte	.LASF16
+ 259 00b7 01       		.byte	0x1
+ 260 00b8 39       		.byte	0x39
+ 261 00b9 6B000000 		.4byte	0x6b
+ 262 00bd 01       		.uleb128 0x1
+ 263 00be 50       		.byte	0x50
+ 264 00bf 08       		.uleb128 0x8
+ 265 00c0 A2000000 		.4byte	.LASF23
+ 266 00c4 01       		.byte	0x1
+ 267 00c5 3B       		.byte	0x3b
+ 268 00c6 6B000000 		.4byte	0x6b
+ 269 00ca 00       		.byte	0
+ 270 00cb 00       		.byte	0
+ 271 00cc 06       		.uleb128 0x6
+ 272 00cd 6A010000 		.4byte	.LASF15
+ 273 00d1 01       		.byte	0x1
+ 274 00d2 5A       		.byte	0x5a
+ 275 00d3 00000000 		.4byte	.LFB1
+ 276 00d7 64000000 		.4byte	.LFE1-.LFB1
+ 277 00db 01       		.uleb128 0x1
+ 278 00dc 9C       		.byte	0x9c
+ 279 00dd F1000000 		.4byte	0xf1
+ 280 00e1 09       		.uleb128 0x9
+ 281 00e2 A3010000 		.4byte	.LASF17
+ 282 00e6 01       		.byte	0x1
+ 283 00e7 5A       		.byte	0x5a
+ 284 00e8 6B000000 		.4byte	0x6b
+ 285 00ec 00000000 		.4byte	.LLST0
+ 286 00f0 00       		.byte	0
+ 287 00f1 0A       		.uleb128 0xa
+ 288 00f2 AD000000 		.4byte	.LASF18
+ 289 00f6 01       		.byte	0x1
+ 290 00f7 78       		.byte	0x78
+ 291 00f8 6B000000 		.4byte	0x6b
+ 292 00fc 00000000 		.4byte	.LFB2
+ 293 0100 0C000000 		.4byte	.LFE2-.LFB2
+ 294 0104 01       		.uleb128 0x1
+ 295 0105 9C       		.byte	0x9c
+ 296 0106 0A       		.uleb128 0xa
+ 297 0107 E0010000 		.4byte	.LASF19
+ 298 010b 01       		.byte	0x1
+ 299 010c 94       		.byte	0x94
+ 300 010d 6B000000 		.4byte	0x6b
+ 301 0111 00000000 		.4byte	.LFB3
+ 302 0115 0C000000 		.4byte	.LFE3-.LFB3
+ 303 0119 01       		.uleb128 0x1
+ 304 011a 9C       		.byte	0x9c
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 9
+
+
+ 305 011b 00       		.byte	0
+ 306              		.section	.debug_abbrev,"",%progbits
+ 307              	.Ldebug_abbrev0:
+ 308 0000 01       		.uleb128 0x1
+ 309 0001 11       		.uleb128 0x11
+ 310 0002 01       		.byte	0x1
+ 311 0003 25       		.uleb128 0x25
+ 312 0004 0E       		.uleb128 0xe
+ 313 0005 13       		.uleb128 0x13
+ 314 0006 0B       		.uleb128 0xb
+ 315 0007 03       		.uleb128 0x3
+ 316 0008 0E       		.uleb128 0xe
+ 317 0009 1B       		.uleb128 0x1b
+ 318 000a 0E       		.uleb128 0xe
+ 319 000b 55       		.uleb128 0x55
+ 320 000c 17       		.uleb128 0x17
+ 321 000d 11       		.uleb128 0x11
+ 322 000e 01       		.uleb128 0x1
+ 323 000f 10       		.uleb128 0x10
+ 324 0010 17       		.uleb128 0x17
+ 325 0011 00       		.byte	0
+ 326 0012 00       		.byte	0
+ 327 0013 02       		.uleb128 0x2
+ 328 0014 24       		.uleb128 0x24
+ 329 0015 00       		.byte	0
+ 330 0016 0B       		.uleb128 0xb
+ 331 0017 0B       		.uleb128 0xb
+ 332 0018 3E       		.uleb128 0x3e
+ 333 0019 0B       		.uleb128 0xb
+ 334 001a 03       		.uleb128 0x3
+ 335 001b 0E       		.uleb128 0xe
+ 336 001c 00       		.byte	0
+ 337 001d 00       		.byte	0
+ 338 001e 03       		.uleb128 0x3
+ 339 001f 24       		.uleb128 0x24
+ 340 0020 00       		.byte	0
+ 341 0021 0B       		.uleb128 0xb
+ 342 0022 0B       		.uleb128 0xb
+ 343 0023 3E       		.uleb128 0x3e
+ 344 0024 0B       		.uleb128 0xb
+ 345 0025 03       		.uleb128 0x3
+ 346 0026 08       		.uleb128 0x8
+ 347 0027 00       		.byte	0
+ 348 0028 00       		.byte	0
+ 349 0029 04       		.uleb128 0x4
+ 350 002a 16       		.uleb128 0x16
+ 351 002b 00       		.byte	0
+ 352 002c 03       		.uleb128 0x3
+ 353 002d 0E       		.uleb128 0xe
+ 354 002e 3A       		.uleb128 0x3a
+ 355 002f 0B       		.uleb128 0xb
+ 356 0030 3B       		.uleb128 0x3b
+ 357 0031 05       		.uleb128 0x5
+ 358 0032 49       		.uleb128 0x49
+ 359 0033 13       		.uleb128 0x13
+ 360 0034 00       		.byte	0
+ 361 0035 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 10
+
+
+ 362 0036 05       		.uleb128 0x5
+ 363 0037 35       		.uleb128 0x35
+ 364 0038 00       		.byte	0
+ 365 0039 49       		.uleb128 0x49
+ 366 003a 13       		.uleb128 0x13
+ 367 003b 00       		.byte	0
+ 368 003c 00       		.byte	0
+ 369 003d 06       		.uleb128 0x6
+ 370 003e 2E       		.uleb128 0x2e
+ 371 003f 01       		.byte	0x1
+ 372 0040 3F       		.uleb128 0x3f
+ 373 0041 19       		.uleb128 0x19
+ 374 0042 03       		.uleb128 0x3
+ 375 0043 0E       		.uleb128 0xe
+ 376 0044 3A       		.uleb128 0x3a
+ 377 0045 0B       		.uleb128 0xb
+ 378 0046 3B       		.uleb128 0x3b
+ 379 0047 0B       		.uleb128 0xb
+ 380 0048 27       		.uleb128 0x27
+ 381 0049 19       		.uleb128 0x19
+ 382 004a 11       		.uleb128 0x11
+ 383 004b 01       		.uleb128 0x1
+ 384 004c 12       		.uleb128 0x12
+ 385 004d 06       		.uleb128 0x6
+ 386 004e 40       		.uleb128 0x40
+ 387 004f 18       		.uleb128 0x18
+ 388 0050 9742     		.uleb128 0x2117
+ 389 0052 19       		.uleb128 0x19
+ 390 0053 01       		.uleb128 0x1
+ 391 0054 13       		.uleb128 0x13
+ 392 0055 00       		.byte	0
+ 393 0056 00       		.byte	0
+ 394 0057 07       		.uleb128 0x7
+ 395 0058 05       		.uleb128 0x5
+ 396 0059 00       		.byte	0
+ 397 005a 03       		.uleb128 0x3
+ 398 005b 0E       		.uleb128 0xe
+ 399 005c 3A       		.uleb128 0x3a
+ 400 005d 0B       		.uleb128 0xb
+ 401 005e 3B       		.uleb128 0x3b
+ 402 005f 0B       		.uleb128 0xb
+ 403 0060 49       		.uleb128 0x49
+ 404 0061 13       		.uleb128 0x13
+ 405 0062 02       		.uleb128 0x2
+ 406 0063 18       		.uleb128 0x18
+ 407 0064 00       		.byte	0
+ 408 0065 00       		.byte	0
+ 409 0066 08       		.uleb128 0x8
+ 410 0067 34       		.uleb128 0x34
+ 411 0068 00       		.byte	0
+ 412 0069 03       		.uleb128 0x3
+ 413 006a 0E       		.uleb128 0xe
+ 414 006b 3A       		.uleb128 0x3a
+ 415 006c 0B       		.uleb128 0xb
+ 416 006d 3B       		.uleb128 0x3b
+ 417 006e 0B       		.uleb128 0xb
+ 418 006f 49       		.uleb128 0x49
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 11
+
+
+ 419 0070 13       		.uleb128 0x13
+ 420 0071 1C       		.uleb128 0x1c
+ 421 0072 0B       		.uleb128 0xb
+ 422 0073 00       		.byte	0
+ 423 0074 00       		.byte	0
+ 424 0075 09       		.uleb128 0x9
+ 425 0076 05       		.uleb128 0x5
+ 426 0077 00       		.byte	0
+ 427 0078 03       		.uleb128 0x3
+ 428 0079 0E       		.uleb128 0xe
+ 429 007a 3A       		.uleb128 0x3a
+ 430 007b 0B       		.uleb128 0xb
+ 431 007c 3B       		.uleb128 0x3b
+ 432 007d 0B       		.uleb128 0xb
+ 433 007e 49       		.uleb128 0x49
+ 434 007f 13       		.uleb128 0x13
+ 435 0080 02       		.uleb128 0x2
+ 436 0081 17       		.uleb128 0x17
+ 437 0082 00       		.byte	0
+ 438 0083 00       		.byte	0
+ 439 0084 0A       		.uleb128 0xa
+ 440 0085 2E       		.uleb128 0x2e
+ 441 0086 00       		.byte	0
+ 442 0087 3F       		.uleb128 0x3f
+ 443 0088 19       		.uleb128 0x19
+ 444 0089 03       		.uleb128 0x3
+ 445 008a 0E       		.uleb128 0xe
+ 446 008b 3A       		.uleb128 0x3a
+ 447 008c 0B       		.uleb128 0xb
+ 448 008d 3B       		.uleb128 0x3b
+ 449 008e 0B       		.uleb128 0xb
+ 450 008f 27       		.uleb128 0x27
+ 451 0090 19       		.uleb128 0x19
+ 452 0091 49       		.uleb128 0x49
+ 453 0092 13       		.uleb128 0x13
+ 454 0093 11       		.uleb128 0x11
+ 455 0094 01       		.uleb128 0x1
+ 456 0095 12       		.uleb128 0x12
+ 457 0096 06       		.uleb128 0x6
+ 458 0097 40       		.uleb128 0x40
+ 459 0098 18       		.uleb128 0x18
+ 460 0099 9742     		.uleb128 0x2117
+ 461 009b 19       		.uleb128 0x19
+ 462 009c 00       		.byte	0
+ 463 009d 00       		.byte	0
+ 464 009e 00       		.byte	0
+ 465              		.section	.debug_loc,"",%progbits
+ 466              	.Ldebug_loc0:
+ 467              	.LLST0:
+ 468 0000 00000000 		.4byte	.LVL2
+ 469 0004 06000000 		.4byte	.LVL3
+ 470 0008 0100     		.2byte	0x1
+ 471 000a 50       		.byte	0x50
+ 472 000b 06000000 		.4byte	.LVL3
+ 473 000f 64000000 		.4byte	.LFE1
+ 474 0013 0400     		.2byte	0x4
+ 475 0015 F3       		.byte	0xf3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 12
+
+
+ 476 0016 01       		.uleb128 0x1
+ 477 0017 50       		.byte	0x50
+ 478 0018 9F       		.byte	0x9f
+ 479 0019 00000000 		.4byte	0
+ 480 001d 00000000 		.4byte	0
+ 481              		.section	.debug_aranges,"",%progbits
+ 482 0000 34000000 		.4byte	0x34
+ 483 0004 0200     		.2byte	0x2
+ 484 0006 00000000 		.4byte	.Ldebug_info0
+ 485 000a 04       		.byte	0x4
+ 486 000b 00       		.byte	0
+ 487 000c 0000     		.2byte	0
+ 488 000e 0000     		.2byte	0
+ 489 0010 00000000 		.4byte	.LFB0
+ 490 0014 0C000000 		.4byte	.LFE0-.LFB0
+ 491 0018 00000000 		.4byte	.LFB1
+ 492 001c 64000000 		.4byte	.LFE1-.LFB1
+ 493 0020 00000000 		.4byte	.LFB2
+ 494 0024 0C000000 		.4byte	.LFE2-.LFB2
+ 495 0028 00000000 		.4byte	.LFB3
+ 496 002c 0C000000 		.4byte	.LFE3-.LFB3
+ 497 0030 00000000 		.4byte	0
+ 498 0034 00000000 		.4byte	0
+ 499              		.section	.debug_ranges,"",%progbits
+ 500              	.Ldebug_ranges0:
+ 501 0000 00000000 		.4byte	.LFB0
+ 502 0004 0C000000 		.4byte	.LFE0
+ 503 0008 00000000 		.4byte	.LFB1
+ 504 000c 64000000 		.4byte	.LFE1
+ 505 0010 00000000 		.4byte	.LFB2
+ 506 0014 0C000000 		.4byte	.LFE2
+ 507 0018 00000000 		.4byte	.LFB3
+ 508 001c 0C000000 		.4byte	.LFE3
+ 509 0020 00000000 		.4byte	0
+ 510 0024 00000000 		.4byte	0
+ 511              		.section	.debug_line,"",%progbits
+ 512              	.Ldebug_line0:
+ 513 0000 99000000 		.section	.debug_str,"MS",%progbits,1
+ 513      02004400 
+ 513      00000201 
+ 513      FB0E0D00 
+ 513      01010101 
+ 514              	.LASF14:
+ 515 0000 594D5F44 		.ascii	"YM_Data_Write\000"
+ 515      6174615F 
+ 515      57726974 
+ 515      6500
+ 516              	.LASF20:
+ 517 000e 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 517      43313120 
+ 517      352E342E 
+ 517      31203230 
+ 517      31363036 
+ 518 0041 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 518      20726576 
+ 518      6973696F 
+ 518      6E203233 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 13
+
+
+ 518      37373135 
+ 519 0074 33202D66 		.ascii	"3 -ffunction-sections -ffat-lto-objects\000"
+ 519      66756E63 
+ 519      74696F6E 
+ 519      2D736563 
+ 519      74696F6E 
+ 520              	.LASF16:
+ 521 009c 76616C75 		.ascii	"value\000"
+ 521      6500
+ 522              	.LASF23:
+ 523 00a2 73746174 		.ascii	"staticBits\000"
+ 523      69634269 
+ 523      747300
+ 524              	.LASF18:
+ 525 00ad 594D5F44 		.ascii	"YM_Data_Read\000"
+ 525      6174615F 
+ 525      52656164 
+ 525      00
+ 526              	.LASF9:
+ 527 00ba 666C6F61 		.ascii	"float\000"
+ 527      7400
+ 528              	.LASF1:
+ 529 00c0 756E7369 		.ascii	"unsigned char\000"
+ 529      676E6564 
+ 529      20636861 
+ 529      7200
+ 530              	.LASF13:
+ 531 00ce 72656738 		.ascii	"reg8\000"
+ 531      00
+ 532              	.LASF5:
+ 533 00d3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 533      20756E73 
+ 533      69676E65 
+ 533      6420696E 
+ 533      7400
+ 534              	.LASF3:
+ 535 00e5 73686F72 		.ascii	"short unsigned int\000"
+ 535      7420756E 
+ 535      7369676E 
+ 535      65642069 
+ 535      6E7400
+ 536              	.LASF21:
+ 537 00f8 47656E65 		.ascii	"Generated_Source\\PSoC5\\YM_Data.c\000"
+ 537      72617465 
+ 537      645F536F 
+ 537      75726365 
+ 537      5C50536F 
+ 538              	.LASF10:
+ 539 0119 646F7562 		.ascii	"double\000"
+ 539      6C6500
+ 540              	.LASF22:
+ 541 0120 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ 541      73657273 
+ 541      5C696E67 
+ 541      616E5C44 
+ 541      6F63756D 
+ 542 014e 655F706C 		.ascii	"e_player\\USBFS_UART01.cydsn\000"
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cctNKDvP.s 			page 14
+
+
+ 542      61796572 
+ 542      5C555342 
+ 542      46535F55 
+ 542      41525430 
+ 543              	.LASF15:
+ 544 016a 594D5F44 		.ascii	"YM_Data_SetDriveMode\000"
+ 544      6174615F 
+ 544      53657444 
+ 544      72697665 
+ 544      4D6F6465 
+ 545              	.LASF8:
+ 546 017f 756E7369 		.ascii	"unsigned int\000"
+ 546      676E6564 
+ 546      20696E74 
+ 546      00
+ 547              	.LASF7:
+ 548 018c 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 548      206C6F6E 
+ 548      6720756E 
+ 548      7369676E 
+ 548      65642069 
+ 549              	.LASF17:
+ 550 01a3 6D6F6465 		.ascii	"mode\000"
+ 550      00
+ 551              	.LASF6:
+ 552 01a8 6C6F6E67 		.ascii	"long long int\000"
+ 552      206C6F6E 
+ 552      6720696E 
+ 552      7400
+ 553              	.LASF11:
+ 554 01b6 63686172 		.ascii	"char\000"
+ 554      00
+ 555              	.LASF2:
+ 556 01bb 73686F72 		.ascii	"short int\000"
+ 556      7420696E 
+ 556      7400
+ 557              	.LASF12:
+ 558 01c5 75696E74 		.ascii	"uint8\000"
+ 558      3800
+ 559              	.LASF4:
+ 560 01cb 6C6F6E67 		.ascii	"long int\000"
+ 560      20696E74 
+ 560      00
+ 561              	.LASF0:
+ 562 01d4 7369676E 		.ascii	"signed char\000"
+ 562      65642063 
+ 562      68617200 
+ 563              	.LASF19:
+ 564 01e0 594D5F44 		.ascii	"YM_Data_ReadDataReg\000"
+ 564      6174615F 
+ 564      52656164 
+ 564      44617461 
+ 564      52656700 
+ 565              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

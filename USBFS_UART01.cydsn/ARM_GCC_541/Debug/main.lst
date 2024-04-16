@@ -1,0 +1,1874 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.syntax unified
+  20              		.global _printf_float
+  21              		.thumb
+  22              		.syntax unified
+  23              		.global	parity
+  24              		.section	.rodata
+  25              		.align	2
+  26              	.LC0:
+  27 0000 4E6F6E65 		.ascii	"None\000"
+  27      00
+  28 0005 000000   		.align	2
+  29              	.LC1:
+  30 0008 4F646400 		.ascii	"Odd\000"
+  31              		.align	2
+  32              	.LC2:
+  33 000c 4576656E 		.ascii	"Even\000"
+  33      00
+  34 0011 000000   		.align	2
+  35              	.LC3:
+  36 0014 4D61726B 		.ascii	"Mark\000"
+  36      00
+  37 0019 000000   		.align	2
+  38              	.LC4:
+  39 001c 53706163 		.ascii	"Space\000"
+  39      6500
+  40              		.data
+  41              		.align	2
+  42              		.type	parity, %object
+  43              		.size	parity, 20
+  44              	parity:
+  45 0000 00000000 		.word	.LC0
+  46 0004 08000000 		.word	.LC1
+  47 0008 0C000000 		.word	.LC2
+  48 000c 14000000 		.word	.LC3
+  49 0010 1C000000 		.word	.LC4
+  50              		.global	stop
+  51              		.section	.rodata
+  52 0022 0000     		.align	2
+  53              	.LC5:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 2
+
+
+  54 0024 3100     		.ascii	"1\000"
+  55 0026 0000     		.align	2
+  56              	.LC6:
+  57 0028 312E3500 		.ascii	"1.5\000"
+  58              		.align	2
+  59              	.LC7:
+  60 002c 3200     		.ascii	"2\000"
+  61              		.data
+  62              		.align	2
+  63              		.type	stop, %object
+  64              		.size	stop, 12
+  65              	stop:
+  66 0014 24000000 		.word	.LC5
+  67 0018 28000000 		.word	.LC6
+  68 001c 2C000000 		.word	.LC7
+  69              		.section	.text.ym2612_write_step,"ax",%progbits
+  70              		.align	2
+  71              		.global	ym2612_write_step
+  72              		.thumb
+  73              		.thumb_func
+  74              		.type	ym2612_write_step, %function
+  75              	ym2612_write_step:
+  76              	.LFB64:
+  77              		.file 1 "main.c"
+   1:main.c        **** /*******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 2.0
+   5:main.c        **** *
+   6:main.c        **** * Description:
+   7:main.c        **** *   The component is enumerated as a Virtual Com port. Receives data from the 
+   8:main.c        **** *   hyper terminal, then sends back the received data.
+   9:main.c        **** *   For PSoC3/PSoC5LP, the LCD shows the line settings.
+  10:main.c        **** *
+  11:main.c        **** * Related Document:
+  12:main.c        **** *  Universal Serial Bus Specification Revision 2.0
+  13:main.c        **** *  Universal Serial Bus Class Definitions for Communications Devices
+  14:main.c        **** *  Revision 1.2
+  15:main.c        **** *
+  16:main.c        **** ********************************************************************************
+  17:main.c        **** * Copyright 2015, Cypress Semiconductor Corporation. All rights reserved.
+  18:main.c        **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  19:main.c        **** * by and subject to worldwide patent and copyright laws and treaties.
+  20:main.c        **** * Therefore, you may use this software only as provided in the license agreement
+  21:main.c        **** * accompanying the software package from which you obtained this software.
+  22:main.c        **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  23:main.c        **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  24:main.c        **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  25:main.c        **** *******************************************************************************/
+  26:main.c        **** 
+  27:main.c        **** #include <project.h>
+  28:main.c        **** #include "stdio.h"
+  29:main.c        **** 
+  30:main.c        **** #if defined (__GNUC__)
+  31:main.c        ****     /* Add an explicit reference to the floating point printf library */
+  32:main.c        ****     /* to allow usage of the floating point conversion specifiers. */
+  33:main.c        ****     /* This is not linked in by default with the newlib-nano library. */
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 3
+
+
+  34:main.c        ****     asm (".global _printf_float");
+  35:main.c        **** #endif
+  36:main.c        **** 
+  37:main.c        **** #define USBFS_DEVICE    (0u)
+  38:main.c        **** 
+  39:main.c        **** /* The buffer size is equal to the maximum packet size of the IN and OUT bulk
+  40:main.c        **** * endpoints.
+  41:main.c        **** */
+  42:main.c        **** #define USBUART_BUFFER_SIZE (64u)
+  43:main.c        **** #define LINE_STR_LENGTH     (20u)
+  44:main.c        **** 
+  45:main.c        **** char8* parity[] = {"None", "Odd", "Even", "Mark", "Space"};
+  46:main.c        **** char8* stop[]   = {"1", "1.5", "2"};
+  47:main.c        **** 
+  48:main.c        **** void ym2612_write_step (uint8_t data)
+  49:main.c        **** {
+  78              		.loc 1 49 0
+  79              		.cfi_startproc
+  80              		@ args = 0, pretend = 0, frame = 8
+  81              		@ frame_needed = 1, uses_anonymous_args = 0
+  82 0000 80B5     		push	{r7, lr}
+  83              		.cfi_def_cfa_offset 8
+  84              		.cfi_offset 7, -8
+  85              		.cfi_offset 14, -4
+  86 0002 82B0     		sub	sp, sp, #8
+  87              		.cfi_def_cfa_offset 16
+  88 0004 00AF     		add	r7, sp, #0
+  89              		.cfi_def_cfa_register 7
+  90 0006 0346     		mov	r3, r0
+  91 0008 FB71     		strb	r3, [r7, #7]
+  50:main.c        ****   // CS Pin low
+  51:main.c        ****   YM_CS_Write(0);
+  92              		.loc 1 51 0
+  93 000a 0020     		movs	r0, #0
+  94 000c FFF7FEFF 		bl	YM_CS_Write
+  52:main.c        ****   // DATA to bus
+  53:main.c        ****   YM_Data_Write(data);
+  95              		.loc 1 53 0
+  96 0010 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  97 0012 1846     		mov	r0, r3
+  98 0014 FFF7FEFF 		bl	YM_Data_Write
+  54:main.c        ****   // WR data
+  55:main.c        ****   YM_WR_Write(0);
+  99              		.loc 1 55 0
+ 100 0018 0020     		movs	r0, #0
+ 101 001a FFF7FEFF 		bl	YM_WR_Write
+  56:main.c        ****   YM_RD_Write(1);
+ 102              		.loc 1 56 0
+ 103 001e 0120     		movs	r0, #1
+ 104 0020 FFF7FEFF 		bl	YM_RD_Write
+  57:main.c        ****   //CyDelayCycles(1);
+  58:main.c        ****   CyDelayUs(1);
+ 105              		.loc 1 58 0
+ 106 0024 0120     		movs	r0, #1
+ 107 0026 FFF7FEFF 		bl	CyDelayUs
+  59:main.c        ****   YM_WR_Write(1);
+ 108              		.loc 1 59 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 4
+
+
+ 109 002a 0120     		movs	r0, #1
+ 110 002c FFF7FEFF 		bl	YM_WR_Write
+  60:main.c        ****   YM_RD_Write(0);
+ 111              		.loc 1 60 0
+ 112 0030 0020     		movs	r0, #0
+ 113 0032 FFF7FEFF 		bl	YM_RD_Write
+  61:main.c        ****   // CS Pin high
+  62:main.c        ****   YM_CS_Write(1);
+ 114              		.loc 1 62 0
+ 115 0036 0120     		movs	r0, #1
+ 116 0038 FFF7FEFF 		bl	YM_CS_Write
+  63:main.c        ****   CyDelayUs(1);
+ 117              		.loc 1 63 0
+ 118 003c 0120     		movs	r0, #1
+ 119 003e FFF7FEFF 		bl	CyDelayUs
+  64:main.c        ****   //CyDelayCycles(1);
+  65:main.c        **** }
+ 120              		.loc 1 65 0
+ 121 0042 00BF     		nop
+ 122 0044 0837     		adds	r7, r7, #8
+ 123              		.cfi_def_cfa_offset 8
+ 124 0046 BD46     		mov	sp, r7
+ 125              		.cfi_def_cfa_register 13
+ 126              		@ sp needed
+ 127 0048 80BD     		pop	{r7, pc}
+ 128              		.cfi_endproc
+ 129              	.LFE64:
+ 130              		.size	ym2612_write_step, .-ym2612_write_step
+ 131 004a 00BF     		.section	.text.ym2612_write,"ax",%progbits
+ 132              		.align	2
+ 133              		.global	ym2612_write
+ 134              		.thumb
+ 135              		.thumb_func
+ 136              		.type	ym2612_write, %function
+ 137              	ym2612_write:
+ 138              	.LFB65:
+  66:main.c        **** 
+  67:main.c        **** void ym2612_write(uint8_t reg, uint8_t data, uint8_t port)
+  68:main.c        **** {
+ 139              		.loc 1 68 0
+ 140              		.cfi_startproc
+ 141              		@ args = 0, pretend = 0, frame = 8
+ 142              		@ frame_needed = 1, uses_anonymous_args = 0
+ 143 0000 80B5     		push	{r7, lr}
+ 144              		.cfi_def_cfa_offset 8
+ 145              		.cfi_offset 7, -8
+ 146              		.cfi_offset 14, -4
+ 147 0002 82B0     		sub	sp, sp, #8
+ 148              		.cfi_def_cfa_offset 16
+ 149 0004 00AF     		add	r7, sp, #0
+ 150              		.cfi_def_cfa_register 7
+ 151 0006 0346     		mov	r3, r0
+ 152 0008 FB71     		strb	r3, [r7, #7]
+ 153 000a 0B46     		mov	r3, r1
+ 154 000c BB71     		strb	r3, [r7, #6]
+ 155 000e 1346     		mov	r3, r2
+ 156 0010 7B71     		strb	r3, [r7, #5]
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 5
+
+
+  69:main.c        ****   // A1 selects part0 (channels 1-3) or part1 (channels 1-6)
+  70:main.c        ****   YM_A1_Write(port);
+ 157              		.loc 1 70 0
+ 158 0012 7B79     		ldrb	r3, [r7, #5]	@ zero_extendqisi2
+ 159 0014 1846     		mov	r0, r3
+ 160 0016 FFF7FEFF 		bl	YM_A1_Write
+  71:main.c        ****   YM_A0_Write(0);
+ 161              		.loc 1 71 0
+ 162 001a 0020     		movs	r0, #0
+ 163 001c FFF7FEFF 		bl	YM_A0_Write
+  72:main.c        ****   // write register selection
+  73:main.c        ****   ym2612_write_step(reg);
+ 164              		.loc 1 73 0
+ 165 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 166 0022 1846     		mov	r0, r3
+ 167 0024 FFF7FEFF 		bl	ym2612_write_step
+  74:main.c        ****   // data part 0 (channels 1-3)
+  75:main.c        ****   // A1 low, A0 high
+  76:main.c        ****   YM_A0_Write(1);
+ 168              		.loc 1 76 0
+ 169 0028 0120     		movs	r0, #1
+ 170 002a FFF7FEFF 		bl	YM_A0_Write
+  77:main.c        ****   ym2612_write_step(data);
+ 171              		.loc 1 77 0
+ 172 002e BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 173 0030 1846     		mov	r0, r3
+ 174 0032 FFF7FEFF 		bl	ym2612_write_step
+  78:main.c        **** }
+ 175              		.loc 1 78 0
+ 176 0036 00BF     		nop
+ 177 0038 0837     		adds	r7, r7, #8
+ 178              		.cfi_def_cfa_offset 8
+ 179 003a BD46     		mov	sp, r7
+ 180              		.cfi_def_cfa_register 13
+ 181              		@ sp needed
+ 182 003c 80BD     		pop	{r7, pc}
+ 183              		.cfi_endproc
+ 184              	.LFE65:
+ 185              		.size	ym2612_write, .-ym2612_write
+ 186 003e 00BF     		.section	.text.sn76489_write,"ax",%progbits
+ 187              		.align	2
+ 188              		.global	sn76489_write
+ 189              		.thumb
+ 190              		.thumb_func
+ 191              		.type	sn76489_write, %function
+ 192              	sn76489_write:
+ 193              	.LFB66:
+  79:main.c        **** 
+  80:main.c        **** void sn76489_write(uint8_t data)
+  81:main.c        **** {
+ 194              		.loc 1 81 0
+ 195              		.cfi_startproc
+ 196              		@ args = 0, pretend = 0, frame = 8
+ 197              		@ frame_needed = 1, uses_anonymous_args = 0
+ 198 0000 80B5     		push	{r7, lr}
+ 199              		.cfi_def_cfa_offset 8
+ 200              		.cfi_offset 7, -8
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 6
+
+
+ 201              		.cfi_offset 14, -4
+ 202 0002 82B0     		sub	sp, sp, #8
+ 203              		.cfi_def_cfa_offset 16
+ 204 0004 00AF     		add	r7, sp, #0
+ 205              		.cfi_def_cfa_register 7
+ 206 0006 0346     		mov	r3, r0
+ 207 0008 FB71     		strb	r3, [r7, #7]
+  82:main.c        ****   //data = flip_byte(data);  
+  83:main.c        ****   SN_WE_Write(1);
+ 208              		.loc 1 83 0
+ 209 000a 0120     		movs	r0, #1
+ 210 000c FFF7FEFF 		bl	SN_WE_Write
+  84:main.c        ****   YM_Data_Write(data);
+ 211              		.loc 1 84 0
+ 212 0010 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 213 0012 1846     		mov	r0, r3
+ 214 0014 FFF7FEFF 		bl	YM_Data_Write
+  85:main.c        ****   SN_WE_Write(0);
+ 215              		.loc 1 85 0
+ 216 0018 0020     		movs	r0, #0
+ 217 001a FFF7FEFF 		bl	SN_WE_Write
+  86:main.c        ****   //CyDelayCycles(1);
+  87:main.c        ****   CyDelayUs(18);
+ 218              		.loc 1 87 0
+ 219 001e 1220     		movs	r0, #18
+ 220 0020 FFF7FEFF 		bl	CyDelayUs
+  88:main.c        ****   SN_WE_Write(1);
+ 221              		.loc 1 88 0
+ 222 0024 0120     		movs	r0, #1
+ 223 0026 FFF7FEFF 		bl	SN_WE_Write
+  89:main.c        **** }
+ 224              		.loc 1 89 0
+ 225 002a 00BF     		nop
+ 226 002c 0837     		adds	r7, r7, #8
+ 227              		.cfi_def_cfa_offset 8
+ 228 002e BD46     		mov	sp, r7
+ 229              		.cfi_def_cfa_register 13
+ 230              		@ sp needed
+ 231 0030 80BD     		pop	{r7, pc}
+ 232              		.cfi_endproc
+ 233              	.LFE66:
+ 234              		.size	sn76489_write, .-sn76489_write
+ 235 0032 00BF     		.section	.text.ym2612_reset,"ax",%progbits
+ 236              		.align	2
+ 237              		.global	ym2612_reset
+ 238              		.thumb
+ 239              		.thumb_func
+ 240              		.type	ym2612_reset, %function
+ 241              	ym2612_reset:
+ 242              	.LFB67:
+  90:main.c        **** 
+  91:main.c        **** void ym2612_reset()
+  92:main.c        **** {
+ 243              		.loc 1 92 0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 7
+
+
+ 247 0000 80B5     		push	{r7, lr}
+ 248              		.cfi_def_cfa_offset 8
+ 249              		.cfi_offset 7, -8
+ 250              		.cfi_offset 14, -4
+ 251 0002 00AF     		add	r7, sp, #0
+ 252              		.cfi_def_cfa_register 7
+  93:main.c        ****   //YM_IC_Write(0);
+  94:main.c        ****   //CyDelayUs(1);
+  95:main.c        ****   //YM_IC_Write(1);
+  96:main.c        ****   YM_IC_Write(0);
+ 253              		.loc 1 96 0
+ 254 0004 0020     		movs	r0, #0
+ 255 0006 FFF7FEFF 		bl	YM_IC_Write
+  97:main.c        ****   CyDelay(10);
+ 256              		.loc 1 97 0
+ 257 000a 0A20     		movs	r0, #10
+ 258 000c FFF7FEFF 		bl	CyDelay
+  98:main.c        ****   YM_IC_Write(1);
+ 259              		.loc 1 98 0
+ 260 0010 0120     		movs	r0, #1
+ 261 0012 FFF7FEFF 		bl	YM_IC_Write
+  99:main.c        ****   CyDelay(10);  
+ 262              		.loc 1 99 0
+ 263 0016 0A20     		movs	r0, #10
+ 264 0018 FFF7FEFF 		bl	CyDelay
+ 100:main.c        ****   // Silence channel-0 to channel-6
+ 101:main.c        ****   //for (uint8_t ch = 0; ch <= 6; ++ch)
+ 102:main.c        ****   //  ym2612_write(0x28, ch, 0);
+ 103:main.c        **** }
+ 265              		.loc 1 103 0
+ 266 001c 00BF     		nop
+ 267 001e 80BD     		pop	{r7, pc}
+ 268              		.cfi_endproc
+ 269              	.LFE67:
+ 270              		.size	ym2612_reset, .-ym2612_reset
+ 271              		.section	.text.ym2612_init,"ax",%progbits
+ 272              		.align	2
+ 273              		.global	ym2612_init
+ 274              		.thumb
+ 275              		.thumb_func
+ 276              		.type	ym2612_init, %function
+ 277              	ym2612_init:
+ 278              	.LFB68:
+ 104:main.c        **** 
+ 105:main.c        **** void ym2612_init (void)
+ 106:main.c        **** {
+ 279              		.loc 1 106 0
+ 280              		.cfi_startproc
+ 281              		@ args = 0, pretend = 0, frame = 0
+ 282              		@ frame_needed = 1, uses_anonymous_args = 0
+ 283 0000 80B5     		push	{r7, lr}
+ 284              		.cfi_def_cfa_offset 8
+ 285              		.cfi_offset 7, -8
+ 286              		.cfi_offset 14, -4
+ 287 0002 00AF     		add	r7, sp, #0
+ 288              		.cfi_def_cfa_register 7
+ 107:main.c        ****   YM_CS_Write(1);
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 8
+
+
+ 289              		.loc 1 107 0
+ 290 0004 0120     		movs	r0, #1
+ 291 0006 FFF7FEFF 		bl	YM_CS_Write
+ 108:main.c        ****   YM_WR_Write(1);
+ 292              		.loc 1 108 0
+ 293 000a 0120     		movs	r0, #1
+ 294 000c FFF7FEFF 		bl	YM_WR_Write
+ 109:main.c        ****   YM_RD_Write(1);
+ 295              		.loc 1 109 0
+ 296 0010 0120     		movs	r0, #1
+ 297 0012 FFF7FEFF 		bl	YM_RD_Write
+ 110:main.c        ****   YM_IC_Write(1);
+ 298              		.loc 1 110 0
+ 299 0016 0120     		movs	r0, #1
+ 300 0018 FFF7FEFF 		bl	YM_IC_Write
+ 111:main.c        ****   YM_A0_Write(0);
+ 301              		.loc 1 111 0
+ 302 001c 0020     		movs	r0, #0
+ 303 001e FFF7FEFF 		bl	YM_A0_Write
+ 112:main.c        ****   YM_A1_Write(0);
+ 304              		.loc 1 112 0
+ 305 0022 0020     		movs	r0, #0
+ 306 0024 FFF7FEFF 		bl	YM_A1_Write
+ 113:main.c        ****   YM_Data_Write(0xff);
+ 307              		.loc 1 113 0
+ 308 0028 FF20     		movs	r0, #255
+ 309 002a FFF7FEFF 		bl	YM_Data_Write
+ 114:main.c        **** }
+ 310              		.loc 1 114 0
+ 311 002e 00BF     		nop
+ 312 0030 80BD     		pop	{r7, pc}
+ 313              		.cfi_endproc
+ 314              	.LFE68:
+ 315              		.size	ym2612_init, .-ym2612_init
+ 316 0032 00BF     		.section	.text.SilenceAllChannels,"ax",%progbits
+ 317              		.align	2
+ 318              		.global	SilenceAllChannels
+ 319              		.thumb
+ 320              		.thumb_func
+ 321              		.type	SilenceAllChannels, %function
+ 322              	SilenceAllChannels:
+ 323              	.LFB69:
+ 115:main.c        **** 
+ 116:main.c        **** void SilenceAllChannels()
+ 117:main.c        **** {  
+ 324              		.loc 1 117 0
+ 325              		.cfi_startproc
+ 326              		@ args = 0, pretend = 0, frame = 0
+ 327              		@ frame_needed = 1, uses_anonymous_args = 0
+ 328 0000 80B5     		push	{r7, lr}
+ 329              		.cfi_def_cfa_offset 8
+ 330              		.cfi_offset 7, -8
+ 331              		.cfi_offset 14, -4
+ 332 0002 00AF     		add	r7, sp, #0
+ 333              		.cfi_def_cfa_register 7
+ 118:main.c        ****   sn76489_write(0x9f);
+ 334              		.loc 1 118 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 9
+
+
+ 335 0004 9F20     		movs	r0, #159
+ 336 0006 FFF7FEFF 		bl	sn76489_write
+ 119:main.c        ****   sn76489_write(0xbf);
+ 337              		.loc 1 119 0
+ 338 000a BF20     		movs	r0, #191
+ 339 000c FFF7FEFF 		bl	sn76489_write
+ 120:main.c        ****   sn76489_write(0xdf);
+ 340              		.loc 1 120 0
+ 341 0010 DF20     		movs	r0, #223
+ 342 0012 FFF7FEFF 		bl	sn76489_write
+ 121:main.c        ****   sn76489_write(0xff);
+ 343              		.loc 1 121 0
+ 344 0016 FF20     		movs	r0, #255
+ 345 0018 FFF7FEFF 		bl	sn76489_write
+ 122:main.c        **** 
+ 123:main.c        ****   ym2612_init();
+ 346              		.loc 1 123 0
+ 347 001c FFF7FEFF 		bl	ym2612_init
+ 124:main.c        ****   ym2612_reset();
+ 348              		.loc 1 124 0
+ 349 0020 FFF7FEFF 		bl	ym2612_reset
+ 125:main.c        **** }
+ 350              		.loc 1 125 0
+ 351 0024 00BF     		nop
+ 352 0026 80BD     		pop	{r7, pc}
+ 353              		.cfi_endproc
+ 354              	.LFE69:
+ 355              		.size	SilenceAllChannels, .-SilenceAllChannels
+ 356              		.section	.text.main,"ax",%progbits
+ 357              		.align	2
+ 358              		.global	main
+ 359              		.thumb
+ 360              		.thumb_func
+ 361              		.type	main, %function
+ 362              	main:
+ 363              	.LFB70:
+ 126:main.c        **** 
+ 127:main.c        **** /*******************************************************************************
+ 128:main.c        **** * Function Name: main
+ 129:main.c        **** ********************************************************************************
+ 130:main.c        **** *
+ 131:main.c        **** * Summary:
+ 132:main.c        **** *  The main function performs the following actions:
+ 133:main.c        **** *   1. Waits until VBUS becomes valid and starts the USBFS component which is
+ 134:main.c        **** *      enumerated as virtual Com port.
+ 135:main.c        **** *   2. Waits until the device is enumerated by the host.
+ 136:main.c        **** *   3. Waits for data coming from the hyper terminal and sends it back.
+ 137:main.c        **** *   4. PSoC3/PSoC5LP: the LCD shows the line settings.
+ 138:main.c        **** *
+ 139:main.c        **** * Parameters:
+ 140:main.c        **** *  None.
+ 141:main.c        **** *
+ 142:main.c        **** * Return:
+ 143:main.c        **** *  None.
+ 144:main.c        **** *
+ 145:main.c        **** *******************************************************************************/
+ 146:main.c        **** int main()
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 10
+
+
+ 147:main.c        **** {
+ 364              		.loc 1 147 0
+ 365              		.cfi_startproc
+ 366              		@ args = 0, pretend = 0, frame = 10072
+ 367              		@ frame_needed = 1, uses_anonymous_args = 0
+ 368 0000 80B5     		push	{r7, lr}
+ 369              		.cfi_def_cfa_offset 8
+ 370              		.cfi_offset 7, -8
+ 371              		.cfi_offset 14, -4
+ 372 0002 ADF51D5D 		sub	sp, sp, #10048
+ 373              		.cfi_def_cfa_offset 10056
+ 374 0006 86B0     		sub	sp, sp, #24
+ 375              		.cfi_def_cfa_offset 10080
+ 376 0008 00AF     		add	r7, sp, #0
+ 377              		.cfi_def_cfa_register 7
+ 148:main.c        ****     uint16 count;
+ 149:main.c        ****     uint8 buffer[USBUART_BUFFER_SIZE];
+ 150:main.c        ****     uint8_t command = 0;
+ 378              		.loc 1 150 0
+ 379 000a 0023     		movs	r3, #0
+ 380 000c 07F51D52 		add	r2, r7, #10048
+ 381 0010 02F11702 		add	r2, r2, #23
+ 382 0014 1370     		strb	r3, [r2]
+ 151:main.c        ****     uint8_t reg = 0;
+ 383              		.loc 1 151 0
+ 384 0016 0023     		movs	r3, #0
+ 385 0018 07F51D52 		add	r2, r7, #10048
+ 386 001c 02F11602 		add	r2, r2, #22
+ 387 0020 1370     		strb	r3, [r2]
+ 152:main.c        ****     uint8_t data = 0;
+ 388              		.loc 1 152 0
+ 389 0022 0023     		movs	r3, #0
+ 390 0024 07F51D52 		add	r2, r7, #10048
+ 391 0028 02F11502 		add	r2, r2, #21
+ 392 002c 1370     		strb	r3, [r2]
+ 153:main.c        ****     uint8_t test[10000];
+ 154:main.c        ****     uint16_t idx = 0;
+ 393              		.loc 1 154 0
+ 394 002e 0023     		movs	r3, #0
+ 395 0030 07F51D52 		add	r2, r7, #10048
+ 396 0034 02F11202 		add	r2, r2, #18
+ 397 0038 1380     		strh	r3, [r2]	@ movhi
+ 155:main.c        ****     //uint16_t waitData = 0;
+ 156:main.c        ****     
+ 157:main.c        **** //#if (CY_PSOC3 || CY_PSOC5LP)
+ 158:main.c        **** //    uint8 state;
+ 159:main.c        **** //    char8 lineStr[LINE_STR_LENGTH];
+ 160:main.c        **** //    
+ 161:main.c        **** //    LCD_Start();
+ 162:main.c        **** //#endif /* (CY_PSOC3 || CY_PSOC5LP) */
+ 163:main.c        ****     
+ 164:main.c        ****     SilenceAllChannels();
+ 398              		.loc 1 164 0
+ 399 003a FFF7FEFF 		bl	SilenceAllChannels
+ 165:main.c        ****     CyGlobalIntEnable;
+ 400              		.loc 1 165 0
+ 401              		.syntax unified
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 11
+
+
+ 402              	@ 165 "main.c" 1
+ 403 003e 62B6     		CPSIE   i
+ 404              	@ 0 "" 2
+ 166:main.c        **** 
+ 167:main.c        ****     /* Start USBFS operation with 5-V operation. */
+ 168:main.c        ****     USBUART_Start(USBFS_DEVICE, USBUART_5V_OPERATION);
+ 405              		.loc 1 168 0
+ 406              		.thumb
+ 407              		.syntax unified
+ 408 0040 0121     		movs	r1, #1
+ 409 0042 0020     		movs	r0, #0
+ 410 0044 FFF7FEFF 		bl	USBUART_Start
+ 411              	.L13:
+ 169:main.c        ****     
+ 170:main.c        ****     for(;;)
+ 171:main.c        ****     {
+ 172:main.c        ****         /* Host can send double SET_INTERFACE request. */
+ 173:main.c        ****         if (0u != USBUART_IsConfigurationChanged())
+ 412              		.loc 1 173 0
+ 413 0048 FFF7FEFF 		bl	USBUART_IsConfigurationChanged
+ 414 004c 0346     		mov	r3, r0
+ 415 004e 002B     		cmp	r3, #0
+ 416 0050 06D0     		beq	.L8
+ 174:main.c        ****         {
+ 175:main.c        ****             /* Initialize IN endpoints when device is configured. */
+ 176:main.c        ****             if (0u != USBUART_GetConfiguration())
+ 417              		.loc 1 176 0
+ 418 0052 FFF7FEFF 		bl	USBUART_GetConfiguration
+ 419 0056 0346     		mov	r3, r0
+ 420 0058 002B     		cmp	r3, #0
+ 421 005a 01D0     		beq	.L8
+ 177:main.c        ****             {
+ 178:main.c        ****                 /* Enumeration is done, enable OUT endpoint to receive data 
+ 179:main.c        ****                  * from host. */
+ 180:main.c        ****                 USBUART_CDC_Init();
+ 422              		.loc 1 180 0
+ 423 005c FFF7FEFF 		bl	USBUART_CDC_Init
+ 424              	.L8:
+ 181:main.c        ****             }
+ 182:main.c        ****         }
+ 183:main.c        **** 
+ 184:main.c        ****         /* Service USB CDC when device is configured. */
+ 185:main.c        ****         if (0u != USBUART_GetConfiguration())
+ 425              		.loc 1 185 0
+ 426 0060 FFF7FEFF 		bl	USBUART_GetConfiguration
+ 427 0064 0346     		mov	r3, r0
+ 428 0066 002B     		cmp	r3, #0
+ 429 0068 EED0     		beq	.L13
+ 186:main.c        ****         {
+ 187:main.c        ****             /* Check for input data from host. */
+ 188:main.c        ****             if (0u != USBUART_DataIsReady())
+ 430              		.loc 1 188 0
+ 431 006a FFF7FEFF 		bl	USBUART_DataIsReady
+ 432 006e 0346     		mov	r3, r0
+ 433 0070 002B     		cmp	r3, #0
+ 434 0072 E9D0     		beq	.L13
+ 189:main.c        ****             {
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 12
+
+
+ 190:main.c        ****                 /* Read received data and re-enable OUT endpoint. */
+ 191:main.c        ****                 count = USBUART_GetAll(buffer);
+ 435              		.loc 1 191 0
+ 436 0074 07F51C53 		add	r3, r7, #9984
+ 437 0078 03F11003 		add	r3, r3, #16
+ 438 007c 1846     		mov	r0, r3
+ 439 007e FFF7FEFF 		bl	USBUART_GetAll
+ 440 0082 0346     		mov	r3, r0
+ 441 0084 07F51D52 		add	r2, r7, #10048
+ 442 0088 02F11002 		add	r2, r2, #16
+ 443 008c 1380     		strh	r3, [r2]	@ movhi
+ 192:main.c        ****                 //USBUART_PutData(buffer, count);
+ 193:main.c        ****                 
+ 194:main.c        ****                 command = buffer[0];
+ 444              		.loc 1 194 0
+ 445 008e 07F51C53 		add	r3, r7, #9984
+ 446 0092 03F11003 		add	r3, r3, #16
+ 447 0096 1B78     		ldrb	r3, [r3]
+ 448 0098 07F51D52 		add	r2, r7, #10048
+ 449 009c 02F11702 		add	r2, r2, #23
+ 450 00a0 1370     		strb	r3, [r2]
+ 195:main.c        ****                 
+ 196:main.c        ****                 // check for seek command
+ 197:main.c        ****                 //if (command == 0xe0) // 0xE0 	dddddddd 	Seek to offset dddddddd (Intel byte order
+ 198:main.c        ****                 //{
+ 199:main.c        ****                 //    pcm_index = pcm_offset + get_vgm_ui32();
+ 200:main.c        ****                 //}
+ 201:main.c        ****                         
+ 202:main.c        ****                 switch (buffer[0]) {
+ 451              		.loc 1 202 0
+ 452 00a2 07F51C53 		add	r3, r7, #9984
+ 453 00a6 03F11003 		add	r3, r3, #16
+ 454 00aa 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 455 00ac 502B     		cmp	r3, #80
+ 456 00ae 05D0     		beq	.L11
+ 457 00b0 502B     		cmp	r3, #80
+ 458 00b2 22DB     		blt	.L15
+ 459 00b4 523B     		subs	r3, r3, #82
+ 460 00b6 012B     		cmp	r3, #1
+ 461 00b8 1FD8     		bhi	.L15
+ 462 00ba 08E0     		b	.L14
+ 463              	.L11:
+ 203:main.c        ****                     
+ 204:main.c        **** //                    case 0x4f: // Game Gear stereo PSG (skip)
+ 205:main.c        **** //                        //get_vgm_ui16();
+ 206:main.c        **** //                        break;
+ 207:main.c        ****                     
+ 208:main.c        ****                     case 0x50: // 0x50 	dd 	PSG (SN76489/SN76496) write value dd
+ 209:main.c        ****                         
+ 210:main.c        ****                         sn76489_write(buffer[1]);
+ 464              		.loc 1 210 0
+ 465 00bc 07F51C53 		add	r3, r7, #9984
+ 466 00c0 03F11103 		add	r3, r3, #17
+ 467 00c4 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 468 00c6 1846     		mov	r0, r3
+ 469 00c8 FFF7FEFF 		bl	sn76489_write
+ 211:main.c        ****                         break;
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 13
+
+
+ 470              		.loc 1 211 0
+ 471 00cc 16E0     		b	.L9
+ 472              	.L14:
+ 212:main.c        ****                     
+ 213:main.c        ****                     case 0x52: // 0x52 	aa dd  YM2612 port 0, write value dd to register aa
+ 214:main.c        ****                     case 0x53: // 0x53 	aa dd  YM2612 port 1, write value dd to register aa
+ 215:main.c        ****                         //reg = buffer[1];
+ 216:main.c        ****                         //data = buffer[2];
+ 217:main.c        ****                         ym2612_write(buffer[1], buffer[2], buffer[0] & 0x01);
+ 473              		.loc 1 217 0
+ 474 00ce 07F51C53 		add	r3, r7, #9984
+ 475 00d2 03F11103 		add	r3, r3, #17
+ 476 00d6 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 477 00d8 07F51C53 		add	r3, r7, #9984
+ 478 00dc 03F11203 		add	r3, r3, #18
+ 479 00e0 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 480 00e2 07F51C53 		add	r3, r7, #9984
+ 481 00e6 03F11003 		add	r3, r3, #16
+ 482 00ea 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 483 00ec 03F00103 		and	r3, r3, #1
+ 484 00f0 DBB2     		uxtb	r3, r3
+ 485 00f2 1A46     		mov	r2, r3
+ 486 00f4 FFF7FEFF 		bl	ym2612_write
+ 218:main.c        ****                         break;
+ 487              		.loc 1 218 0
+ 488 00f8 00E0     		b	.L9
+ 489              	.L15:
+ 219:main.c        ****                     
+ 220:main.c        **** //                    case 0x61: // 0x61 	nn nn 	Wait n samples, n can range from 0 to 65535 (appro
+ 221:main.c        **** //                        waitData = buffer[1] + (buffer[2] << 8);
+ 222:main.c        **** ////                        if (waitData == 0)
+ 223:main.c        **** ////                        {
+ 224:main.c        **** ////                            noWait = 1;
+ 225:main.c        **** ////                        }
+ 226:main.c        **** ////                        else
+ 227:main.c        **** ////                        {
+ 228:main.c        **** ////                            waitData--;
+ 229:main.c        **** ////                        }
+ 230:main.c        **** //                        break;
+ 231:main.c        **** //                    
+ 232:main.c        **** //                    case 0x62: // wait 735 samples (60th of a second), a shortcut for 0x61 0xdf 0
+ 233:main.c        **** //                        waitData = 735 - 1;
+ 234:main.c        **** //                        break;
+ 235:main.c        **** //                    
+ 236:main.c        **** //                    case 0x63: // wait 882 samples (50th of a second), a shortcut for 0x61 0x72 0
+ 237:main.c        **** //                        waitData = 882 - 1;
+ 238:main.c        **** //                        break;
+ 239:main.c        **** //                      
+ 240:main.c        **** //                    case 0x67: // data block   0x67 0x66 tt ss ss ss ss (data)
+ 241:main.c        **** //                        get_vgm_ui8();              // skip 0x66
+ 242:main.c        **** //                        get_vgm_ui8();              // skip type
+ 243:main.c        **** //                        pcm_size = get_vgm_ui32();  // read size (4 byte)
+ 244:main.c        **** //                        pcm_offset = vgm_pos;        // store start position
+ 245:main.c        **** //                        pcm_index = pcm_offset;
+ 246:main.c        **** //                        vgm_pos += pcm_size;        // seek by "pcm_size" bytes
+ 247:main.c        **** //                        break;
+ 248:main.c        **** //                        
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 14
+
+
+ 249:main.c        **** //                    case  0x70:
+ 250:main.c        **** //                    case  0x71:
+ 251:main.c        **** //                    case  0x72:
+ 252:main.c        **** //                    case  0x73:
+ 253:main.c        **** //                    case  0x74:
+ 254:main.c        **** //                    case  0x75:
+ 255:main.c        **** //                    case  0x76:
+ 256:main.c        **** //                    case  0x77:
+ 257:main.c        **** //                    case  0x78:
+ 258:main.c        **** //                    case  0x79:
+ 259:main.c        **** //                    case  0x7A:
+ 260:main.c        **** //                    case  0x7B:   
+ 261:main.c        **** //                    case  0x7C:
+ 262:main.c        **** //                    case  0x7D:
+ 263:main.c        **** //                    case  0x7E:
+ 264:main.c        **** //                    case  0x7F: // 0x7n 	wait n+1 samples, n can range from 0 to 15.             
+ 265:main.c        **** //                        waitData = command & 0x0f; // this is actually (n+1)
+ 266:main.c        **** //                        break;
+ 267:main.c        **** //                    
+ 268:main.c        **** //                    case 0x80:
+ 269:main.c        **** //                    case 0x81:
+ 270:main.c        **** //                    case 0x82:
+ 271:main.c        **** //                    case 0x83:
+ 272:main.c        **** //                    case 0x84:
+ 273:main.c        **** //                    case 0x85:
+ 274:main.c        **** //                    case 0x86:
+ 275:main.c        **** //                    case 0x87:
+ 276:main.c        **** //                    case 0x88:
+ 277:main.c        **** //                    case 0x89:
+ 278:main.c        **** //                    case 0x8a:
+ 279:main.c        **** //                    case 0x8b:
+ 280:main.c        **** //                    case 0x8c:
+ 281:main.c        **** //                    case 0x8d:
+ 282:main.c        **** //                    case 0x8e:
+ 283:main.c        **** //                    case 0x8f: // 0x8n      YM2612 port 0 address 2A write from the data bank, th
+ 284:main.c        **** //                        data = rawData[pcm_offset + pcm_index++];
+ 285:main.c        **** //                        ym2612_write(0x2a, data, 0x00);
+ 286:main.c        **** //                        waitData = (command & 0x0f);
+ 287:main.c        **** //                        if (waitData == 0)
+ 288:main.c        **** //                        {
+ 289:main.c        **** //                            noWait = 1; // if 0x80, don't wait for the next ISR (repeat parser lo
+ 290:main.c        **** //                        }
+ 291:main.c        **** //                        else
+ 292:main.c        **** //                        {
+ 293:main.c        **** //                            waitData--; // else wait n samples
+ 294:main.c        **** //                        }
+ 295:main.c        **** //                        break;
+ 296:main.c        **** //                        
+ 297:main.c        **** //                    case 0x90:    
+ 298:main.c        **** //                    case 0x91:
+ 299:main.c        **** //                        // TO DO
+ 300:main.c        **** //                        get_vgm_ui32();
+ 301:main.c        **** //                        break;
+ 302:main.c        **** //                        
+ 303:main.c        **** //                    case 0x92:
+ 304:main.c        **** //                        // TO DO
+ 305:main.c        **** //                        get_vgm_ui8();
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 15
+
+
+ 306:main.c        **** //                        get_vgm_ui32();
+ 307:main.c        **** //                        break;
+ 308:main.c        **** //                        
+ 309:main.c        **** //                    case 0x93:
+ 310:main.c        **** //                        // TO DO
+ 311:main.c        **** //                        get_vgm_ui8();
+ 312:main.c        **** //                        get_vgm_ui32();
+ 313:main.c        **** //                        get_vgm_ui8();
+ 314:main.c        **** //                        get_vgm_ui32();
+ 315:main.c        **** //                        break;
+ 316:main.c        **** //                        
+ 317:main.c        **** //                    case 0xe0:
+ 318:main.c        **** //                        pcm_index = pcm_offset + get_vgm_ui32();
+ 319:main.c        **** //                        noWait = 1;
+ 320:main.c        **** //                        break;
+ 321:main.c        **** //                    
+ 322:main.c        **** //                    case 0x66: // EOF
+ 323:main.c        **** //                        while(1);
+ 324:main.c        **** //                        break;
+ 325:main.c        ****                         
+ 326:main.c        ****                     default: break;
+ 490              		.loc 1 326 0
+ 491 00fa 00BF     		nop
+ 492              	.L9:
+ 327:main.c        ****                 }
+ 328:main.c        **** //                if (0u != count)
+ 329:main.c        **** //                {
+ 330:main.c        **** //                    /* Wait until component is ready to send data to host. */
+ 331:main.c        **** //                    while (0u == USBUART_CDCIsReady())
+ 332:main.c        **** //                    {
+ 333:main.c        **** //                    }
+ 334:main.c        **** //
+ 335:main.c        **** //                    /* Send data back to host. */
+ 336:main.c        **** //                    USBUART_PutData(buffer, count);
+ 337:main.c        **** //
+ 338:main.c        **** //                    /* If the last sent packet is exactly the maximum packet 
+ 339:main.c        **** //                    *  size, it is followed by a zero-length packet to assure
+ 340:main.c        **** //                    *  that the end of the segment is properly identified by 
+ 341:main.c        **** //                    *  the terminal.
+ 342:main.c        **** //                    */
+ 343:main.c        **** //                    if (USBUART_BUFFER_SIZE == count)
+ 344:main.c        **** //                    {
+ 345:main.c        **** //                        /* Wait until component is ready to send data to PC. */
+ 346:main.c        **** //                        while (0u == USBUART_CDCIsReady())
+ 347:main.c        **** //                        {
+ 348:main.c        **** //                        }
+ 349:main.c        **** //
+ 350:main.c        **** //                        /* Send zero-length packet to PC. */
+ 351:main.c        **** //                        USBUART_PutData(NULL, 0u);
+ 352:main.c        **** //                    }
+ 353:main.c        **** //                }
+ 354:main.c        ****             }
+ 355:main.c        **** 
+ 356:main.c        **** 
+ 357:main.c        **** //        #if (CY_PSOC3 || CY_PSOC5LP)
+ 358:main.c        **** //            /* Check for Line settings change. */
+ 359:main.c        **** //            state = USBUART_IsLineChanged();
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 16
+
+
+ 360:main.c        **** //            if (0u != state)
+ 361:main.c        **** //            {
+ 362:main.c        **** //                /* Output on LCD Line Coding settings. */
+ 363:main.c        **** //                if (0u != (state & USBUART_LINE_CODING_CHANGED))
+ 364:main.c        **** //                {                  
+ 365:main.c        **** //                    /* Get string to output. */
+ 366:main.c        **** //                    sprintf(lineStr,"BR:%4ld %d%c%s", USBUART_GetDTERate(),\
+ 367:main.c        **** //                                   (uint16) USBUART_GetDataBits(),\
+ 368:main.c        **** //                                   parity[(uint16) USBUART_GetParityType()][0],\
+ 369:main.c        **** //                                   stop[(uint16) USBUART_GetCharFormat()]);
+ 370:main.c        **** //
+ 371:main.c        **** //                    /* Clear LCD line. */
+ 372:main.c        **** //                    LCD_Position(0u, 0u);
+ 373:main.c        **** //                    LCD_PrintString("                    ");
+ 374:main.c        **** //
+ 375:main.c        **** //                    /* Output string on LCD. */
+ 376:main.c        **** //                    LCD_Position(0u, 0u);
+ 377:main.c        **** //                    LCD_PrintString(lineStr);
+ 378:main.c        **** //                }
+ 379:main.c        **** //
+ 380:main.c        **** //                /* Output on LCD Line Control settings. */
+ 381:main.c        **** ////                if (0u != (state & USBUART_LINE_CONTROL_CHANGED))
+ 382:main.c        **** ////                {                   
+ 383:main.c        **** ////                    /* Get string to output. */
+ 384:main.c        **** ////                    state = USBUART_GetLineControl();
+ 385:main.c        **** ////                    sprintf(lineStr,"DTR:%s,RTS:%s",  (0u != (state & USBUART_LINE_CONTROL_DTR)
+ 386:main.c        **** ////                                                      (0u != (state & USBUART_LINE_CONTROL_RTS)
+ 387:main.c        **** ////
+ 388:main.c        **** ////                    /* Clear LCD line. */
+ 389:main.c        **** ////                    LCD_Position(1u, 0u);
+ 390:main.c        **** ////                    LCD_PrintString("                    ");
+ 391:main.c        **** ////
+ 392:main.c        **** ////                    /* Output string on LCD. */
+ 393:main.c        **** ////                    LCD_Position(1u, 0u);
+ 394:main.c        **** ////                    LCD_PrintString(lineStr);
+ 395:main.c        **** ////                }
+ 396:main.c        **** //            }
+ 397:main.c        **** //        #endif /* (CY_PSOC3 || CY_PSOC5LP) */
+ 398:main.c        ****         }
+ 399:main.c        ****     }
+ 493              		.loc 1 399 0 discriminator 1
+ 494 00fc A4E7     		b	.L13
+ 495              		.cfi_endproc
+ 496              	.LFE70:
+ 497              		.size	main, .-main
+ 498 00fe 00BF     		.text
+ 499              	.Letext0:
+ 500              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 501              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 502              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 503              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 504              		.section	.debug_info,"",%progbits
+ 505              	.Ldebug_info0:
+ 506 0000 A5020000 		.4byte	0x2a5
+ 507 0004 0400     		.2byte	0x4
+ 508 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 509 000a 04       		.byte	0x4
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 17
+
+
+ 510 000b 01       		.uleb128 0x1
+ 511 000c 0A000000 		.4byte	.LASF38
+ 512 0010 0C       		.byte	0xc
+ 513 0011 AE010000 		.4byte	.LASF39
+ 514 0015 F5010000 		.4byte	.LASF40
+ 515 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 516 001d 00000000 		.4byte	0
+ 517 0021 00000000 		.4byte	.Ldebug_line0
+ 518 0025 02       		.uleb128 0x2
+ 519 0026 01       		.byte	0x1
+ 520 0027 06       		.byte	0x6
+ 521 0028 4B020000 		.4byte	.LASF0
+ 522 002c 03       		.uleb128 0x3
+ 523 002d 00000000 		.4byte	.LASF3
+ 524 0031 02       		.byte	0x2
+ 525 0032 1D       		.byte	0x1d
+ 526 0033 37000000 		.4byte	0x37
+ 527 0037 02       		.uleb128 0x2
+ 528 0038 01       		.byte	0x1
+ 529 0039 08       		.byte	0x8
+ 530 003a CF000000 		.4byte	.LASF1
+ 531 003e 02       		.uleb128 0x2
+ 532 003f 02       		.byte	0x2
+ 533 0040 05       		.byte	0x5
+ 534 0041 D2010000 		.4byte	.LASF2
+ 535 0045 03       		.uleb128 0x3
+ 536 0046 27010000 		.4byte	.LASF4
+ 537 004a 02       		.byte	0x2
+ 538 004b 2B       		.byte	0x2b
+ 539 004c 50000000 		.4byte	0x50
+ 540 0050 02       		.uleb128 0x2
+ 541 0051 02       		.byte	0x2
+ 542 0052 07       		.byte	0x7
+ 543 0053 F5000000 		.4byte	.LASF5
+ 544 0057 03       		.uleb128 0x3
+ 545 0058 98000000 		.4byte	.LASF6
+ 546 005c 02       		.byte	0x2
+ 547 005d 3F       		.byte	0x3f
+ 548 005e 62000000 		.4byte	0x62
+ 549 0062 02       		.uleb128 0x2
+ 550 0063 04       		.byte	0x4
+ 551 0064 05       		.byte	0x5
+ 552 0065 EC010000 		.4byte	.LASF7
+ 553 0069 02       		.uleb128 0x2
+ 554 006a 04       		.byte	0x4
+ 555 006b 07       		.byte	0x7
+ 556 006c E3000000 		.4byte	.LASF8
+ 557 0070 02       		.uleb128 0x2
+ 558 0071 08       		.byte	0x8
+ 559 0072 05       		.byte	0x5
+ 560 0073 A0010000 		.4byte	.LASF9
+ 561 0077 02       		.uleb128 0x2
+ 562 0078 08       		.byte	0x8
+ 563 0079 07       		.byte	0x7
+ 564 007a 6A010000 		.4byte	.LASF10
+ 565 007e 04       		.uleb128 0x4
+ 566 007f 04       		.byte	0x4
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 18
+
+
+ 567 0080 05       		.byte	0x5
+ 568 0081 696E7400 		.ascii	"int\000"
+ 569 0085 02       		.uleb128 0x2
+ 570 0086 04       		.byte	0x4
+ 571 0087 07       		.byte	0x7
+ 572 0088 5D010000 		.4byte	.LASF11
+ 573 008c 03       		.uleb128 0x3
+ 574 008d 81010000 		.4byte	.LASF12
+ 575 0091 03       		.byte	0x3
+ 576 0092 18       		.byte	0x18
+ 577 0093 2C000000 		.4byte	0x2c
+ 578 0097 03       		.uleb128 0x3
+ 579 0098 E3010000 		.4byte	.LASF13
+ 580 009c 03       		.byte	0x3
+ 581 009d 24       		.byte	0x24
+ 582 009e 45000000 		.4byte	0x45
+ 583 00a2 03       		.uleb128 0x3
+ 584 00a3 8F010000 		.4byte	.LASF14
+ 585 00a7 03       		.byte	0x3
+ 586 00a8 2C       		.byte	0x2c
+ 587 00a9 57000000 		.4byte	0x57
+ 588 00ad 05       		.uleb128 0x5
+ 589 00ae 89010000 		.4byte	.LASF15
+ 590 00b2 04       		.byte	0x4
+ 591 00b3 9201     		.2byte	0x192
+ 592 00b5 37000000 		.4byte	0x37
+ 593 00b9 05       		.uleb128 0x5
+ 594 00ba 3E010000 		.4byte	.LASF16
+ 595 00be 04       		.byte	0x4
+ 596 00bf 9301     		.2byte	0x193
+ 597 00c1 50000000 		.4byte	0x50
+ 598 00c5 02       		.uleb128 0x2
+ 599 00c6 04       		.byte	0x4
+ 600 00c7 04       		.byte	0x4
+ 601 00c8 C4000000 		.4byte	.LASF17
+ 602 00cc 02       		.uleb128 0x2
+ 603 00cd 08       		.byte	0x8
+ 604 00ce 04       		.byte	0x4
+ 605 00cf 32010000 		.4byte	.LASF18
+ 606 00d3 05       		.uleb128 0x5
+ 607 00d4 DD000000 		.4byte	.LASF19
+ 608 00d8 04       		.byte	0x4
+ 609 00d9 A301     		.2byte	0x1a3
+ 610 00db DF000000 		.4byte	0xdf
+ 611 00df 02       		.uleb128 0x2
+ 612 00e0 01       		.byte	0x1
+ 613 00e1 08       		.byte	0x8
+ 614 00e2 B5010000 		.4byte	.LASF20
+ 615 00e6 02       		.uleb128 0x2
+ 616 00e7 08       		.byte	0x8
+ 617 00e8 04       		.byte	0x4
+ 618 00e9 3F020000 		.4byte	.LASF21
+ 619 00ed 02       		.uleb128 0x2
+ 620 00ee 04       		.byte	0x4
+ 621 00ef 07       		.byte	0x7
+ 622 00f0 97010000 		.4byte	.LASF22
+ 623 00f4 06       		.uleb128 0x6
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 19
+
+
+ 624 00f5 57020000 		.4byte	.LASF23
+ 625 00f9 01       		.byte	0x1
+ 626 00fa 30       		.byte	0x30
+ 627 00fb 00000000 		.4byte	.LFB64
+ 628 00ff 4A000000 		.4byte	.LFE64-.LFB64
+ 629 0103 01       		.uleb128 0x1
+ 630 0104 9C       		.byte	0x9c
+ 631 0105 18010000 		.4byte	0x118
+ 632 0109 07       		.uleb128 0x7
+ 633 010a CA000000 		.4byte	.LASF25
+ 634 010e 01       		.byte	0x1
+ 635 010f 30       		.byte	0x30
+ 636 0110 8C000000 		.4byte	0x8c
+ 637 0114 02       		.uleb128 0x2
+ 638 0115 91       		.byte	0x91
+ 639 0116 77       		.sleb128 -9
+ 640 0117 00       		.byte	0
+ 641 0118 06       		.uleb128 0x6
+ 642 0119 08010000 		.4byte	.LASF24
+ 643 011d 01       		.byte	0x1
+ 644 011e 43       		.byte	0x43
+ 645 011f 00000000 		.4byte	.LFB65
+ 646 0123 3E000000 		.4byte	.LFE65-.LFB65
+ 647 0127 01       		.uleb128 0x1
+ 648 0128 9C       		.byte	0x9c
+ 649 0129 58010000 		.4byte	0x158
+ 650 012d 08       		.uleb128 0x8
+ 651 012e 72656700 		.ascii	"reg\000"
+ 652 0132 01       		.byte	0x1
+ 653 0133 43       		.byte	0x43
+ 654 0134 8C000000 		.4byte	0x8c
+ 655 0138 02       		.uleb128 0x2
+ 656 0139 91       		.byte	0x91
+ 657 013a 77       		.sleb128 -9
+ 658 013b 07       		.uleb128 0x7
+ 659 013c CA000000 		.4byte	.LASF25
+ 660 0140 01       		.byte	0x1
+ 661 0141 43       		.byte	0x43
+ 662 0142 8C000000 		.4byte	0x8c
+ 663 0146 02       		.uleb128 0x2
+ 664 0147 91       		.byte	0x91
+ 665 0148 76       		.sleb128 -10
+ 666 0149 07       		.uleb128 0x7
+ 667 014a BA010000 		.4byte	.LASF26
+ 668 014e 01       		.byte	0x1
+ 669 014f 43       		.byte	0x43
+ 670 0150 8C000000 		.4byte	0x8c
+ 671 0154 02       		.uleb128 0x2
+ 672 0155 91       		.byte	0x91
+ 673 0156 75       		.sleb128 -11
+ 674 0157 00       		.byte	0
+ 675 0158 06       		.uleb128 0x6
+ 676 0159 A2000000 		.4byte	.LASF27
+ 677 015d 01       		.byte	0x1
+ 678 015e 50       		.byte	0x50
+ 679 015f 00000000 		.4byte	.LFB66
+ 680 0163 32000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 20
+
+
+ 681 0167 01       		.uleb128 0x1
+ 682 0168 9C       		.byte	0x9c
+ 683 0169 7C010000 		.4byte	0x17c
+ 684 016d 07       		.uleb128 0x7
+ 685 016e CA000000 		.4byte	.LASF25
+ 686 0172 01       		.byte	0x1
+ 687 0173 50       		.byte	0x50
+ 688 0174 8C000000 		.4byte	0x8c
+ 689 0178 02       		.uleb128 0x2
+ 690 0179 91       		.byte	0x91
+ 691 017a 77       		.sleb128 -9
+ 692 017b 00       		.byte	0
+ 693 017c 09       		.uleb128 0x9
+ 694 017d C5010000 		.4byte	.LASF28
+ 695 0181 01       		.byte	0x1
+ 696 0182 5B       		.byte	0x5b
+ 697 0183 00000000 		.4byte	.LFB67
+ 698 0187 20000000 		.4byte	.LFE67-.LFB67
+ 699 018b 01       		.uleb128 0x1
+ 700 018c 9C       		.byte	0x9c
+ 701 018d 0A       		.uleb128 0xa
+ 702 018e B8000000 		.4byte	.LASF41
+ 703 0192 01       		.byte	0x1
+ 704 0193 69       		.byte	0x69
+ 705 0194 00000000 		.4byte	.LFB68
+ 706 0198 32000000 		.4byte	.LFE68-.LFB68
+ 707 019c 01       		.uleb128 0x1
+ 708 019d 9C       		.byte	0x9c
+ 709 019e 09       		.uleb128 0x9
+ 710 019f 45010000 		.4byte	.LASF29
+ 711 01a3 01       		.byte	0x1
+ 712 01a4 74       		.byte	0x74
+ 713 01a5 00000000 		.4byte	.LFB69
+ 714 01a9 28000000 		.4byte	.LFE69-.LFB69
+ 715 01ad 01       		.uleb128 0x1
+ 716 01ae 9C       		.byte	0x9c
+ 717 01af 0B       		.uleb128 0xb
+ 718 01b0 39010000 		.4byte	.LASF30
+ 719 01b4 01       		.byte	0x1
+ 720 01b5 92       		.byte	0x92
+ 721 01b6 7E000000 		.4byte	0x7e
+ 722 01ba 00000000 		.4byte	.LFB70
+ 723 01be FE000000 		.4byte	.LFE70-.LFB70
+ 724 01c2 01       		.uleb128 0x1
+ 725 01c3 9C       		.byte	0x9c
+ 726 01c4 2E020000 		.4byte	0x22e
+ 727 01c8 0C       		.uleb128 0xc
+ 728 01c9 BF010000 		.4byte	.LASF31
+ 729 01cd 01       		.byte	0x1
+ 730 01ce 94       		.byte	0x94
+ 731 01cf B9000000 		.4byte	0xb9
+ 732 01d3 02       		.uleb128 0x2
+ 733 01d4 91       		.byte	0x91
+ 734 01d5 70       		.sleb128 -16
+ 735 01d6 0C       		.uleb128 0xc
+ 736 01d7 DC010000 		.4byte	.LASF32
+ 737 01db 01       		.byte	0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 21
+
+
+ 738 01dc 95       		.byte	0x95
+ 739 01dd 2E020000 		.4byte	0x22e
+ 740 01e1 03       		.uleb128 0x3
+ 741 01e2 91       		.byte	0x91
+ 742 01e3 B07F     		.sleb128 -80
+ 743 01e5 0C       		.uleb128 0xc
+ 744 01e6 B0000000 		.4byte	.LASF33
+ 745 01ea 01       		.byte	0x1
+ 746 01eb 96       		.byte	0x96
+ 747 01ec 8C000000 		.4byte	0x8c
+ 748 01f0 02       		.uleb128 0x2
+ 749 01f1 91       		.byte	0x91
+ 750 01f2 77       		.sleb128 -9
+ 751 01f3 0D       		.uleb128 0xd
+ 752 01f4 72656700 		.ascii	"reg\000"
+ 753 01f8 01       		.byte	0x1
+ 754 01f9 97       		.byte	0x97
+ 755 01fa 8C000000 		.4byte	0x8c
+ 756 01fe 02       		.uleb128 0x2
+ 757 01ff 91       		.byte	0x91
+ 758 0200 76       		.sleb128 -10
+ 759 0201 0C       		.uleb128 0xc
+ 760 0202 CA000000 		.4byte	.LASF25
+ 761 0206 01       		.byte	0x1
+ 762 0207 98       		.byte	0x98
+ 763 0208 8C000000 		.4byte	0x8c
+ 764 020c 02       		.uleb128 0x2
+ 765 020d 91       		.byte	0x91
+ 766 020e 75       		.sleb128 -11
+ 767 020f 0C       		.uleb128 0xc
+ 768 0210 58010000 		.4byte	.LASF34
+ 769 0214 01       		.byte	0x1
+ 770 0215 99       		.byte	0x99
+ 771 0216 3E020000 		.4byte	0x23e
+ 772 021a 04       		.uleb128 0x4
+ 773 021b 91       		.byte	0x91
+ 774 021c A0B17F   		.sleb128 -10080
+ 775 021f 0D       		.uleb128 0xd
+ 776 0220 69647800 		.ascii	"idx\000"
+ 777 0224 01       		.byte	0x1
+ 778 0225 9A       		.byte	0x9a
+ 779 0226 97000000 		.4byte	0x97
+ 780 022a 02       		.uleb128 0x2
+ 781 022b 91       		.byte	0x91
+ 782 022c 72       		.sleb128 -14
+ 783 022d 00       		.byte	0
+ 784 022e 0E       		.uleb128 0xe
+ 785 022f AD000000 		.4byte	0xad
+ 786 0233 3E020000 		.4byte	0x23e
+ 787 0237 0F       		.uleb128 0xf
+ 788 0238 ED000000 		.4byte	0xed
+ 789 023c 3F       		.byte	0x3f
+ 790 023d 00       		.byte	0
+ 791 023e 0E       		.uleb128 0xe
+ 792 023f 8C000000 		.4byte	0x8c
+ 793 0243 4F020000 		.4byte	0x24f
+ 794 0247 10       		.uleb128 0x10
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 22
+
+
+ 795 0248 ED000000 		.4byte	0xed
+ 796 024c 0F27     		.2byte	0x270f
+ 797 024e 00       		.byte	0
+ 798 024f 11       		.uleb128 0x11
+ 799 0250 1A010000 		.4byte	.LASF35
+ 800 0254 05       		.byte	0x5
+ 801 0255 1207     		.2byte	0x712
+ 802 0257 5B020000 		.4byte	0x25b
+ 803 025b 12       		.uleb128 0x12
+ 804 025c A2000000 		.4byte	0xa2
+ 805 0260 0E       		.uleb128 0xe
+ 806 0261 70020000 		.4byte	0x270
+ 807 0265 70020000 		.4byte	0x270
+ 808 0269 0F       		.uleb128 0xf
+ 809 026a ED000000 		.4byte	0xed
+ 810 026e 04       		.byte	0x4
+ 811 026f 00       		.byte	0
+ 812 0270 13       		.uleb128 0x13
+ 813 0271 04       		.byte	0x4
+ 814 0272 D3000000 		.4byte	0xd3
+ 815 0276 14       		.uleb128 0x14
+ 816 0277 69020000 		.4byte	.LASF36
+ 817 027b 01       		.byte	0x1
+ 818 027c 2D       		.byte	0x2d
+ 819 027d 60020000 		.4byte	0x260
+ 820 0281 05       		.uleb128 0x5
+ 821 0282 03       		.byte	0x3
+ 822 0283 00000000 		.4byte	parity
+ 823 0287 0E       		.uleb128 0xe
+ 824 0288 70020000 		.4byte	0x270
+ 825 028c 97020000 		.4byte	0x297
+ 826 0290 0F       		.uleb128 0xf
+ 827 0291 ED000000 		.4byte	0xed
+ 828 0295 02       		.byte	0x2
+ 829 0296 00       		.byte	0
+ 830 0297 14       		.uleb128 0x14
+ 831 0298 15010000 		.4byte	.LASF37
+ 832 029c 01       		.byte	0x1
+ 833 029d 2E       		.byte	0x2e
+ 834 029e 87020000 		.4byte	0x287
+ 835 02a2 05       		.uleb128 0x5
+ 836 02a3 03       		.byte	0x3
+ 837 02a4 00000000 		.4byte	stop
+ 838 02a8 00       		.byte	0
+ 839              		.section	.debug_abbrev,"",%progbits
+ 840              	.Ldebug_abbrev0:
+ 841 0000 01       		.uleb128 0x1
+ 842 0001 11       		.uleb128 0x11
+ 843 0002 01       		.byte	0x1
+ 844 0003 25       		.uleb128 0x25
+ 845 0004 0E       		.uleb128 0xe
+ 846 0005 13       		.uleb128 0x13
+ 847 0006 0B       		.uleb128 0xb
+ 848 0007 03       		.uleb128 0x3
+ 849 0008 0E       		.uleb128 0xe
+ 850 0009 1B       		.uleb128 0x1b
+ 851 000a 0E       		.uleb128 0xe
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 23
+
+
+ 852 000b 55       		.uleb128 0x55
+ 853 000c 17       		.uleb128 0x17
+ 854 000d 11       		.uleb128 0x11
+ 855 000e 01       		.uleb128 0x1
+ 856 000f 10       		.uleb128 0x10
+ 857 0010 17       		.uleb128 0x17
+ 858 0011 00       		.byte	0
+ 859 0012 00       		.byte	0
+ 860 0013 02       		.uleb128 0x2
+ 861 0014 24       		.uleb128 0x24
+ 862 0015 00       		.byte	0
+ 863 0016 0B       		.uleb128 0xb
+ 864 0017 0B       		.uleb128 0xb
+ 865 0018 3E       		.uleb128 0x3e
+ 866 0019 0B       		.uleb128 0xb
+ 867 001a 03       		.uleb128 0x3
+ 868 001b 0E       		.uleb128 0xe
+ 869 001c 00       		.byte	0
+ 870 001d 00       		.byte	0
+ 871 001e 03       		.uleb128 0x3
+ 872 001f 16       		.uleb128 0x16
+ 873 0020 00       		.byte	0
+ 874 0021 03       		.uleb128 0x3
+ 875 0022 0E       		.uleb128 0xe
+ 876 0023 3A       		.uleb128 0x3a
+ 877 0024 0B       		.uleb128 0xb
+ 878 0025 3B       		.uleb128 0x3b
+ 879 0026 0B       		.uleb128 0xb
+ 880 0027 49       		.uleb128 0x49
+ 881 0028 13       		.uleb128 0x13
+ 882 0029 00       		.byte	0
+ 883 002a 00       		.byte	0
+ 884 002b 04       		.uleb128 0x4
+ 885 002c 24       		.uleb128 0x24
+ 886 002d 00       		.byte	0
+ 887 002e 0B       		.uleb128 0xb
+ 888 002f 0B       		.uleb128 0xb
+ 889 0030 3E       		.uleb128 0x3e
+ 890 0031 0B       		.uleb128 0xb
+ 891 0032 03       		.uleb128 0x3
+ 892 0033 08       		.uleb128 0x8
+ 893 0034 00       		.byte	0
+ 894 0035 00       		.byte	0
+ 895 0036 05       		.uleb128 0x5
+ 896 0037 16       		.uleb128 0x16
+ 897 0038 00       		.byte	0
+ 898 0039 03       		.uleb128 0x3
+ 899 003a 0E       		.uleb128 0xe
+ 900 003b 3A       		.uleb128 0x3a
+ 901 003c 0B       		.uleb128 0xb
+ 902 003d 3B       		.uleb128 0x3b
+ 903 003e 05       		.uleb128 0x5
+ 904 003f 49       		.uleb128 0x49
+ 905 0040 13       		.uleb128 0x13
+ 906 0041 00       		.byte	0
+ 907 0042 00       		.byte	0
+ 908 0043 06       		.uleb128 0x6
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 24
+
+
+ 909 0044 2E       		.uleb128 0x2e
+ 910 0045 01       		.byte	0x1
+ 911 0046 3F       		.uleb128 0x3f
+ 912 0047 19       		.uleb128 0x19
+ 913 0048 03       		.uleb128 0x3
+ 914 0049 0E       		.uleb128 0xe
+ 915 004a 3A       		.uleb128 0x3a
+ 916 004b 0B       		.uleb128 0xb
+ 917 004c 3B       		.uleb128 0x3b
+ 918 004d 0B       		.uleb128 0xb
+ 919 004e 27       		.uleb128 0x27
+ 920 004f 19       		.uleb128 0x19
+ 921 0050 11       		.uleb128 0x11
+ 922 0051 01       		.uleb128 0x1
+ 923 0052 12       		.uleb128 0x12
+ 924 0053 06       		.uleb128 0x6
+ 925 0054 40       		.uleb128 0x40
+ 926 0055 18       		.uleb128 0x18
+ 927 0056 9642     		.uleb128 0x2116
+ 928 0058 19       		.uleb128 0x19
+ 929 0059 01       		.uleb128 0x1
+ 930 005a 13       		.uleb128 0x13
+ 931 005b 00       		.byte	0
+ 932 005c 00       		.byte	0
+ 933 005d 07       		.uleb128 0x7
+ 934 005e 05       		.uleb128 0x5
+ 935 005f 00       		.byte	0
+ 936 0060 03       		.uleb128 0x3
+ 937 0061 0E       		.uleb128 0xe
+ 938 0062 3A       		.uleb128 0x3a
+ 939 0063 0B       		.uleb128 0xb
+ 940 0064 3B       		.uleb128 0x3b
+ 941 0065 0B       		.uleb128 0xb
+ 942 0066 49       		.uleb128 0x49
+ 943 0067 13       		.uleb128 0x13
+ 944 0068 02       		.uleb128 0x2
+ 945 0069 18       		.uleb128 0x18
+ 946 006a 00       		.byte	0
+ 947 006b 00       		.byte	0
+ 948 006c 08       		.uleb128 0x8
+ 949 006d 05       		.uleb128 0x5
+ 950 006e 00       		.byte	0
+ 951 006f 03       		.uleb128 0x3
+ 952 0070 08       		.uleb128 0x8
+ 953 0071 3A       		.uleb128 0x3a
+ 954 0072 0B       		.uleb128 0xb
+ 955 0073 3B       		.uleb128 0x3b
+ 956 0074 0B       		.uleb128 0xb
+ 957 0075 49       		.uleb128 0x49
+ 958 0076 13       		.uleb128 0x13
+ 959 0077 02       		.uleb128 0x2
+ 960 0078 18       		.uleb128 0x18
+ 961 0079 00       		.byte	0
+ 962 007a 00       		.byte	0
+ 963 007b 09       		.uleb128 0x9
+ 964 007c 2E       		.uleb128 0x2e
+ 965 007d 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 25
+
+
+ 966 007e 3F       		.uleb128 0x3f
+ 967 007f 19       		.uleb128 0x19
+ 968 0080 03       		.uleb128 0x3
+ 969 0081 0E       		.uleb128 0xe
+ 970 0082 3A       		.uleb128 0x3a
+ 971 0083 0B       		.uleb128 0xb
+ 972 0084 3B       		.uleb128 0x3b
+ 973 0085 0B       		.uleb128 0xb
+ 974 0086 11       		.uleb128 0x11
+ 975 0087 01       		.uleb128 0x1
+ 976 0088 12       		.uleb128 0x12
+ 977 0089 06       		.uleb128 0x6
+ 978 008a 40       		.uleb128 0x40
+ 979 008b 18       		.uleb128 0x18
+ 980 008c 9642     		.uleb128 0x2116
+ 981 008e 19       		.uleb128 0x19
+ 982 008f 00       		.byte	0
+ 983 0090 00       		.byte	0
+ 984 0091 0A       		.uleb128 0xa
+ 985 0092 2E       		.uleb128 0x2e
+ 986 0093 00       		.byte	0
+ 987 0094 3F       		.uleb128 0x3f
+ 988 0095 19       		.uleb128 0x19
+ 989 0096 03       		.uleb128 0x3
+ 990 0097 0E       		.uleb128 0xe
+ 991 0098 3A       		.uleb128 0x3a
+ 992 0099 0B       		.uleb128 0xb
+ 993 009a 3B       		.uleb128 0x3b
+ 994 009b 0B       		.uleb128 0xb
+ 995 009c 27       		.uleb128 0x27
+ 996 009d 19       		.uleb128 0x19
+ 997 009e 11       		.uleb128 0x11
+ 998 009f 01       		.uleb128 0x1
+ 999 00a0 12       		.uleb128 0x12
+ 1000 00a1 06       		.uleb128 0x6
+ 1001 00a2 40       		.uleb128 0x40
+ 1002 00a3 18       		.uleb128 0x18
+ 1003 00a4 9642     		.uleb128 0x2116
+ 1004 00a6 19       		.uleb128 0x19
+ 1005 00a7 00       		.byte	0
+ 1006 00a8 00       		.byte	0
+ 1007 00a9 0B       		.uleb128 0xb
+ 1008 00aa 2E       		.uleb128 0x2e
+ 1009 00ab 01       		.byte	0x1
+ 1010 00ac 3F       		.uleb128 0x3f
+ 1011 00ad 19       		.uleb128 0x19
+ 1012 00ae 03       		.uleb128 0x3
+ 1013 00af 0E       		.uleb128 0xe
+ 1014 00b0 3A       		.uleb128 0x3a
+ 1015 00b1 0B       		.uleb128 0xb
+ 1016 00b2 3B       		.uleb128 0x3b
+ 1017 00b3 0B       		.uleb128 0xb
+ 1018 00b4 49       		.uleb128 0x49
+ 1019 00b5 13       		.uleb128 0x13
+ 1020 00b6 11       		.uleb128 0x11
+ 1021 00b7 01       		.uleb128 0x1
+ 1022 00b8 12       		.uleb128 0x12
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 26
+
+
+ 1023 00b9 06       		.uleb128 0x6
+ 1024 00ba 40       		.uleb128 0x40
+ 1025 00bb 18       		.uleb128 0x18
+ 1026 00bc 9642     		.uleb128 0x2116
+ 1027 00be 19       		.uleb128 0x19
+ 1028 00bf 01       		.uleb128 0x1
+ 1029 00c0 13       		.uleb128 0x13
+ 1030 00c1 00       		.byte	0
+ 1031 00c2 00       		.byte	0
+ 1032 00c3 0C       		.uleb128 0xc
+ 1033 00c4 34       		.uleb128 0x34
+ 1034 00c5 00       		.byte	0
+ 1035 00c6 03       		.uleb128 0x3
+ 1036 00c7 0E       		.uleb128 0xe
+ 1037 00c8 3A       		.uleb128 0x3a
+ 1038 00c9 0B       		.uleb128 0xb
+ 1039 00ca 3B       		.uleb128 0x3b
+ 1040 00cb 0B       		.uleb128 0xb
+ 1041 00cc 49       		.uleb128 0x49
+ 1042 00cd 13       		.uleb128 0x13
+ 1043 00ce 02       		.uleb128 0x2
+ 1044 00cf 18       		.uleb128 0x18
+ 1045 00d0 00       		.byte	0
+ 1046 00d1 00       		.byte	0
+ 1047 00d2 0D       		.uleb128 0xd
+ 1048 00d3 34       		.uleb128 0x34
+ 1049 00d4 00       		.byte	0
+ 1050 00d5 03       		.uleb128 0x3
+ 1051 00d6 08       		.uleb128 0x8
+ 1052 00d7 3A       		.uleb128 0x3a
+ 1053 00d8 0B       		.uleb128 0xb
+ 1054 00d9 3B       		.uleb128 0x3b
+ 1055 00da 0B       		.uleb128 0xb
+ 1056 00db 49       		.uleb128 0x49
+ 1057 00dc 13       		.uleb128 0x13
+ 1058 00dd 02       		.uleb128 0x2
+ 1059 00de 18       		.uleb128 0x18
+ 1060 00df 00       		.byte	0
+ 1061 00e0 00       		.byte	0
+ 1062 00e1 0E       		.uleb128 0xe
+ 1063 00e2 01       		.uleb128 0x1
+ 1064 00e3 01       		.byte	0x1
+ 1065 00e4 49       		.uleb128 0x49
+ 1066 00e5 13       		.uleb128 0x13
+ 1067 00e6 01       		.uleb128 0x1
+ 1068 00e7 13       		.uleb128 0x13
+ 1069 00e8 00       		.byte	0
+ 1070 00e9 00       		.byte	0
+ 1071 00ea 0F       		.uleb128 0xf
+ 1072 00eb 21       		.uleb128 0x21
+ 1073 00ec 00       		.byte	0
+ 1074 00ed 49       		.uleb128 0x49
+ 1075 00ee 13       		.uleb128 0x13
+ 1076 00ef 2F       		.uleb128 0x2f
+ 1077 00f0 0B       		.uleb128 0xb
+ 1078 00f1 00       		.byte	0
+ 1079 00f2 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 27
+
+
+ 1080 00f3 10       		.uleb128 0x10
+ 1081 00f4 21       		.uleb128 0x21
+ 1082 00f5 00       		.byte	0
+ 1083 00f6 49       		.uleb128 0x49
+ 1084 00f7 13       		.uleb128 0x13
+ 1085 00f8 2F       		.uleb128 0x2f
+ 1086 00f9 05       		.uleb128 0x5
+ 1087 00fa 00       		.byte	0
+ 1088 00fb 00       		.byte	0
+ 1089 00fc 11       		.uleb128 0x11
+ 1090 00fd 34       		.uleb128 0x34
+ 1091 00fe 00       		.byte	0
+ 1092 00ff 03       		.uleb128 0x3
+ 1093 0100 0E       		.uleb128 0xe
+ 1094 0101 3A       		.uleb128 0x3a
+ 1095 0102 0B       		.uleb128 0xb
+ 1096 0103 3B       		.uleb128 0x3b
+ 1097 0104 05       		.uleb128 0x5
+ 1098 0105 49       		.uleb128 0x49
+ 1099 0106 13       		.uleb128 0x13
+ 1100 0107 3F       		.uleb128 0x3f
+ 1101 0108 19       		.uleb128 0x19
+ 1102 0109 3C       		.uleb128 0x3c
+ 1103 010a 19       		.uleb128 0x19
+ 1104 010b 00       		.byte	0
+ 1105 010c 00       		.byte	0
+ 1106 010d 12       		.uleb128 0x12
+ 1107 010e 35       		.uleb128 0x35
+ 1108 010f 00       		.byte	0
+ 1109 0110 49       		.uleb128 0x49
+ 1110 0111 13       		.uleb128 0x13
+ 1111 0112 00       		.byte	0
+ 1112 0113 00       		.byte	0
+ 1113 0114 13       		.uleb128 0x13
+ 1114 0115 0F       		.uleb128 0xf
+ 1115 0116 00       		.byte	0
+ 1116 0117 0B       		.uleb128 0xb
+ 1117 0118 0B       		.uleb128 0xb
+ 1118 0119 49       		.uleb128 0x49
+ 1119 011a 13       		.uleb128 0x13
+ 1120 011b 00       		.byte	0
+ 1121 011c 00       		.byte	0
+ 1122 011d 14       		.uleb128 0x14
+ 1123 011e 34       		.uleb128 0x34
+ 1124 011f 00       		.byte	0
+ 1125 0120 03       		.uleb128 0x3
+ 1126 0121 0E       		.uleb128 0xe
+ 1127 0122 3A       		.uleb128 0x3a
+ 1128 0123 0B       		.uleb128 0xb
+ 1129 0124 3B       		.uleb128 0x3b
+ 1130 0125 0B       		.uleb128 0xb
+ 1131 0126 49       		.uleb128 0x49
+ 1132 0127 13       		.uleb128 0x13
+ 1133 0128 3F       		.uleb128 0x3f
+ 1134 0129 19       		.uleb128 0x19
+ 1135 012a 02       		.uleb128 0x2
+ 1136 012b 18       		.uleb128 0x18
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 28
+
+
+ 1137 012c 00       		.byte	0
+ 1138 012d 00       		.byte	0
+ 1139 012e 00       		.byte	0
+ 1140              		.section	.debug_aranges,"",%progbits
+ 1141 0000 4C000000 		.4byte	0x4c
+ 1142 0004 0200     		.2byte	0x2
+ 1143 0006 00000000 		.4byte	.Ldebug_info0
+ 1144 000a 04       		.byte	0x4
+ 1145 000b 00       		.byte	0
+ 1146 000c 0000     		.2byte	0
+ 1147 000e 0000     		.2byte	0
+ 1148 0010 00000000 		.4byte	.LFB64
+ 1149 0014 4A000000 		.4byte	.LFE64-.LFB64
+ 1150 0018 00000000 		.4byte	.LFB65
+ 1151 001c 3E000000 		.4byte	.LFE65-.LFB65
+ 1152 0020 00000000 		.4byte	.LFB66
+ 1153 0024 32000000 		.4byte	.LFE66-.LFB66
+ 1154 0028 00000000 		.4byte	.LFB67
+ 1155 002c 20000000 		.4byte	.LFE67-.LFB67
+ 1156 0030 00000000 		.4byte	.LFB68
+ 1157 0034 32000000 		.4byte	.LFE68-.LFB68
+ 1158 0038 00000000 		.4byte	.LFB69
+ 1159 003c 28000000 		.4byte	.LFE69-.LFB69
+ 1160 0040 00000000 		.4byte	.LFB70
+ 1161 0044 FE000000 		.4byte	.LFE70-.LFB70
+ 1162 0048 00000000 		.4byte	0
+ 1163 004c 00000000 		.4byte	0
+ 1164              		.section	.debug_ranges,"",%progbits
+ 1165              	.Ldebug_ranges0:
+ 1166 0000 00000000 		.4byte	.LFB64
+ 1167 0004 4A000000 		.4byte	.LFE64
+ 1168 0008 00000000 		.4byte	.LFB65
+ 1169 000c 3E000000 		.4byte	.LFE65
+ 1170 0010 00000000 		.4byte	.LFB66
+ 1171 0014 32000000 		.4byte	.LFE66
+ 1172 0018 00000000 		.4byte	.LFB67
+ 1173 001c 20000000 		.4byte	.LFE67
+ 1174 0020 00000000 		.4byte	.LFB68
+ 1175 0024 32000000 		.4byte	.LFE68
+ 1176 0028 00000000 		.4byte	.LFB69
+ 1177 002c 28000000 		.4byte	.LFE69
+ 1178 0030 00000000 		.4byte	.LFB70
+ 1179 0034 FE000000 		.4byte	.LFE70
+ 1180 0038 00000000 		.4byte	0
+ 1181 003c 00000000 		.4byte	0
+ 1182              		.section	.debug_line,"",%progbits
+ 1183              	.Ldebug_line0:
+ 1184 0000 0D020000 		.section	.debug_str,"MS",%progbits,1
+ 1184      02004C01 
+ 1184      00000201 
+ 1184      FB0E0D00 
+ 1184      01010101 
+ 1185              	.LASF3:
+ 1186 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 1186      6E74385F 
+ 1186      7400
+ 1187              	.LASF38:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 29
+
+
+ 1188 000a 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1188      43313120 
+ 1188      352E342E 
+ 1188      31203230 
+ 1188      31363036 
+ 1189 003d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1189      20726576 
+ 1189      6973696F 
+ 1189      6E203233 
+ 1189      37373135 
+ 1190 0070 30202D66 		.ascii	"0 -ffunction-sections -ffat-lto-objects\000"
+ 1190      66756E63 
+ 1190      74696F6E 
+ 1190      2D736563 
+ 1190      74696F6E 
+ 1191              	.LASF6:
+ 1192 0098 5F5F696E 		.ascii	"__int32_t\000"
+ 1192      7433325F 
+ 1192      7400
+ 1193              	.LASF27:
+ 1194 00a2 736E3736 		.ascii	"sn76489_write\000"
+ 1194      3438395F 
+ 1194      77726974 
+ 1194      6500
+ 1195              	.LASF33:
+ 1196 00b0 636F6D6D 		.ascii	"command\000"
+ 1196      616E6400 
+ 1197              	.LASF41:
+ 1198 00b8 796D3236 		.ascii	"ym2612_init\000"
+ 1198      31325F69 
+ 1198      6E697400 
+ 1199              	.LASF17:
+ 1200 00c4 666C6F61 		.ascii	"float\000"
+ 1200      7400
+ 1201              	.LASF25:
+ 1202 00ca 64617461 		.ascii	"data\000"
+ 1202      00
+ 1203              	.LASF1:
+ 1204 00cf 756E7369 		.ascii	"unsigned char\000"
+ 1204      676E6564 
+ 1204      20636861 
+ 1204      7200
+ 1205              	.LASF19:
+ 1206 00dd 63686172 		.ascii	"char8\000"
+ 1206      3800
+ 1207              	.LASF8:
+ 1208 00e3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1208      20756E73 
+ 1208      69676E65 
+ 1208      6420696E 
+ 1208      7400
+ 1209              	.LASF5:
+ 1210 00f5 73686F72 		.ascii	"short unsigned int\000"
+ 1210      7420756E 
+ 1210      7369676E 
+ 1210      65642069 
+ 1210      6E7400
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 30
+
+
+ 1211              	.LASF24:
+ 1212 0108 796D3236 		.ascii	"ym2612_write\000"
+ 1212      31325F77 
+ 1212      72697465 
+ 1212      00
+ 1213              	.LASF37:
+ 1214 0115 73746F70 		.ascii	"stop\000"
+ 1214      00
+ 1215              	.LASF35:
+ 1216 011a 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1216      52784275 
+ 1216      66666572 
+ 1216      00
+ 1217              	.LASF4:
+ 1218 0127 5F5F7569 		.ascii	"__uint16_t\000"
+ 1218      6E743136 
+ 1218      5F7400
+ 1219              	.LASF18:
+ 1220 0132 646F7562 		.ascii	"double\000"
+ 1220      6C6500
+ 1221              	.LASF30:
+ 1222 0139 6D61696E 		.ascii	"main\000"
+ 1222      00
+ 1223              	.LASF16:
+ 1224 013e 75696E74 		.ascii	"uint16\000"
+ 1224      313600
+ 1225              	.LASF29:
+ 1226 0145 53696C65 		.ascii	"SilenceAllChannels\000"
+ 1226      6E636541 
+ 1226      6C6C4368 
+ 1226      616E6E65 
+ 1226      6C7300
+ 1227              	.LASF34:
+ 1228 0158 74657374 		.ascii	"test\000"
+ 1228      00
+ 1229              	.LASF11:
+ 1230 015d 756E7369 		.ascii	"unsigned int\000"
+ 1230      676E6564 
+ 1230      20696E74 
+ 1230      00
+ 1231              	.LASF10:
+ 1232 016a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1232      206C6F6E 
+ 1232      6720756E 
+ 1232      7369676E 
+ 1232      65642069 
+ 1233              	.LASF12:
+ 1234 0181 75696E74 		.ascii	"uint8_t\000"
+ 1234      385F7400 
+ 1235              	.LASF15:
+ 1236 0189 75696E74 		.ascii	"uint8\000"
+ 1236      3800
+ 1237              	.LASF14:
+ 1238 018f 696E7433 		.ascii	"int32_t\000"
+ 1238      325F7400 
+ 1239              	.LASF22:
+ 1240 0197 73697A65 		.ascii	"sizetype\000"
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 31
+
+
+ 1240      74797065 
+ 1240      00
+ 1241              	.LASF9:
+ 1242 01a0 6C6F6E67 		.ascii	"long long int\000"
+ 1242      206C6F6E 
+ 1242      6720696E 
+ 1242      7400
+ 1243              	.LASF39:
+ 1244 01ae 6D61696E 		.ascii	"main.c\000"
+ 1244      2E6300
+ 1245              	.LASF20:
+ 1246 01b5 63686172 		.ascii	"char\000"
+ 1246      00
+ 1247              	.LASF26:
+ 1248 01ba 706F7274 		.ascii	"port\000"
+ 1248      00
+ 1249              	.LASF31:
+ 1250 01bf 636F756E 		.ascii	"count\000"
+ 1250      7400
+ 1251              	.LASF28:
+ 1252 01c5 796D3236 		.ascii	"ym2612_reset\000"
+ 1252      31325F72 
+ 1252      65736574 
+ 1252      00
+ 1253              	.LASF2:
+ 1254 01d2 73686F72 		.ascii	"short int\000"
+ 1254      7420696E 
+ 1254      7400
+ 1255              	.LASF32:
+ 1256 01dc 62756666 		.ascii	"buffer\000"
+ 1256      657200
+ 1257              	.LASF13:
+ 1258 01e3 75696E74 		.ascii	"uint16_t\000"
+ 1258      31365F74 
+ 1258      00
+ 1259              	.LASF7:
+ 1260 01ec 6C6F6E67 		.ascii	"long int\000"
+ 1260      20696E74 
+ 1260      00
+ 1261              	.LASF40:
+ 1262 01f5 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ 1262      73657273 
+ 1262      5C696E67 
+ 1262      616E5C44 
+ 1262      6F63756D 
+ 1263 0223 655F706C 		.ascii	"e_player\\USBFS_UART01.cydsn\000"
+ 1263      61796572 
+ 1263      5C555342 
+ 1263      46535F55 
+ 1263      41525430 
+ 1264              	.LASF21:
+ 1265 023f 6C6F6E67 		.ascii	"long double\000"
+ 1265      20646F75 
+ 1265      626C6500 
+ 1266              	.LASF0:
+ 1267 024b 7369676E 		.ascii	"signed char\000"
+ 1267      65642063 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cckGFdli.s 			page 32
+
+
+ 1267      68617200 
+ 1268              	.LASF23:
+ 1269 0257 796D3236 		.ascii	"ym2612_write_step\000"
+ 1269      31325F77 
+ 1269      72697465 
+ 1269      5F737465 
+ 1269      7000
+ 1270              	.LASF36:
+ 1271 0269 70617269 		.ascii	"parity\000"
+ 1271      747900
+ 1272              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

@@ -1,0 +1,14 @@
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\SoundTest.cydsn\SoundTest.cyprj|99b84b66-69ea-40aa-9c68-36874796a5e2
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|b34cc4d9-42ae-4fb2-be84-e0f29467cf83
+C:\Users\ingan\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|6a8cd688-06ab-4adf-8d3a-7483117eeeb0
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|64c34bbf-025a-4f02-bec4-593703726ebc
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|20577a5a-1cfa-428a-9972-1f5b304a035f
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|363287cc-09b2-4ac3-9a16-0c48dbabce5b
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.1.cydsn\VGMPlayer_v0.1.cyprj|21c9ed55-cf63-4d23-8ed8-23e9e8256f30
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.2.cydsn\VGMPlayer_v0.2.cyprj|59559b6b-3b1b-4b59-a91d-3c3dd3ca5bf0
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\USBFS_UART01.cydsn\USBFS_UART01.cyprj|8848fb15-b6fd-4126-a27b-60fcc22d4fa9
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|2a6f7b74-a14a-4ffb-8599-3c0d2e1a1317
+C:\Users\ingan\Downloads\USBUART.cydsn\USBUART.cydsn\USBUART.cyprj|cac9e9cd-4a68-4832-b5b6-16dcd43779d4
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.3.cydsn\VGMPlayer_v0.3.cyprj|3532714d-b855-47ef-870d-7fa598b2bed0
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.4.cydsn\VGMPlayer_v0.4.cyprj|45b76df6-8888-4c08-b412-3feae516ea18
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.5.cydsn\VGMPlayer_v0.5.cyprj|68a7360d-d477-45fb-b885-5203df6fc9ad

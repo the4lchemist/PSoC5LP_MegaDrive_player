@@ -1,0 +1,13 @@
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\SoundTest.cydsn\SoundTest.cyprj|88fd4fa7-a376-463a-bd0a-6045d5630a28
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|adc4b7a3-177c-4c12-9e2f-5b6ccb7fe872
+C:\Users\ingan\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|90229df5-c714-4db0-be30-1b78135aaa44
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|d3b349f7-1740-4ba6-a182-68612f12f2f9
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|82ede45c-3a77-46f8-bfc2-d14f05c0b29a
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|104c2e99-45b8-44d8-a01f-28f2000a74a3
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.1.cydsn\VGMPlayer_v0.1.cyprj|0587c9d9-807d-47d0-9f8c-076a96654094
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.2.cydsn\VGMPlayer_v0.2.cyprj|21f46dc1-3afb-4a20-9025-9a235bbafba1
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\USBFS_UART01.cydsn\USBFS_UART01.cyprj|d20d2dc0-9c3e-4946-8e2a-5fc9267c36de
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|6d0f7cfe-4c15-48fc-b1ad-20d98e26f5ab
+C:\Users\ingan\Downloads\USBUART.cydsn\USBUART.cydsn\USBUART.cyprj|19bdc6b6-b487-4930-b35e-a077b39128fd
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.3.cydsn\VGMPlayer_v0.3.cyprj|b2d5e1dd-113e-4da6-953a-f2f07f2a7a79
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.4.cydsn\VGMPlayer_v0.4.cyprj|b6459fd1-dc85-4d57-be8b-1aa51e0f0670

@@ -1,0 +1,1591 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"utils.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.data
+  20              		.align	2
+  21              		.type	keep_on, %object
+  22              		.size	keep_on, 4
+  23              	keep_on:
+  24 0000 01000000 		.word	1
+  25              		.align	1
+  26              		.type	loop, %object
+  27              		.size	loop, 2
+  28              	loop:
+  29 0004 0100     		.short	1
+  30              		.align	1
+  31              		.type	interval, %object
+  32              		.size	interval, 2
+  33              	interval:
+  34 0006 6400     		.short	100
+  35              		.align	2
+  36              		.type	sAddress, %object
+  37              		.size	sAddress, 4
+  38              	sAddress:
+  39 0008 08000000 		.word	8
+  40              		.align	2
+  41              		.type	delay, %object
+  42              		.size	delay, 4
+  43              	delay:
+  44 000c 1E000000 		.word	30
+  45              		.global	timeoutms
+  46              		.align	1
+  47              		.type	timeoutms, %object
+  48              		.size	timeoutms, 2
+  49              	timeoutms:
+  50 0010 F401     		.short	500
+  51              		.global	i2c_func_list
+  52              		.section	.rodata
+  53              		.align	2
+  54              	.LC0:
+  55 0000 68656C70 		.ascii	"help\000"
+  55      00
+  56 0005 000000   		.align	2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 2
+
+
+  57              	.LC1:
+  58 0008 73686F77 		.ascii	"show help message\000"
+  58      2068656C 
+  58      70206D65 
+  58      73736167 
+  58      6500
+  59 001a 0000     		.align	2
+  60              	.LC2:
+  61 001c 6C6F6F70 		.ascii	"loop\000"
+  61      00
+  62 0021 000000   		.align	2
+  63              	.LC3:
+  64 0024 73657420 		.ascii	"set loop counts\000"
+  64      6C6F6F70 
+  64      20636F75 
+  64      6E747300 
+  65              		.align	2
+  66              	.LC4:
+  67 0034 696E7465 		.ascii	"interval\000"
+  67      7276616C 
+  67      00
+  68 003d 000000   		.align	2
+  69              	.LC5:
+  70 0040 73657420 		.ascii	"set interval time (ms)\000"
+  70      696E7465 
+  70      7276616C 
+  70      2074696D 
+  70      6520286D 
+  71 0057 00       		.align	2
+  72              	.LC6:
+  73 0058 61646472 		.ascii	"address\000"
+  73      65737300 
+  74              		.align	2
+  75              	.LC7:
+  76 0060 73657420 		.ascii	"set address\000"
+  76      61646472 
+  76      65737300 
+  77              		.align	2
+  78              	.LC8:
+  79 006c 64656C61 		.ascii	"delay\000"
+  79      7900
+  80 0072 0000     		.align	2
+  81              	.LC9:
+  82 0074 73657420 		.ascii	"set delay between address and command\000"
+  82      64656C61 
+  82      79206265 
+  82      74776565 
+  82      6E206164 
+  83 009a 0000     		.align	2
+  84              	.LC10:
+  85 009c 73746174 		.ascii	"status\000"
+  85      757300
+  86 00a3 00       		.align	2
+  87              	.LC11:
+  88 00a4 7072696E 		.ascii	"print config status\000"
+  88      7420636F 
+  88      6E666967 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 3
+
+
+  88      20737461 
+  88      74757300 
+  89              		.align	2
+  90              	.LC12:
+  91 00b8 72657475 		.ascii	"return\000"
+  91      726E00
+  92 00bf 00       		.align	2
+  93              	.LC13:
+  94 00c0 72657475 		.ascii	"return to the previous mode\000"
+  94      726E2074 
+  94      6F207468 
+  94      65207072 
+  94      6576696F 
+  95              		.align	2
+  96              	.LC14:
+  97 00dc 72657365 		.ascii	"reset\000"
+  97      7400
+  98 00e2 0000     		.align	2
+  99              	.LC15:
+ 100 00e4 736F6674 		.ascii	"software rest\000"
+ 100      77617265 
+ 100      20726573 
+ 100      7400
+ 101              		.data
+ 102 0012 0000     		.align	2
+ 103              		.type	i2c_func_list, %object
+ 104              		.size	i2c_func_list, 108
+ 105              	i2c_func_list:
+ 106 0014 00000000 		.word	.LC0
+ 107 0018 00000000 		.word	do_help
+ 108 001c 08000000 		.word	.LC1
+ 109 0020 1C000000 		.word	.LC2
+ 110 0024 00000000 		.word	do_loop
+ 111 0028 24000000 		.word	.LC3
+ 112 002c 34000000 		.word	.LC4
+ 113 0030 00000000 		.word	do_interval
+ 114 0034 40000000 		.word	.LC5
+ 115 0038 58000000 		.word	.LC6
+ 116 003c 00000000 		.word	do_address
+ 117 0040 60000000 		.word	.LC7
+ 118 0044 6C000000 		.word	.LC8
+ 119 0048 00000000 		.word	do_delay
+ 120 004c 74000000 		.word	.LC9
+ 121 0050 9C000000 		.word	.LC10
+ 122 0054 00000000 		.word	do_status
+ 123 0058 A4000000 		.word	.LC11
+ 124 005c B8000000 		.word	.LC12
+ 125 0060 00000000 		.word	do_return
+ 126 0064 C0000000 		.word	.LC13
+ 127 0068 DC000000 		.word	.LC14
+ 128 006c 00000000 		.word	do_soft_reset
+ 129 0070 E4000000 		.word	.LC15
+ 130 0074 00000000 		.word	0
+ 131 0078 00000000 		.word	0
+ 132 007c 00000000 		.word	0
+ 133              		.section	.rodata
+ 134 00f2 0000     		.align	2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 4
+
+
+ 135              	.LC16:
+ 136 00f4 44656D6F 		.ascii	"Demo> \000"
+ 136      3E2000
+ 137 00fb 00       		.align	2
+ 138              	.LC17:
+ 139 00fc 556E6B6E 		.ascii	"Unknown Command: \000"
+ 139      6F776E20 
+ 139      436F6D6D 
+ 139      616E643A 
+ 139      2000
+ 140 010e 0000     		.align	2
+ 141              	.LC18:
+ 142 0110 0A0D00   		.ascii	"\012\015\000"
+ 143              		.section	.text.do_demo,"ax",%progbits
+ 144              		.align	2
+ 145              		.global	do_demo
+ 146              		.thumb
+ 147              		.thumb_func
+ 148              		.type	do_demo, %function
+ 149              	do_demo:
+ 150              	.LFB64:
+ 151              		.file 1 "utils.c"
+   1:utils.c       **** #include "project.h"
+   2:utils.c       **** #include "stdio.h"
+   3:utils.c       **** #include "stdlib.h"
+   4:utils.c       **** #include "tty_utils.h"
+   5:utils.c       **** #include "utils.h"
+   6:utils.c       **** 
+   7:utils.c       **** static int      keep_on  = 1 ;
+   8:utils.c       **** static uint16_t loop     = 1 ;
+   9:utils.c       **** static uint16_t interval = 100 ; /* 100 ms */
+  10:utils.c       **** static int      sAddress = 0x08 ; 
+  11:utils.c       **** static int      delay    = 30 ; /* default 30ms */
+  12:utils.c       **** uint16_t        timeoutms = 500 ;
+  13:utils.c       **** 
+  14:utils.c       **** f_list_type i2c_func_list[] = {
+  15:utils.c       ****     { "help",        do_help,       "show help message" },
+  16:utils.c       ****     { "loop",        do_loop,       "set loop counts"},
+  17:utils.c       ****     { "interval",    do_interval,   "set interval time (ms)"},
+  18:utils.c       ****     { "address",     do_address,    "set address" },
+  19:utils.c       ****     { "delay",       do_delay,      "set delay between address and command" },
+  20:utils.c       ****     { "status",      do_status,     "print config status" },
+  21:utils.c       ****     { "return",      do_return,     "return to the previous mode" },
+  22:utils.c       ****     { "reset",       do_soft_reset,  "software rest" },
+  23:utils.c       ****     { 0,             0,             0} /* list terminator */
+  24:utils.c       **** } ;
+  25:utils.c       **** 
+  26:utils.c       **** void do_demo(void)
+  27:utils.c       **** {
+ 152              		.loc 1 27 0
+ 153              		.cfi_startproc
+ 154              		@ args = 0, pretend = 0, frame = 8
+ 155              		@ frame_needed = 1, uses_anonymous_args = 0
+ 156 0000 80B5     		push	{r7, lr}
+ 157              		.cfi_def_cfa_offset 8
+ 158              		.cfi_offset 7, -8
+ 159              		.cfi_offset 14, -4
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 5
+
+
+ 160 0002 82B0     		sub	sp, sp, #8
+ 161              		.cfi_def_cfa_offset 16
+ 162 0004 00AF     		add	r7, sp, #0
+ 163              		.cfi_def_cfa_register 7
+  28:utils.c       ****     func_ptr func ;
+  29:utils.c       ****     keep_on = 1 ;
+ 164              		.loc 1 29 0
+ 165 0006 194B     		ldr	r3, .L6
+ 166 0008 0122     		movs	r2, #1
+ 167 000a 1A60     		str	r2, [r3]
+  30:utils.c       ****     
+  31:utils.c       ****     
+  32:utils.c       ****     do_help() ;
+ 168              		.loc 1 32 0
+ 169 000c FFF7FEFF 		bl	do_help
+  33:utils.c       ****     
+  34:utils.c       ****     prompt("Demo> ") ;
+ 170              		.loc 1 34 0
+ 171 0010 1748     		ldr	r0, .L6+4
+ 172 0012 FFF7FEFF 		bl	prompt
+  35:utils.c       ****     
+  36:utils.c       ****     while(keep_on) {
+ 173              		.loc 1 36 0
+ 174 0016 21E0     		b	.L2
+ 175              	.L5:
+  37:utils.c       ****         if (get_line()) {
+ 176              		.loc 1 37 0
+ 177 0018 FFF7FEFF 		bl	get_line
+ 178 001c 0346     		mov	r3, r0
+ 179 001e 002B     		cmp	r3, #0
+ 180 0020 1CD0     		beq	.L2
+  38:utils.c       ****             func = get_func(i2c_func_list, str) ;
+ 181              		.loc 1 38 0
+ 182 0022 1449     		ldr	r1, .L6+8
+ 183 0024 1448     		ldr	r0, .L6+12
+ 184 0026 FFF7FEFF 		bl	get_func
+ 185 002a 7860     		str	r0, [r7, #4]
+  39:utils.c       ****             if (func) {
+ 186              		.loc 1 39 0
+ 187 002c 7B68     		ldr	r3, [r7, #4]
+ 188 002e 002B     		cmp	r3, #0
+ 189 0030 02D0     		beq	.L3
+  40:utils.c       ****                 func() ;
+ 190              		.loc 1 40 0
+ 191 0032 7B68     		ldr	r3, [r7, #4]
+ 192 0034 9847     		blx	r3
+ 193 0036 0AE0     		b	.L4
+ 194              	.L3:
+  41:utils.c       ****             } else {
+  42:utils.c       ****                 print("Unknown Command: ") ;
+ 195              		.loc 1 42 0
+ 196 0038 1048     		ldr	r0, .L6+16
+ 197 003a FFF7FEFF 		bl	print
+  43:utils.c       ****                 print(str) ;
+ 198              		.loc 1 43 0
+ 199 003e 0D48     		ldr	r0, .L6+8
+ 200 0040 FFF7FEFF 		bl	print
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 6
+
+
+  44:utils.c       ****                 print("\n\r") ;
+ 201              		.loc 1 44 0
+ 202 0044 0E48     		ldr	r0, .L6+20
+ 203 0046 FFF7FEFF 		bl	print
+  45:utils.c       ****                 do_help() ;
+ 204              		.loc 1 45 0
+ 205 004a FFF7FEFF 		bl	do_help
+ 206              	.L4:
+  46:utils.c       ****             }
+  47:utils.c       ****             if (keep_on) {
+ 207              		.loc 1 47 0
+ 208 004e 074B     		ldr	r3, .L6
+ 209 0050 1B68     		ldr	r3, [r3]
+ 210 0052 002B     		cmp	r3, #0
+ 211 0054 02D0     		beq	.L2
+  48:utils.c       ****                 prompt("Demo> ") ;
+ 212              		.loc 1 48 0
+ 213 0056 0648     		ldr	r0, .L6+4
+ 214 0058 FFF7FEFF 		bl	prompt
+ 215              	.L2:
+  36:utils.c       ****         if (get_line()) {
+ 216              		.loc 1 36 0
+ 217 005c 034B     		ldr	r3, .L6
+ 218 005e 1B68     		ldr	r3, [r3]
+ 219 0060 002B     		cmp	r3, #0
+ 220 0062 D9D1     		bne	.L5
+  49:utils.c       ****             }
+  50:utils.c       ****         }
+  51:utils.c       ****     }
+  52:utils.c       **** }
+ 221              		.loc 1 52 0
+ 222 0064 00BF     		nop
+ 223 0066 0837     		adds	r7, r7, #8
+ 224              		.cfi_def_cfa_offset 8
+ 225 0068 BD46     		mov	sp, r7
+ 226              		.cfi_def_cfa_register 13
+ 227              		@ sp needed
+ 228 006a 80BD     		pop	{r7, pc}
+ 229              	.L7:
+ 230              		.align	2
+ 231              	.L6:
+ 232 006c 00000000 		.word	keep_on
+ 233 0070 F4000000 		.word	.LC16
+ 234 0074 00000000 		.word	str
+ 235 0078 00000000 		.word	i2c_func_list
+ 236 007c FC000000 		.word	.LC17
+ 237 0080 10010000 		.word	.LC18
+ 238              		.cfi_endproc
+ 239              	.LFE64:
+ 240              		.size	do_demo, .-do_demo
+ 241              		.section	.text.do_help,"ax",%progbits
+ 242              		.align	2
+ 243              		.global	do_help
+ 244              		.thumb
+ 245              		.thumb_func
+ 246              		.type	do_help, %function
+ 247              	do_help:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 7
+
+
+ 248              	.LFB65:
+  53:utils.c       **** 
+  54:utils.c       **** void do_help(void) 
+  55:utils.c       **** {
+ 249              		.loc 1 55 0
+ 250              		.cfi_startproc
+ 251              		@ args = 0, pretend = 0, frame = 0
+ 252              		@ frame_needed = 1, uses_anonymous_args = 0
+ 253 0000 80B5     		push	{r7, lr}
+ 254              		.cfi_def_cfa_offset 8
+ 255              		.cfi_offset 7, -8
+ 256              		.cfi_offset 14, -4
+ 257 0002 00AF     		add	r7, sp, #0
+ 258              		.cfi_def_cfa_register 7
+  56:utils.c       ****     show_help(i2c_func_list) ;    
+ 259              		.loc 1 56 0
+ 260 0004 0248     		ldr	r0, .L9
+ 261 0006 FFF7FEFF 		bl	show_help
+  57:utils.c       **** }
+ 262              		.loc 1 57 0
+ 263 000a 00BF     		nop
+ 264 000c 80BD     		pop	{r7, pc}
+ 265              	.L10:
+ 266 000e 00BF     		.align	2
+ 267              	.L9:
+ 268 0010 00000000 		.word	i2c_func_list
+ 269              		.cfi_endproc
+ 270              	.LFE65:
+ 271              		.size	do_help, .-do_help
+ 272              		.section	.text.do_return,"ax",%progbits
+ 273              		.align	2
+ 274              		.global	do_return
+ 275              		.thumb
+ 276              		.thumb_func
+ 277              		.type	do_return, %function
+ 278              	do_return:
+ 279              	.LFB66:
+  58:utils.c       **** 
+  59:utils.c       **** void do_return(void) 
+  60:utils.c       **** {
+ 280              		.loc 1 60 0
+ 281              		.cfi_startproc
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 1, uses_anonymous_args = 0
+ 284              		@ link register save eliminated.
+ 285 0000 80B4     		push	{r7}
+ 286              		.cfi_def_cfa_offset 4
+ 287              		.cfi_offset 7, -4
+ 288 0002 00AF     		add	r7, sp, #0
+ 289              		.cfi_def_cfa_register 7
+  61:utils.c       ****     keep_on = 0 ;
+ 290              		.loc 1 61 0
+ 291 0004 034B     		ldr	r3, .L12
+ 292 0006 0022     		movs	r2, #0
+ 293 0008 1A60     		str	r2, [r3]
+  62:utils.c       **** }
+ 294              		.loc 1 62 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 8
+
+
+ 295 000a 00BF     		nop
+ 296 000c BD46     		mov	sp, r7
+ 297              		.cfi_def_cfa_register 13
+ 298              		@ sp needed
+ 299 000e 80BC     		pop	{r7}
+ 300              		.cfi_restore 7
+ 301              		.cfi_def_cfa_offset 0
+ 302 0010 7047     		bx	lr
+ 303              	.L13:
+ 304 0012 00BF     		.align	2
+ 305              	.L12:
+ 306 0014 00000000 		.word	keep_on
+ 307              		.cfi_endproc
+ 308              	.LFE66:
+ 309              		.size	do_return, .-do_return
+ 310              		.section	.text.do_soft_reset,"ax",%progbits
+ 311              		.align	2
+ 312              		.global	do_soft_reset
+ 313              		.thumb
+ 314              		.thumb_func
+ 315              		.type	do_soft_reset, %function
+ 316              	do_soft_reset:
+ 317              	.LFB67:
+  63:utils.c       **** 
+  64:utils.c       **** void do_soft_reset(void)
+  65:utils.c       **** {
+ 318              		.loc 1 65 0
+ 319              		.cfi_startproc
+ 320              		@ args = 0, pretend = 0, frame = 0
+ 321              		@ frame_needed = 1, uses_anonymous_args = 0
+ 322 0000 80B5     		push	{r7, lr}
+ 323              		.cfi_def_cfa_offset 8
+ 324              		.cfi_offset 7, -8
+ 325              		.cfi_offset 14, -4
+ 326 0002 00AF     		add	r7, sp, #0
+ 327              		.cfi_def_cfa_register 7
+  66:utils.c       ****     CySoftwareReset();
+ 328              		.loc 1 66 0
+ 329 0004 FFF7FEFF 		bl	CySoftwareReset
+  67:utils.c       **** }
+ 330              		.loc 1 67 0
+ 331 0008 00BF     		nop
+ 332 000a 80BD     		pop	{r7, pc}
+ 333              		.cfi_endproc
+ 334              	.LFE67:
+ 335              		.size	do_soft_reset, .-do_soft_reset
+ 336              		.section	.rodata
+ 337 0113 00       		.align	2
+ 338              	.LC19:
+ 339 0114 252A7320 		.ascii	"%*s %hd\000"
+ 339      25686400 
+ 340              		.section	.text.do_loop,"ax",%progbits
+ 341              		.align	2
+ 342              		.global	do_loop
+ 343              		.thumb
+ 344              		.thumb_func
+ 345              		.type	do_loop, %function
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 9
+
+
+ 346              	do_loop:
+ 347              	.LFB68:
+  68:utils.c       **** 
+  69:utils.c       **** void do_loop(void) 
+  70:utils.c       **** {
+ 348              		.loc 1 70 0
+ 349              		.cfi_startproc
+ 350              		@ args = 0, pretend = 0, frame = 0
+ 351              		@ frame_needed = 1, uses_anonymous_args = 0
+ 352 0000 80B5     		push	{r7, lr}
+ 353              		.cfi_def_cfa_offset 8
+ 354              		.cfi_offset 7, -8
+ 355              		.cfi_offset 14, -4
+ 356 0002 00AF     		add	r7, sp, #0
+ 357              		.cfi_def_cfa_register 7
+  71:utils.c       ****     sscanf(str, "%*s %hd", &loop) ;
+ 358              		.loc 1 71 0
+ 359 0004 034A     		ldr	r2, .L16
+ 360 0006 0449     		ldr	r1, .L16+4
+ 361 0008 0448     		ldr	r0, .L16+8
+ 362 000a FFF7FEFF 		bl	sscanf
+  72:utils.c       **** }
+ 363              		.loc 1 72 0
+ 364 000e 00BF     		nop
+ 365 0010 80BD     		pop	{r7, pc}
+ 366              	.L17:
+ 367 0012 00BF     		.align	2
+ 368              	.L16:
+ 369 0014 04000000 		.word	loop
+ 370 0018 14010000 		.word	.LC19
+ 371 001c 00000000 		.word	str
+ 372              		.cfi_endproc
+ 373              	.LFE68:
+ 374              		.size	do_loop, .-do_loop
+ 375              		.section	.text.do_interval,"ax",%progbits
+ 376              		.align	2
+ 377              		.global	do_interval
+ 378              		.thumb
+ 379              		.thumb_func
+ 380              		.type	do_interval, %function
+ 381              	do_interval:
+ 382              	.LFB69:
+  73:utils.c       **** 
+  74:utils.c       **** void do_interval(void) 
+  75:utils.c       **** {
+ 383              		.loc 1 75 0
+ 384              		.cfi_startproc
+ 385              		@ args = 0, pretend = 0, frame = 0
+ 386              		@ frame_needed = 1, uses_anonymous_args = 0
+ 387 0000 80B5     		push	{r7, lr}
+ 388              		.cfi_def_cfa_offset 8
+ 389              		.cfi_offset 7, -8
+ 390              		.cfi_offset 14, -4
+ 391 0002 00AF     		add	r7, sp, #0
+ 392              		.cfi_def_cfa_register 7
+  76:utils.c       ****     sscanf(str, "%*s %hd", &interval) ;
+ 393              		.loc 1 76 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 10
+
+
+ 394 0004 034A     		ldr	r2, .L19
+ 395 0006 0449     		ldr	r1, .L19+4
+ 396 0008 0448     		ldr	r0, .L19+8
+ 397 000a FFF7FEFF 		bl	sscanf
+  77:utils.c       **** }
+ 398              		.loc 1 77 0
+ 399 000e 00BF     		nop
+ 400 0010 80BD     		pop	{r7, pc}
+ 401              	.L20:
+ 402 0012 00BF     		.align	2
+ 403              	.L19:
+ 404 0014 06000000 		.word	interval
+ 405 0018 14010000 		.word	.LC19
+ 406 001c 00000000 		.word	str
+ 407              		.cfi_endproc
+ 408              	.LFE69:
+ 409              		.size	do_interval, .-do_interval
+ 410              		.section	.rodata
+ 411              		.align	2
+ 412              	.LC20:
+ 413 011c 252A7320 		.ascii	"%*s %d\000"
+ 413      256400
+ 414              		.section	.text.do_delay,"ax",%progbits
+ 415              		.align	2
+ 416              		.global	do_delay
+ 417              		.thumb
+ 418              		.thumb_func
+ 419              		.type	do_delay, %function
+ 420              	do_delay:
+ 421              	.LFB70:
+  78:utils.c       **** 
+  79:utils.c       **** void do_delay(void)
+  80:utils.c       **** {
+ 422              		.loc 1 80 0
+ 423              		.cfi_startproc
+ 424              		@ args = 0, pretend = 0, frame = 0
+ 425              		@ frame_needed = 1, uses_anonymous_args = 0
+ 426 0000 80B5     		push	{r7, lr}
+ 427              		.cfi_def_cfa_offset 8
+ 428              		.cfi_offset 7, -8
+ 429              		.cfi_offset 14, -4
+ 430 0002 00AF     		add	r7, sp, #0
+ 431              		.cfi_def_cfa_register 7
+  81:utils.c       ****     sscanf(str, "%*s %d", &delay) ;
+ 432              		.loc 1 81 0
+ 433 0004 034A     		ldr	r2, .L22
+ 434 0006 0449     		ldr	r1, .L22+4
+ 435 0008 0448     		ldr	r0, .L22+8
+ 436 000a FFF7FEFF 		bl	sscanf
+  82:utils.c       **** }
+ 437              		.loc 1 82 0
+ 438 000e 00BF     		nop
+ 439 0010 80BD     		pop	{r7, pc}
+ 440              	.L23:
+ 441 0012 00BF     		.align	2
+ 442              	.L22:
+ 443 0014 0C000000 		.word	delay
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 11
+
+
+ 444 0018 1C010000 		.word	.LC20
+ 445 001c 00000000 		.word	str
+ 446              		.cfi_endproc
+ 447              	.LFE70:
+ 448              		.size	do_delay, .-do_delay
+ 449              		.section	.rodata
+ 450 0123 00       		.align	2
+ 451              	.LC21:
+ 452 0124 436F6E66 		.ascii	"Config: address: 0x%02X (%d)\012\015\000"
+ 452      69673A20 
+ 452      61646472 
+ 452      6573733A 
+ 452      20307825 
+ 453              		.section	.text.do_status,"ax",%progbits
+ 454              		.align	2
+ 455              		.global	do_status
+ 456              		.thumb
+ 457              		.thumb_func
+ 458              		.type	do_status, %function
+ 459              	do_status:
+ 460              	.LFB71:
+  83:utils.c       **** 
+  84:utils.c       **** void do_status(void) 
+  85:utils.c       **** {
+ 461              		.loc 1 85 0
+ 462              		.cfi_startproc
+ 463              		@ args = 0, pretend = 0, frame = 0
+ 464              		@ frame_needed = 1, uses_anonymous_args = 0
+ 465 0000 80B5     		push	{r7, lr}
+ 466              		.cfi_def_cfa_offset 8
+ 467              		.cfi_offset 7, -8
+ 468              		.cfi_offset 14, -4
+ 469 0002 82B0     		sub	sp, sp, #8
+ 470              		.cfi_def_cfa_offset 16
+ 471 0004 02AF     		add	r7, sp, #8
+ 472              		.cfi_def_cfa 7, 8
+  86:utils.c       ****     snprintf(str, STR_BUF_LEN, "Config: address: 0x%02X (%d)\n\r",
+ 473              		.loc 1 86 0
+ 474 0006 084B     		ldr	r3, .L25
+ 475 0008 1A68     		ldr	r2, [r3]
+ 476 000a 074B     		ldr	r3, .L25
+ 477 000c 1B68     		ldr	r3, [r3]
+ 478 000e 0093     		str	r3, [sp]
+ 479 0010 1346     		mov	r3, r2
+ 480 0012 064A     		ldr	r2, .L25+4
+ 481 0014 4021     		movs	r1, #64
+ 482 0016 0648     		ldr	r0, .L25+8
+ 483 0018 FFF7FEFF 		bl	snprintf
+  87:utils.c       ****         sAddress, sAddress) ;
+  88:utils.c       ****     print(str) ;
+ 484              		.loc 1 88 0
+ 485 001c 0448     		ldr	r0, .L25+8
+ 486 001e FFF7FEFF 		bl	print
+  89:utils.c       **** }
+ 487              		.loc 1 89 0
+ 488 0022 00BF     		nop
+ 489 0024 BD46     		mov	sp, r7
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 12
+
+
+ 490              		.cfi_def_cfa_register 13
+ 491              		@ sp needed
+ 492 0026 80BD     		pop	{r7, pc}
+ 493              	.L26:
+ 494              		.align	2
+ 495              	.L25:
+ 496 0028 08000000 		.word	sAddress
+ 497 002c 24010000 		.word	.LC21
+ 498 0030 00000000 		.word	str
+ 499              		.cfi_endproc
+ 500              	.LFE71:
+ 501              		.size	do_status, .-do_status
+ 502              		.section	.text.do_address,"ax",%progbits
+ 503              		.align	2
+ 504              		.global	do_address
+ 505              		.thumb
+ 506              		.thumb_func
+ 507              		.type	do_address, %function
+ 508              	do_address:
+ 509              	.LFB72:
+  90:utils.c       **** 
+  91:utils.c       **** 
+  92:utils.c       **** void do_address(void) 
+  93:utils.c       **** {
+ 510              		.loc 1 93 0
+ 511              		.cfi_startproc
+ 512              		@ args = 0, pretend = 0, frame = 0
+ 513              		@ frame_needed = 1, uses_anonymous_args = 0
+ 514 0000 80B5     		push	{r7, lr}
+ 515              		.cfi_def_cfa_offset 8
+ 516              		.cfi_offset 7, -8
+ 517              		.cfi_offset 14, -4
+ 518 0002 00AF     		add	r7, sp, #0
+ 519              		.cfi_def_cfa_register 7
+  94:utils.c       ****     sscanf(str, "%*s %d", &sAddress) ;
+ 520              		.loc 1 94 0
+ 521 0004 034A     		ldr	r2, .L28
+ 522 0006 0449     		ldr	r1, .L28+4
+ 523 0008 0448     		ldr	r0, .L28+8
+ 524 000a FFF7FEFF 		bl	sscanf
+  95:utils.c       **** }
+ 525              		.loc 1 95 0
+ 526 000e 00BF     		nop
+ 527 0010 80BD     		pop	{r7, pc}
+ 528              	.L29:
+ 529 0012 00BF     		.align	2
+ 530              	.L28:
+ 531 0014 08000000 		.word	sAddress
+ 532 0018 1C010000 		.word	.LC20
+ 533 001c 00000000 		.word	str
+ 534              		.cfi_endproc
+ 535              	.LFE72:
+ 536              		.size	do_address, .-do_address
+ 537              		.text
+ 538              	.Letext0:
+ 539              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 540              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 13
+
+
+ 541              		.file 4 "func_list.h"
+ 542              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 543              		.file 6 "tty_utils.h"
+ 544              		.section	.debug_info,"",%progbits
+ 545              	.Ldebug_info0:
+ 546 0000 65020000 		.4byte	0x265
+ 547 0004 0400     		.2byte	0x4
+ 548 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 549 000a 04       		.byte	0x4
+ 550 000b 01       		.uleb128 0x1
+ 551 000c 71010000 		.4byte	.LASF39
+ 552 0010 0C       		.byte	0xc
+ 553 0011 CE000000 		.4byte	.LASF40
+ 554 0015 25010000 		.4byte	.LASF41
+ 555 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 556 001d 00000000 		.4byte	0
+ 557 0021 00000000 		.4byte	.Ldebug_line0
+ 558 0025 02       		.uleb128 0x2
+ 559 0026 01       		.byte	0x1
+ 560 0027 06       		.byte	0x6
+ 561 0028 72020000 		.4byte	.LASF0
+ 562 002c 02       		.uleb128 0x2
+ 563 002d 01       		.byte	0x1
+ 564 002e 08       		.byte	0x8
+ 565 002f 9B000000 		.4byte	.LASF1
+ 566 0033 02       		.uleb128 0x2
+ 567 0034 02       		.byte	0x2
+ 568 0035 05       		.byte	0x5
+ 569 0036 29020000 		.4byte	.LASF2
+ 570 003a 03       		.uleb128 0x3
+ 571 003b A9000000 		.4byte	.LASF4
+ 572 003f 02       		.byte	0x2
+ 573 0040 2B       		.byte	0x2b
+ 574 0041 45000000 		.4byte	0x45
+ 575 0045 02       		.uleb128 0x2
+ 576 0046 02       		.byte	0x2
+ 577 0047 07       		.byte	0x7
+ 578 0048 7B000000 		.4byte	.LASF3
+ 579 004c 03       		.uleb128 0x3
+ 580 004d 13000000 		.4byte	.LASF5
+ 581 0051 02       		.byte	0x2
+ 582 0052 3F       		.byte	0x3f
+ 583 0053 57000000 		.4byte	0x57
+ 584 0057 02       		.uleb128 0x2
+ 585 0058 04       		.byte	0x4
+ 586 0059 05       		.byte	0x5
+ 587 005a 1D000000 		.4byte	.LASF6
+ 588 005e 02       		.uleb128 0x2
+ 589 005f 04       		.byte	0x4
+ 590 0060 07       		.byte	0x7
+ 591 0061 69000000 		.4byte	.LASF7
+ 592 0065 02       		.uleb128 0x2
+ 593 0066 08       		.byte	0x8
+ 594 0067 05       		.byte	0x5
+ 595 0068 17010000 		.4byte	.LASF8
+ 596 006c 02       		.uleb128 0x2
+ 597 006d 08       		.byte	0x8
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 14
+
+
+ 598 006e 07       		.byte	0x7
+ 599 006f EF000000 		.4byte	.LASF9
+ 600 0073 04       		.uleb128 0x4
+ 601 0074 04       		.byte	0x4
+ 602 0075 05       		.byte	0x5
+ 603 0076 696E7400 		.ascii	"int\000"
+ 604 007a 02       		.uleb128 0x2
+ 605 007b 04       		.byte	0x4
+ 606 007c 07       		.byte	0x7
+ 607 007d D6000000 		.4byte	.LASF10
+ 608 0081 03       		.uleb128 0x3
+ 609 0082 20020000 		.4byte	.LASF11
+ 610 0086 03       		.byte	0x3
+ 611 0087 24       		.byte	0x24
+ 612 0088 3A000000 		.4byte	0x3a
+ 613 008c 03       		.uleb128 0x3
+ 614 008d 06010000 		.4byte	.LASF12
+ 615 0091 03       		.byte	0x3
+ 616 0092 2C       		.byte	0x2c
+ 617 0093 4C000000 		.4byte	0x4c
+ 618 0097 02       		.uleb128 0x2
+ 619 0098 04       		.byte	0x4
+ 620 0099 04       		.byte	0x4
+ 621 009a 43000000 		.4byte	.LASF13
+ 622 009e 02       		.uleb128 0x2
+ 623 009f 08       		.byte	0x8
+ 624 00a0 04       		.byte	0x4
+ 625 00a1 B4000000 		.4byte	.LASF14
+ 626 00a5 02       		.uleb128 0x2
+ 627 00a6 01       		.byte	0x1
+ 628 00a7 08       		.byte	0x8
+ 629 00a8 61020000 		.4byte	.LASF15
+ 630 00ac 05       		.uleb128 0x5
+ 631 00ad 04       		.byte	0x4
+ 632 00ae B2000000 		.4byte	0xb2
+ 633 00b2 06       		.uleb128 0x6
+ 634 00b3 02       		.uleb128 0x2
+ 635 00b4 08       		.byte	0x8
+ 636 00b5 04       		.byte	0x4
+ 637 00b6 66020000 		.4byte	.LASF16
+ 638 00ba 02       		.uleb128 0x2
+ 639 00bb 04       		.byte	0x4
+ 640 00bc 07       		.byte	0x7
+ 641 00bd 0E010000 		.4byte	.LASF17
+ 642 00c1 05       		.uleb128 0x5
+ 643 00c2 04       		.byte	0x4
+ 644 00c3 A5000000 		.4byte	0xa5
+ 645 00c7 03       		.uleb128 0x3
+ 646 00c8 3A000000 		.4byte	.LASF18
+ 647 00cc 04       		.byte	0x4
+ 648 00cd 07       		.byte	0x7
+ 649 00ce AC000000 		.4byte	0xac
+ 650 00d2 07       		.uleb128 0x7
+ 651 00d3 E3000000 		.4byte	.LASF42
+ 652 00d7 0C       		.byte	0xc
+ 653 00d8 04       		.byte	0x4
+ 654 00d9 09       		.byte	0x9
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 15
+
+
+ 655 00da 03010000 		.4byte	0x103
+ 656 00de 08       		.uleb128 0x8
+ 657 00df 90020000 		.4byte	.LASF19
+ 658 00e3 04       		.byte	0x4
+ 659 00e4 0A       		.byte	0xa
+ 660 00e5 C1000000 		.4byte	0xc1
+ 661 00e9 00       		.byte	0
+ 662 00ea 08       		.uleb128 0x8
+ 663 00eb BB000000 		.4byte	.LASF20
+ 664 00ef 04       		.byte	0x4
+ 665 00f0 0B       		.byte	0xb
+ 666 00f1 C7000000 		.4byte	0xc7
+ 667 00f5 04       		.byte	0x4
+ 668 00f6 08       		.uleb128 0x8
+ 669 00f7 49000000 		.4byte	.LASF21
+ 670 00fb 04       		.byte	0x4
+ 671 00fc 0C       		.byte	0xc
+ 672 00fd C1000000 		.4byte	0xc1
+ 673 0101 08       		.byte	0x8
+ 674 0102 00       		.byte	0
+ 675 0103 03       		.uleb128 0x3
+ 676 0104 95020000 		.4byte	.LASF22
+ 677 0108 04       		.byte	0x4
+ 678 0109 0D       		.byte	0xd
+ 679 010a D2000000 		.4byte	0xd2
+ 680 010e 09       		.uleb128 0x9
+ 681 010f 59020000 		.4byte	.LASF43
+ 682 0113 01       		.byte	0x1
+ 683 0114 1A       		.byte	0x1a
+ 684 0115 00000000 		.4byte	.LFB64
+ 685 0119 84000000 		.4byte	.LFE64-.LFB64
+ 686 011d 01       		.uleb128 0x1
+ 687 011e 9C       		.byte	0x9c
+ 688 011f 32010000 		.4byte	0x132
+ 689 0123 0A       		.uleb128 0xa
+ 690 0124 BB000000 		.4byte	.LASF20
+ 691 0128 01       		.byte	0x1
+ 692 0129 1C       		.byte	0x1c
+ 693 012a C7000000 		.4byte	0xc7
+ 694 012e 02       		.uleb128 0x2
+ 695 012f 91       		.byte	0x91
+ 696 0130 74       		.sleb128 -12
+ 697 0131 00       		.byte	0
+ 698 0132 0B       		.uleb128 0xb
+ 699 0133 32000000 		.4byte	.LASF23
+ 700 0137 01       		.byte	0x1
+ 701 0138 36       		.byte	0x36
+ 702 0139 00000000 		.4byte	.LFB65
+ 703 013d 14000000 		.4byte	.LFE65-.LFB65
+ 704 0141 01       		.uleb128 0x1
+ 705 0142 9C       		.byte	0x9c
+ 706 0143 0C       		.uleb128 0xc
+ 707 0144 3C020000 		.4byte	.LASF24
+ 708 0148 01       		.byte	0x1
+ 709 0149 3B       		.byte	0x3b
+ 710 014a 00000000 		.4byte	.LFB66
+ 711 014e 18000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 16
+
+
+ 712 0152 01       		.uleb128 0x1
+ 713 0153 9C       		.byte	0x9c
+ 714 0154 0B       		.uleb128 0xb
+ 715 0155 C0000000 		.4byte	.LASF25
+ 716 0159 01       		.byte	0x1
+ 717 015a 40       		.byte	0x40
+ 718 015b 00000000 		.4byte	.LFB67
+ 719 015f 0C000000 		.4byte	.LFE67-.LFB67
+ 720 0163 01       		.uleb128 0x1
+ 721 0164 9C       		.byte	0x9c
+ 722 0165 0B       		.uleb128 0xb
+ 723 0166 0B000000 		.4byte	.LASF26
+ 724 016a 01       		.byte	0x1
+ 725 016b 45       		.byte	0x45
+ 726 016c 00000000 		.4byte	.LFB68
+ 727 0170 20000000 		.4byte	.LFE68-.LFB68
+ 728 0174 01       		.uleb128 0x1
+ 729 0175 9C       		.byte	0x9c
+ 730 0176 0B       		.uleb128 0xb
+ 731 0177 26000000 		.4byte	.LASF27
+ 732 017b 01       		.byte	0x1
+ 733 017c 4A       		.byte	0x4a
+ 734 017d 00000000 		.4byte	.LFB69
+ 735 0181 20000000 		.4byte	.LFE69-.LFB69
+ 736 0185 01       		.uleb128 0x1
+ 737 0186 9C       		.byte	0x9c
+ 738 0187 0B       		.uleb128 0xb
+ 739 0188 50020000 		.4byte	.LASF28
+ 740 018c 01       		.byte	0x1
+ 741 018d 4F       		.byte	0x4f
+ 742 018e 00000000 		.4byte	.LFB70
+ 743 0192 20000000 		.4byte	.LFE70-.LFB70
+ 744 0196 01       		.uleb128 0x1
+ 745 0197 9C       		.byte	0x9c
+ 746 0198 0B       		.uleb128 0xb
+ 747 0199 86020000 		.4byte	.LASF29
+ 748 019d 01       		.byte	0x1
+ 749 019e 54       		.byte	0x54
+ 750 019f 00000000 		.4byte	.LFB71
+ 751 01a3 34000000 		.4byte	.LFE71-.LFB71
+ 752 01a7 01       		.uleb128 0x1
+ 753 01a8 9C       		.byte	0x9c
+ 754 01a9 0B       		.uleb128 0xb
+ 755 01aa 00000000 		.4byte	.LASF30
+ 756 01ae 01       		.byte	0x1
+ 757 01af 5C       		.byte	0x5c
+ 758 01b0 00000000 		.4byte	.LFB72
+ 759 01b4 20000000 		.4byte	.LFE72-.LFB72
+ 760 01b8 01       		.uleb128 0x1
+ 761 01b9 9C       		.byte	0x9c
+ 762 01ba 0A       		.uleb128 0xa
+ 763 01bb 7E020000 		.4byte	.LASF31
+ 764 01bf 01       		.byte	0x1
+ 765 01c0 07       		.byte	0x7
+ 766 01c1 73000000 		.4byte	0x73
+ 767 01c5 05       		.uleb128 0x5
+ 768 01c6 03       		.byte	0x3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 17
+
+
+ 769 01c7 00000000 		.4byte	keep_on
+ 770 01cb 0A       		.uleb128 0xa
+ 771 01cc 5B000000 		.4byte	.LASF32
+ 772 01d0 01       		.byte	0x1
+ 773 01d1 08       		.byte	0x8
+ 774 01d2 81000000 		.4byte	0x81
+ 775 01d6 05       		.uleb128 0x5
+ 776 01d7 03       		.byte	0x3
+ 777 01d8 04000000 		.4byte	loop
+ 778 01dc 0A       		.uleb128 0xa
+ 779 01dd 33020000 		.4byte	.LASF33
+ 780 01e1 01       		.byte	0x1
+ 781 01e2 09       		.byte	0x9
+ 782 01e3 81000000 		.4byte	0x81
+ 783 01e7 05       		.uleb128 0x5
+ 784 01e8 03       		.byte	0x3
+ 785 01e9 06000000 		.4byte	interval
+ 786 01ed 0A       		.uleb128 0xa
+ 787 01ee 60000000 		.4byte	.LASF34
+ 788 01f2 01       		.byte	0x1
+ 789 01f3 0A       		.byte	0xa
+ 790 01f4 73000000 		.4byte	0x73
+ 791 01f8 05       		.uleb128 0x5
+ 792 01f9 03       		.byte	0x3
+ 793 01fa 08000000 		.4byte	sAddress
+ 794 01fe 0A       		.uleb128 0xa
+ 795 01ff 55000000 		.4byte	.LASF35
+ 796 0203 01       		.byte	0x1
+ 797 0204 0B       		.byte	0xb
+ 798 0205 73000000 		.4byte	0x73
+ 799 0209 05       		.uleb128 0x5
+ 800 020a 03       		.byte	0x3
+ 801 020b 0C000000 		.4byte	delay
+ 802 020f 0D       		.uleb128 0xd
+ 803 0210 8E000000 		.4byte	.LASF36
+ 804 0214 05       		.byte	0x5
+ 805 0215 1207     		.2byte	0x712
+ 806 0217 1B020000 		.4byte	0x21b
+ 807 021b 0E       		.uleb128 0xe
+ 808 021c 8C000000 		.4byte	0x8c
+ 809 0220 0F       		.uleb128 0xf
+ 810 0221 A5000000 		.4byte	0xa5
+ 811 0225 2B020000 		.4byte	0x22b
+ 812 0229 10       		.uleb128 0x10
+ 813 022a 00       		.byte	0
+ 814 022b 11       		.uleb128 0x11
+ 815 022c 73747200 		.ascii	"str\000"
+ 816 0230 06       		.byte	0x6
+ 817 0231 35       		.byte	0x35
+ 818 0232 20020000 		.4byte	0x220
+ 819 0236 12       		.uleb128 0x12
+ 820 0237 46020000 		.4byte	.LASF37
+ 821 023b 01       		.byte	0x1
+ 822 023c 0C       		.byte	0xc
+ 823 023d 81000000 		.4byte	0x81
+ 824 0241 05       		.uleb128 0x5
+ 825 0242 03       		.byte	0x3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 18
+
+
+ 826 0243 00000000 		.4byte	timeoutms
+ 827 0247 0F       		.uleb128 0xf
+ 828 0248 03010000 		.4byte	0x103
+ 829 024c 57020000 		.4byte	0x257
+ 830 0250 13       		.uleb128 0x13
+ 831 0251 BA000000 		.4byte	0xba
+ 832 0255 08       		.byte	0x8
+ 833 0256 00       		.byte	0
+ 834 0257 12       		.uleb128 0x12
+ 835 0258 12020000 		.4byte	.LASF38
+ 836 025c 01       		.byte	0x1
+ 837 025d 0E       		.byte	0xe
+ 838 025e 47020000 		.4byte	0x247
+ 839 0262 05       		.uleb128 0x5
+ 840 0263 03       		.byte	0x3
+ 841 0264 00000000 		.4byte	i2c_func_list
+ 842 0268 00       		.byte	0
+ 843              		.section	.debug_abbrev,"",%progbits
+ 844              	.Ldebug_abbrev0:
+ 845 0000 01       		.uleb128 0x1
+ 846 0001 11       		.uleb128 0x11
+ 847 0002 01       		.byte	0x1
+ 848 0003 25       		.uleb128 0x25
+ 849 0004 0E       		.uleb128 0xe
+ 850 0005 13       		.uleb128 0x13
+ 851 0006 0B       		.uleb128 0xb
+ 852 0007 03       		.uleb128 0x3
+ 853 0008 0E       		.uleb128 0xe
+ 854 0009 1B       		.uleb128 0x1b
+ 855 000a 0E       		.uleb128 0xe
+ 856 000b 55       		.uleb128 0x55
+ 857 000c 17       		.uleb128 0x17
+ 858 000d 11       		.uleb128 0x11
+ 859 000e 01       		.uleb128 0x1
+ 860 000f 10       		.uleb128 0x10
+ 861 0010 17       		.uleb128 0x17
+ 862 0011 00       		.byte	0
+ 863 0012 00       		.byte	0
+ 864 0013 02       		.uleb128 0x2
+ 865 0014 24       		.uleb128 0x24
+ 866 0015 00       		.byte	0
+ 867 0016 0B       		.uleb128 0xb
+ 868 0017 0B       		.uleb128 0xb
+ 869 0018 3E       		.uleb128 0x3e
+ 870 0019 0B       		.uleb128 0xb
+ 871 001a 03       		.uleb128 0x3
+ 872 001b 0E       		.uleb128 0xe
+ 873 001c 00       		.byte	0
+ 874 001d 00       		.byte	0
+ 875 001e 03       		.uleb128 0x3
+ 876 001f 16       		.uleb128 0x16
+ 877 0020 00       		.byte	0
+ 878 0021 03       		.uleb128 0x3
+ 879 0022 0E       		.uleb128 0xe
+ 880 0023 3A       		.uleb128 0x3a
+ 881 0024 0B       		.uleb128 0xb
+ 882 0025 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 19
+
+
+ 883 0026 0B       		.uleb128 0xb
+ 884 0027 49       		.uleb128 0x49
+ 885 0028 13       		.uleb128 0x13
+ 886 0029 00       		.byte	0
+ 887 002a 00       		.byte	0
+ 888 002b 04       		.uleb128 0x4
+ 889 002c 24       		.uleb128 0x24
+ 890 002d 00       		.byte	0
+ 891 002e 0B       		.uleb128 0xb
+ 892 002f 0B       		.uleb128 0xb
+ 893 0030 3E       		.uleb128 0x3e
+ 894 0031 0B       		.uleb128 0xb
+ 895 0032 03       		.uleb128 0x3
+ 896 0033 08       		.uleb128 0x8
+ 897 0034 00       		.byte	0
+ 898 0035 00       		.byte	0
+ 899 0036 05       		.uleb128 0x5
+ 900 0037 0F       		.uleb128 0xf
+ 901 0038 00       		.byte	0
+ 902 0039 0B       		.uleb128 0xb
+ 903 003a 0B       		.uleb128 0xb
+ 904 003b 49       		.uleb128 0x49
+ 905 003c 13       		.uleb128 0x13
+ 906 003d 00       		.byte	0
+ 907 003e 00       		.byte	0
+ 908 003f 06       		.uleb128 0x6
+ 909 0040 15       		.uleb128 0x15
+ 910 0041 00       		.byte	0
+ 911 0042 27       		.uleb128 0x27
+ 912 0043 19       		.uleb128 0x19
+ 913 0044 00       		.byte	0
+ 914 0045 00       		.byte	0
+ 915 0046 07       		.uleb128 0x7
+ 916 0047 13       		.uleb128 0x13
+ 917 0048 01       		.byte	0x1
+ 918 0049 03       		.uleb128 0x3
+ 919 004a 0E       		.uleb128 0xe
+ 920 004b 0B       		.uleb128 0xb
+ 921 004c 0B       		.uleb128 0xb
+ 922 004d 3A       		.uleb128 0x3a
+ 923 004e 0B       		.uleb128 0xb
+ 924 004f 3B       		.uleb128 0x3b
+ 925 0050 0B       		.uleb128 0xb
+ 926 0051 01       		.uleb128 0x1
+ 927 0052 13       		.uleb128 0x13
+ 928 0053 00       		.byte	0
+ 929 0054 00       		.byte	0
+ 930 0055 08       		.uleb128 0x8
+ 931 0056 0D       		.uleb128 0xd
+ 932 0057 00       		.byte	0
+ 933 0058 03       		.uleb128 0x3
+ 934 0059 0E       		.uleb128 0xe
+ 935 005a 3A       		.uleb128 0x3a
+ 936 005b 0B       		.uleb128 0xb
+ 937 005c 3B       		.uleb128 0x3b
+ 938 005d 0B       		.uleb128 0xb
+ 939 005e 49       		.uleb128 0x49
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 20
+
+
+ 940 005f 13       		.uleb128 0x13
+ 941 0060 38       		.uleb128 0x38
+ 942 0061 0B       		.uleb128 0xb
+ 943 0062 00       		.byte	0
+ 944 0063 00       		.byte	0
+ 945 0064 09       		.uleb128 0x9
+ 946 0065 2E       		.uleb128 0x2e
+ 947 0066 01       		.byte	0x1
+ 948 0067 3F       		.uleb128 0x3f
+ 949 0068 19       		.uleb128 0x19
+ 950 0069 03       		.uleb128 0x3
+ 951 006a 0E       		.uleb128 0xe
+ 952 006b 3A       		.uleb128 0x3a
+ 953 006c 0B       		.uleb128 0xb
+ 954 006d 3B       		.uleb128 0x3b
+ 955 006e 0B       		.uleb128 0xb
+ 956 006f 27       		.uleb128 0x27
+ 957 0070 19       		.uleb128 0x19
+ 958 0071 11       		.uleb128 0x11
+ 959 0072 01       		.uleb128 0x1
+ 960 0073 12       		.uleb128 0x12
+ 961 0074 06       		.uleb128 0x6
+ 962 0075 40       		.uleb128 0x40
+ 963 0076 18       		.uleb128 0x18
+ 964 0077 9642     		.uleb128 0x2116
+ 965 0079 19       		.uleb128 0x19
+ 966 007a 01       		.uleb128 0x1
+ 967 007b 13       		.uleb128 0x13
+ 968 007c 00       		.byte	0
+ 969 007d 00       		.byte	0
+ 970 007e 0A       		.uleb128 0xa
+ 971 007f 34       		.uleb128 0x34
+ 972 0080 00       		.byte	0
+ 973 0081 03       		.uleb128 0x3
+ 974 0082 0E       		.uleb128 0xe
+ 975 0083 3A       		.uleb128 0x3a
+ 976 0084 0B       		.uleb128 0xb
+ 977 0085 3B       		.uleb128 0x3b
+ 978 0086 0B       		.uleb128 0xb
+ 979 0087 49       		.uleb128 0x49
+ 980 0088 13       		.uleb128 0x13
+ 981 0089 02       		.uleb128 0x2
+ 982 008a 18       		.uleb128 0x18
+ 983 008b 00       		.byte	0
+ 984 008c 00       		.byte	0
+ 985 008d 0B       		.uleb128 0xb
+ 986 008e 2E       		.uleb128 0x2e
+ 987 008f 00       		.byte	0
+ 988 0090 3F       		.uleb128 0x3f
+ 989 0091 19       		.uleb128 0x19
+ 990 0092 03       		.uleb128 0x3
+ 991 0093 0E       		.uleb128 0xe
+ 992 0094 3A       		.uleb128 0x3a
+ 993 0095 0B       		.uleb128 0xb
+ 994 0096 3B       		.uleb128 0x3b
+ 995 0097 0B       		.uleb128 0xb
+ 996 0098 27       		.uleb128 0x27
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 21
+
+
+ 997 0099 19       		.uleb128 0x19
+ 998 009a 11       		.uleb128 0x11
+ 999 009b 01       		.uleb128 0x1
+ 1000 009c 12       		.uleb128 0x12
+ 1001 009d 06       		.uleb128 0x6
+ 1002 009e 40       		.uleb128 0x40
+ 1003 009f 18       		.uleb128 0x18
+ 1004 00a0 9642     		.uleb128 0x2116
+ 1005 00a2 19       		.uleb128 0x19
+ 1006 00a3 00       		.byte	0
+ 1007 00a4 00       		.byte	0
+ 1008 00a5 0C       		.uleb128 0xc
+ 1009 00a6 2E       		.uleb128 0x2e
+ 1010 00a7 00       		.byte	0
+ 1011 00a8 3F       		.uleb128 0x3f
+ 1012 00a9 19       		.uleb128 0x19
+ 1013 00aa 03       		.uleb128 0x3
+ 1014 00ab 0E       		.uleb128 0xe
+ 1015 00ac 3A       		.uleb128 0x3a
+ 1016 00ad 0B       		.uleb128 0xb
+ 1017 00ae 3B       		.uleb128 0x3b
+ 1018 00af 0B       		.uleb128 0xb
+ 1019 00b0 27       		.uleb128 0x27
+ 1020 00b1 19       		.uleb128 0x19
+ 1021 00b2 11       		.uleb128 0x11
+ 1022 00b3 01       		.uleb128 0x1
+ 1023 00b4 12       		.uleb128 0x12
+ 1024 00b5 06       		.uleb128 0x6
+ 1025 00b6 40       		.uleb128 0x40
+ 1026 00b7 18       		.uleb128 0x18
+ 1027 00b8 9742     		.uleb128 0x2117
+ 1028 00ba 19       		.uleb128 0x19
+ 1029 00bb 00       		.byte	0
+ 1030 00bc 00       		.byte	0
+ 1031 00bd 0D       		.uleb128 0xd
+ 1032 00be 34       		.uleb128 0x34
+ 1033 00bf 00       		.byte	0
+ 1034 00c0 03       		.uleb128 0x3
+ 1035 00c1 0E       		.uleb128 0xe
+ 1036 00c2 3A       		.uleb128 0x3a
+ 1037 00c3 0B       		.uleb128 0xb
+ 1038 00c4 3B       		.uleb128 0x3b
+ 1039 00c5 05       		.uleb128 0x5
+ 1040 00c6 49       		.uleb128 0x49
+ 1041 00c7 13       		.uleb128 0x13
+ 1042 00c8 3F       		.uleb128 0x3f
+ 1043 00c9 19       		.uleb128 0x19
+ 1044 00ca 3C       		.uleb128 0x3c
+ 1045 00cb 19       		.uleb128 0x19
+ 1046 00cc 00       		.byte	0
+ 1047 00cd 00       		.byte	0
+ 1048 00ce 0E       		.uleb128 0xe
+ 1049 00cf 35       		.uleb128 0x35
+ 1050 00d0 00       		.byte	0
+ 1051 00d1 49       		.uleb128 0x49
+ 1052 00d2 13       		.uleb128 0x13
+ 1053 00d3 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 22
+
+
+ 1054 00d4 00       		.byte	0
+ 1055 00d5 0F       		.uleb128 0xf
+ 1056 00d6 01       		.uleb128 0x1
+ 1057 00d7 01       		.byte	0x1
+ 1058 00d8 49       		.uleb128 0x49
+ 1059 00d9 13       		.uleb128 0x13
+ 1060 00da 01       		.uleb128 0x1
+ 1061 00db 13       		.uleb128 0x13
+ 1062 00dc 00       		.byte	0
+ 1063 00dd 00       		.byte	0
+ 1064 00de 10       		.uleb128 0x10
+ 1065 00df 21       		.uleb128 0x21
+ 1066 00e0 00       		.byte	0
+ 1067 00e1 00       		.byte	0
+ 1068 00e2 00       		.byte	0
+ 1069 00e3 11       		.uleb128 0x11
+ 1070 00e4 34       		.uleb128 0x34
+ 1071 00e5 00       		.byte	0
+ 1072 00e6 03       		.uleb128 0x3
+ 1073 00e7 08       		.uleb128 0x8
+ 1074 00e8 3A       		.uleb128 0x3a
+ 1075 00e9 0B       		.uleb128 0xb
+ 1076 00ea 3B       		.uleb128 0x3b
+ 1077 00eb 0B       		.uleb128 0xb
+ 1078 00ec 49       		.uleb128 0x49
+ 1079 00ed 13       		.uleb128 0x13
+ 1080 00ee 3F       		.uleb128 0x3f
+ 1081 00ef 19       		.uleb128 0x19
+ 1082 00f0 3C       		.uleb128 0x3c
+ 1083 00f1 19       		.uleb128 0x19
+ 1084 00f2 00       		.byte	0
+ 1085 00f3 00       		.byte	0
+ 1086 00f4 12       		.uleb128 0x12
+ 1087 00f5 34       		.uleb128 0x34
+ 1088 00f6 00       		.byte	0
+ 1089 00f7 03       		.uleb128 0x3
+ 1090 00f8 0E       		.uleb128 0xe
+ 1091 00f9 3A       		.uleb128 0x3a
+ 1092 00fa 0B       		.uleb128 0xb
+ 1093 00fb 3B       		.uleb128 0x3b
+ 1094 00fc 0B       		.uleb128 0xb
+ 1095 00fd 49       		.uleb128 0x49
+ 1096 00fe 13       		.uleb128 0x13
+ 1097 00ff 3F       		.uleb128 0x3f
+ 1098 0100 19       		.uleb128 0x19
+ 1099 0101 02       		.uleb128 0x2
+ 1100 0102 18       		.uleb128 0x18
+ 1101 0103 00       		.byte	0
+ 1102 0104 00       		.byte	0
+ 1103 0105 13       		.uleb128 0x13
+ 1104 0106 21       		.uleb128 0x21
+ 1105 0107 00       		.byte	0
+ 1106 0108 49       		.uleb128 0x49
+ 1107 0109 13       		.uleb128 0x13
+ 1108 010a 2F       		.uleb128 0x2f
+ 1109 010b 0B       		.uleb128 0xb
+ 1110 010c 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 23
+
+
+ 1111 010d 00       		.byte	0
+ 1112 010e 00       		.byte	0
+ 1113              		.section	.debug_aranges,"",%progbits
+ 1114 0000 5C000000 		.4byte	0x5c
+ 1115 0004 0200     		.2byte	0x2
+ 1116 0006 00000000 		.4byte	.Ldebug_info0
+ 1117 000a 04       		.byte	0x4
+ 1118 000b 00       		.byte	0
+ 1119 000c 0000     		.2byte	0
+ 1120 000e 0000     		.2byte	0
+ 1121 0010 00000000 		.4byte	.LFB64
+ 1122 0014 84000000 		.4byte	.LFE64-.LFB64
+ 1123 0018 00000000 		.4byte	.LFB65
+ 1124 001c 14000000 		.4byte	.LFE65-.LFB65
+ 1125 0020 00000000 		.4byte	.LFB66
+ 1126 0024 18000000 		.4byte	.LFE66-.LFB66
+ 1127 0028 00000000 		.4byte	.LFB67
+ 1128 002c 0C000000 		.4byte	.LFE67-.LFB67
+ 1129 0030 00000000 		.4byte	.LFB68
+ 1130 0034 20000000 		.4byte	.LFE68-.LFB68
+ 1131 0038 00000000 		.4byte	.LFB69
+ 1132 003c 20000000 		.4byte	.LFE69-.LFB69
+ 1133 0040 00000000 		.4byte	.LFB70
+ 1134 0044 20000000 		.4byte	.LFE70-.LFB70
+ 1135 0048 00000000 		.4byte	.LFB71
+ 1136 004c 34000000 		.4byte	.LFE71-.LFB71
+ 1137 0050 00000000 		.4byte	.LFB72
+ 1138 0054 20000000 		.4byte	.LFE72-.LFB72
+ 1139 0058 00000000 		.4byte	0
+ 1140 005c 00000000 		.4byte	0
+ 1141              		.section	.debug_ranges,"",%progbits
+ 1142              	.Ldebug_ranges0:
+ 1143 0000 00000000 		.4byte	.LFB64
+ 1144 0004 84000000 		.4byte	.LFE64
+ 1145 0008 00000000 		.4byte	.LFB65
+ 1146 000c 14000000 		.4byte	.LFE65
+ 1147 0010 00000000 		.4byte	.LFB66
+ 1148 0014 18000000 		.4byte	.LFE66
+ 1149 0018 00000000 		.4byte	.LFB67
+ 1150 001c 0C000000 		.4byte	.LFE67
+ 1151 0020 00000000 		.4byte	.LFB68
+ 1152 0024 20000000 		.4byte	.LFE68
+ 1153 0028 00000000 		.4byte	.LFB69
+ 1154 002c 20000000 		.4byte	.LFE69
+ 1155 0030 00000000 		.4byte	.LFB70
+ 1156 0034 20000000 		.4byte	.LFE70
+ 1157 0038 00000000 		.4byte	.LFB71
+ 1158 003c 34000000 		.4byte	.LFE71
+ 1159 0040 00000000 		.4byte	.LFB72
+ 1160 0044 20000000 		.4byte	.LFE72
+ 1161 0048 00000000 		.4byte	0
+ 1162 004c 00000000 		.4byte	0
+ 1163              		.section	.debug_line,"",%progbits
+ 1164              	.Ldebug_line0:
+ 1165 0000 16020000 		.section	.debug_str,"MS",%progbits,1
+ 1165      02005E01 
+ 1165      00000201 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 24
+
+
+ 1165      FB0E0D00 
+ 1165      01010101 
+ 1166              	.LASF30:
+ 1167 0000 646F5F61 		.ascii	"do_address\000"
+ 1167      64647265 
+ 1167      737300
+ 1168              	.LASF26:
+ 1169 000b 646F5F6C 		.ascii	"do_loop\000"
+ 1169      6F6F7000 
+ 1170              	.LASF5:
+ 1171 0013 5F5F696E 		.ascii	"__int32_t\000"
+ 1171      7433325F 
+ 1171      7400
+ 1172              	.LASF6:
+ 1173 001d 6C6F6E67 		.ascii	"long int\000"
+ 1173      20696E74 
+ 1173      00
+ 1174              	.LASF27:
+ 1175 0026 646F5F69 		.ascii	"do_interval\000"
+ 1175      6E746572 
+ 1175      76616C00 
+ 1176              	.LASF23:
+ 1177 0032 646F5F68 		.ascii	"do_help\000"
+ 1177      656C7000 
+ 1178              	.LASF18:
+ 1179 003a 66756E63 		.ascii	"func_ptr\000"
+ 1179      5F707472 
+ 1179      00
+ 1180              	.LASF13:
+ 1181 0043 666C6F61 		.ascii	"float\000"
+ 1181      7400
+ 1182              	.LASF21:
+ 1183 0049 64657363 		.ascii	"description\000"
+ 1183      72697074 
+ 1183      696F6E00 
+ 1184              	.LASF35:
+ 1185 0055 64656C61 		.ascii	"delay\000"
+ 1185      7900
+ 1186              	.LASF32:
+ 1187 005b 6C6F6F70 		.ascii	"loop\000"
+ 1187      00
+ 1188              	.LASF34:
+ 1189 0060 73416464 		.ascii	"sAddress\000"
+ 1189      72657373 
+ 1189      00
+ 1190              	.LASF7:
+ 1191 0069 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1191      20756E73 
+ 1191      69676E65 
+ 1191      6420696E 
+ 1191      7400
+ 1192              	.LASF3:
+ 1193 007b 73686F72 		.ascii	"short unsigned int\000"
+ 1193      7420756E 
+ 1193      7369676E 
+ 1193      65642069 
+ 1193      6E7400
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 25
+
+
+ 1194              	.LASF36:
+ 1195 008e 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1195      52784275 
+ 1195      66666572 
+ 1195      00
+ 1196              	.LASF1:
+ 1197 009b 756E7369 		.ascii	"unsigned char\000"
+ 1197      676E6564 
+ 1197      20636861 
+ 1197      7200
+ 1198              	.LASF4:
+ 1199 00a9 5F5F7569 		.ascii	"__uint16_t\000"
+ 1199      6E743136 
+ 1199      5F7400
+ 1200              	.LASF14:
+ 1201 00b4 646F7562 		.ascii	"double\000"
+ 1201      6C6500
+ 1202              	.LASF20:
+ 1203 00bb 66756E63 		.ascii	"func\000"
+ 1203      00
+ 1204              	.LASF25:
+ 1205 00c0 646F5F73 		.ascii	"do_soft_reset\000"
+ 1205      6F66745F 
+ 1205      72657365 
+ 1205      7400
+ 1206              	.LASF40:
+ 1207 00ce 7574696C 		.ascii	"utils.c\000"
+ 1207      732E6300 
+ 1208              	.LASF10:
+ 1209 00d6 756E7369 		.ascii	"unsigned int\000"
+ 1209      676E6564 
+ 1209      20696E74 
+ 1209      00
+ 1210              	.LASF42:
+ 1211 00e3 5F665F6C 		.ascii	"_f_list_st_\000"
+ 1211      6973745F 
+ 1211      73745F00 
+ 1212              	.LASF9:
+ 1213 00ef 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1213      206C6F6E 
+ 1213      6720756E 
+ 1213      7369676E 
+ 1213      65642069 
+ 1214              	.LASF12:
+ 1215 0106 696E7433 		.ascii	"int32_t\000"
+ 1215      325F7400 
+ 1216              	.LASF17:
+ 1217 010e 73697A65 		.ascii	"sizetype\000"
+ 1217      74797065 
+ 1217      00
+ 1218              	.LASF8:
+ 1219 0117 6C6F6E67 		.ascii	"long long int\000"
+ 1219      206C6F6E 
+ 1219      6720696E 
+ 1219      7400
+ 1220              	.LASF41:
+ 1221 0125 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 26
+
+
+ 1221      73657273 
+ 1221      5C696E67 
+ 1221      616E5C44 
+ 1221      6F63756D 
+ 1222 0153 655F706C 		.ascii	"e_player\\VGMPlayer_v0.6.cydsn\000"
+ 1222      61796572 
+ 1222      5C56474D 
+ 1222      506C6179 
+ 1222      65725F76 
+ 1223              	.LASF39:
+ 1224 0171 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1224      43313120 
+ 1224      352E342E 
+ 1224      31203230 
+ 1224      31363036 
+ 1225 01a4 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1225      20726576 
+ 1225      6973696F 
+ 1225      6E203233 
+ 1225      37373135 
+ 1226 01d7 30202D66 		.ascii	"0 -ffunction-sections -ffat-lto-objects -finline-fu"
+ 1226      66756E63 
+ 1226      74696F6E 
+ 1226      2D736563 
+ 1226      74696F6E 
+ 1227 020a 6E637469 		.ascii	"nctions\000"
+ 1227      6F6E7300 
+ 1228              	.LASF38:
+ 1229 0212 6932635F 		.ascii	"i2c_func_list\000"
+ 1229      66756E63 
+ 1229      5F6C6973 
+ 1229      7400
+ 1230              	.LASF11:
+ 1231 0220 75696E74 		.ascii	"uint16_t\000"
+ 1231      31365F74 
+ 1231      00
+ 1232              	.LASF2:
+ 1233 0229 73686F72 		.ascii	"short int\000"
+ 1233      7420696E 
+ 1233      7400
+ 1234              	.LASF33:
+ 1235 0233 696E7465 		.ascii	"interval\000"
+ 1235      7276616C 
+ 1235      00
+ 1236              	.LASF24:
+ 1237 023c 646F5F72 		.ascii	"do_return\000"
+ 1237      65747572 
+ 1237      6E00
+ 1238              	.LASF37:
+ 1239 0246 74696D65 		.ascii	"timeoutms\000"
+ 1239      6F75746D 
+ 1239      7300
+ 1240              	.LASF28:
+ 1241 0250 646F5F64 		.ascii	"do_delay\000"
+ 1241      656C6179 
+ 1241      00
+ 1242              	.LASF43:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\cchc1OT0.s 			page 27
+
+
+ 1243 0259 646F5F64 		.ascii	"do_demo\000"
+ 1243      656D6F00 
+ 1244              	.LASF15:
+ 1245 0261 63686172 		.ascii	"char\000"
+ 1245      00
+ 1246              	.LASF16:
+ 1247 0266 6C6F6E67 		.ascii	"long double\000"
+ 1247      20646F75 
+ 1247      626C6500 
+ 1248              	.LASF0:
+ 1249 0272 7369676E 		.ascii	"signed char\000"
+ 1249      65642063 
+ 1249      68617200 
+ 1250              	.LASF31:
+ 1251 027e 6B656570 		.ascii	"keep_on\000"
+ 1251      5F6F6E00 
+ 1252              	.LASF29:
+ 1253 0286 646F5F73 		.ascii	"do_status\000"
+ 1253      74617475 
+ 1253      7300
+ 1254              	.LASF19:
+ 1255 0290 6E616D65 		.ascii	"name\000"
+ 1255      00
+ 1256              	.LASF22:
+ 1257 0295 665F6C69 		.ascii	"f_list_type\000"
+ 1257      73745F74 
+ 1257      79706500 
+ 1258              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

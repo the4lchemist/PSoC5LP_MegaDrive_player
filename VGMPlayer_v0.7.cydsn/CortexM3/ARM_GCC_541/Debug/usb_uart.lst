@@ -1,0 +1,1268 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"usb_uart.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.usbuart_init,"ax",%progbits
+  20              		.align	2
+  21              		.global	usbuart_init
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	usbuart_init, %function
+  25              	usbuart_init:
+  26              	.LFB64:
+  27              		.file 1 "usb_uart.c"
+   1:usb_uart.c    **** /*
+   2:usb_uart.c    **** *   This is an implementation of the USBFS CDC - USBUART using 
+   3:usb_uart.c    **** *   endpoint interrupts with no additional self defined clock 
+   4:usb_uart.c    **** *   interrupt to check USBUART buffer. 
+   5:usb_uart.c    **** *   In topdesign, the USBFS has been selected in 
+   6:usb_uart.c    **** *   Descriptor root:Device Descriptor:Device Class as 0x02 CDC 
+   7:usb_uart.c    **** *   In Descriptor root, endpoint buffer management is 
+   8:usb_uart.c    **** *   defined as manual(static allocation), EP 2 direction as IN, 
+   9:usb_uart.c    **** *   but is a send point, EP3 direction as out, but a receive point. All settings
+  10:usb_uart.c    **** *   are default when select Device Class as 0x02 CDC
+  11:usb_uart.c    **** *   THESE IMPLEMENTIONS ARE EXPERIMENTAL, MAY DEPENDED ON THE DEVICE FAMILY
+  12:usb_uart.c    **** */
+  13:usb_uart.c    **** #include "project.h"
+  14:usb_uart.c    **** #include "stdio.h"
+  15:usb_uart.c    **** #include "usb_uart.h"
+  16:usb_uart.c    **** #include "usbuart.h"
+  17:usb_uart.c    **** #include "tty_utils.h"
+  18:usb_uart.c    **** 
+  19:usb_uart.c    **** //uint16_t count;
+  20:usb_uart.c    **** //uint8_t buffer[2][USBUART_BUFFER_SIZE];
+  21:usb_uart.c    **** //uint8_t* bufPtr = buffer[0];
+  22:usb_uart.c    **** volatile uint8_t rx_flag = 0;
+  23:usb_uart.c    **** //uint8_t goFlag = 0;
+  24:usb_uart.c    **** //uint8_t received[1000];
+  25:usb_uart.c    **** //uint8_t *ptr = received;
+  26:usb_uart.c    **** //uint8_t received[64];
+  27:usb_uart.c    **** 
+  28:usb_uart.c    **** char* EP3 = "USBUart EP 3 ISR Exit Callback ";
+  29:usb_uart.c    **** char* EP1 = "USBUart EP 1 ISR Exit Callback ";
+  30:usb_uart.c    **** 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 2
+
+
+  31:usb_uart.c    **** void usbuart_init(void)
+  32:usb_uart.c    **** {
+  28              		.loc 1 32 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  33:usb_uart.c    ****     /* Start USBFS operation with 5-V operation. */
+  34:usb_uart.c    ****     USBUART_Start(USBFS_DEVICE, USBUART_5V_OPERATION);
+  36              		.loc 1 34 0
+  37 0002 0121     		movs	r1, #1
+  38 0004 0020     		movs	r0, #0
+  39 0006 FFF7FEFF 		bl	USBUART_Start
+  40              	.LVL0:
+  35:usb_uart.c    ****     /* Host can send double SET_INTERFACE request. */
+  36:usb_uart.c    ****     if (0u != USBUART_IsConfigurationChanged())
+  41              		.loc 1 36 0
+  42 000a FFF7FEFF 		bl	USBUART_IsConfigurationChanged
+  43              	.LVL1:
+  44 000e 20B1     		cbz	r0, .L1
+  37:usb_uart.c    ****     {
+  38:usb_uart.c    ****         /* Initialize IN endpoints when device is configured. */
+  39:usb_uart.c    ****         if (0u != USBUART_GetConfiguration())
+  45              		.loc 1 39 0
+  46 0010 FFF7FEFF 		bl	USBUART_GetConfiguration
+  47              	.LVL2:
+  48 0014 08B1     		cbz	r0, .L1
+  40:usb_uart.c    ****         {
+  41:usb_uart.c    ****             /* Enumeration is done, enable OUT endpoint to receive data 
+  42:usb_uart.c    ****              * from host. */
+  43:usb_uart.c    ****             USBUART_CDC_Init();
+  49              		.loc 1 43 0
+  50 0016 FFF7FEFF 		bl	USBUART_CDC_Init
+  51              	.LVL3:
+  52              	.L1:
+  53 001a 08BD     		pop	{r3, pc}
+  54              		.cfi_endproc
+  55              	.LFE64:
+  56              		.size	usbuart_init, .-usbuart_init
+  57              		.section	.text.USBUART_EP_2_ISR_EntryCallback,"ax",%progbits
+  58              		.align	2
+  59              		.global	USBUART_EP_2_ISR_EntryCallback
+  60              		.thumb
+  61              		.thumb_func
+  62              		.type	USBUART_EP_2_ISR_EntryCallback, %function
+  63              	USBUART_EP_2_ISR_EntryCallback:
+  64              	.LFB65:
+  44:usb_uart.c    ****         }
+  45:usb_uart.c    ****     }
+  46:usb_uart.c    **** }
+  47:usb_uart.c    **** /*
+  48:usb_uart.c    **** *   After tryouts of the usbfs endpoints, for CDC, these are the interrupts that were
+  49:usb_uart.c    **** *   enabled by "system" in generated code. And for EP 2 is a sending endpoint, EP 3 is 
+  50:usb_uart.c    **** *   a receiving endpoint.
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 3
+
+
+  51:usb_uart.c    **** */
+  52:usb_uart.c    **** /*
+  53:usb_uart.c    **** *   In cyapicallbacks.h defined enabling of USBUART_EP_2_ISR_EntryCallback,
+  54:usb_uart.c    **** *   this is the call back function
+  55:usb_uart.c    **** */
+  56:usb_uart.c    **** void USBUART_EP_2_ISR_EntryCallback(void)
+  57:usb_uart.c    **** {
+  65              		.loc 1 57 0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69 0000 08B5     		push	{r3, lr}
+  70              		.cfi_def_cfa_offset 8
+  71              		.cfi_offset 3, -8
+  72              		.cfi_offset 14, -4
+  58:usb_uart.c    ****     if (0u != USBUART_IsConfigurationChanged())
+  73              		.loc 1 58 0
+  74 0002 FFF7FEFF 		bl	USBUART_IsConfigurationChanged
+  75              	.LVL4:
+  76 0006 20B1     		cbz	r0, .L4
+  59:usb_uart.c    ****     {
+  60:usb_uart.c    ****         /* Initialize IN endpoints when device is configured. */
+  61:usb_uart.c    ****         if (0u != USBUART_GetConfiguration())
+  77              		.loc 1 61 0
+  78 0008 FFF7FEFF 		bl	USBUART_GetConfiguration
+  79              	.LVL5:
+  80 000c 08B1     		cbz	r0, .L4
+  62:usb_uart.c    ****         {
+  63:usb_uart.c    ****             /* Enumeration is done, enable OUT endpoint to receive data 
+  64:usb_uart.c    ****              * from host. */
+  65:usb_uart.c    ****             USBUART_CDC_Init();
+  81              		.loc 1 65 0
+  82 000e FFF7FEFF 		bl	USBUART_CDC_Init
+  83              	.LVL6:
+  84              	.L4:
+  85 0012 08BD     		pop	{r3, pc}
+  86              		.cfi_endproc
+  87              	.LFE65:
+  88              		.size	USBUART_EP_2_ISR_EntryCallback, .-USBUART_EP_2_ISR_EntryCallback
+  89              		.section	.text.USBUART_EP_3_ISR_ExitCallback,"ax",%progbits
+  90              		.align	2
+  91              		.global	USBUART_EP_3_ISR_ExitCallback
+  92              		.thumb
+  93              		.thumb_func
+  94              		.type	USBUART_EP_3_ISR_ExitCallback, %function
+  95              	USBUART_EP_3_ISR_ExitCallback:
+  96              	.LFB66:
+  66:usb_uart.c    ****         }
+  67:usb_uart.c    ****     }
+  68:usb_uart.c    **** }
+  69:usb_uart.c    **** 
+  70:usb_uart.c    **** /*
+  71:usb_uart.c    **** *   In cyapicallbacks.h defined enabling of USBUART_EP_3_ISR_ExitCallback,
+  72:usb_uart.c    **** *   this is the call back function
+  73:usb_uart.c    **** */
+  74:usb_uart.c    **** void USBUART_EP_3_ISR_ExitCallback(void)
+  75:usb_uart.c    **** {
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 4
+
+
+  97              		.loc 1 75 0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101 0000 08B5     		push	{r3, lr}
+ 102              		.cfi_def_cfa_offset 8
+ 103              		.cfi_offset 3, -8
+ 104              		.cfi_offset 14, -4
+  76:usb_uart.c    ****     /* Service USB CDC when device is configured. */
+  77:usb_uart.c    ****     if (0u != USBUART_GetConfiguration())
+ 105              		.loc 1 77 0
+ 106 0002 FFF7FEFF 		bl	USBUART_GetConfiguration
+ 107              	.LVL7:
+ 108 0006 28B1     		cbz	r0, .L7
+  78:usb_uart.c    ****     {
+  79:usb_uart.c    ****         /* Check for input data from host. */
+  80:usb_uart.c    ****         if (0u != USBUART_DataIsReady())
+ 109              		.loc 1 80 0
+ 110 0008 FFF7FEFF 		bl	USBUART_DataIsReady
+ 111              	.LVL8:
+ 112 000c 10B1     		cbz	r0, .L7
+  81:usb_uart.c    ****         {
+  82:usb_uart.c    ****                 /* Read received data and re-enable OUT endpoint. */
+  83:usb_uart.c    ****                 //count = USBUART_GetAll(bufPtr);
+  84:usb_uart.c    ****                 rx_flag = 1;
+ 113              		.loc 1 84 0
+ 114 000e 0122     		movs	r2, #1
+ 115 0010 014B     		ldr	r3, .L10
+ 116 0012 1A70     		strb	r2, [r3]
+ 117              	.L7:
+ 118 0014 08BD     		pop	{r3, pc}
+ 119              	.L11:
+ 120 0016 00BF     		.align	2
+ 121              	.L10:
+ 122 0018 00000000 		.word	.LANCHOR0
+ 123              		.cfi_endproc
+ 124              	.LFE66:
+ 125              		.size	USBUART_EP_3_ISR_ExitCallback, .-USBUART_EP_3_ISR_ExitCallback
+ 126              		.section	.text.usbuart_putstring,"ax",%progbits
+ 127              		.align	2
+ 128              		.global	usbuart_putstring
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.type	usbuart_putstring, %function
+ 132              	usbuart_putstring:
+ 133              	.LFB67:
+  85:usb_uart.c    ****         }
+  86:usb_uart.c    ****     }
+  87:usb_uart.c    **** }
+  88:usb_uart.c    **** 
+  89:usb_uart.c    **** void usbuart_putstring(char *str)
+  90:usb_uart.c    **** {
+ 134              		.loc 1 90 0
+ 135              		.cfi_startproc
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138              	.LVL9:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 5
+
+
+ 139 0000 10B5     		push	{r4, lr}
+ 140              		.cfi_def_cfa_offset 8
+ 141              		.cfi_offset 4, -8
+ 142              		.cfi_offset 14, -4
+ 143 0002 0446     		mov	r4, r0
+ 144              	.LVL10:
+ 145              	.L13:
+  91:usb_uart.c    ****     /* Wait until component is ready to send data to host. */
+  92:usb_uart.c    ****     while (0u == USBUART_CDCIsReady())
+ 146              		.loc 1 92 0 discriminator 1
+ 147 0004 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 148              	.LVL11:
+ 149 0008 0028     		cmp	r0, #0
+ 150 000a FBD0     		beq	.L13
+  93:usb_uart.c    ****     {
+  94:usb_uart.c    ****     }
+  95:usb_uart.c    ****     USBUART_PutString(str);
+ 151              		.loc 1 95 0
+ 152 000c 2046     		mov	r0, r4
+ 153 000e FFF7FEFF 		bl	USBUART_PutString
+ 154              	.LVL12:
+ 155 0012 10BD     		pop	{r4, pc}
+ 156              		.cfi_endproc
+ 157              	.LFE67:
+ 158              		.size	usbuart_putstring, .-usbuart_putstring
+ 159              		.section	.text.usbuart_puteol,"ax",%progbits
+ 160              		.align	2
+ 161              		.global	usbuart_puteol
+ 162              		.thumb
+ 163              		.thumb_func
+ 164              		.type	usbuart_puteol, %function
+ 165              	usbuart_puteol:
+ 166              	.LFB68:
+  96:usb_uart.c    **** }
+  97:usb_uart.c    **** 
+  98:usb_uart.c    **** void usbuart_puteol(void)
+  99:usb_uart.c    **** {
+ 167              		.loc 1 99 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171 0000 08B5     		push	{r3, lr}
+ 172              		.cfi_def_cfa_offset 8
+ 173              		.cfi_offset 3, -8
+ 174              		.cfi_offset 14, -4
+ 175              	.L16:
+ 100:usb_uart.c    ****     /* Wait until component is ready to send data to host. */
+ 101:usb_uart.c    ****     while (0u == USBUART_CDCIsReady())
+ 176              		.loc 1 101 0 discriminator 1
+ 177 0002 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 178              	.LVL13:
+ 179 0006 0028     		cmp	r0, #0
+ 180 0008 FBD0     		beq	.L16
+ 102:usb_uart.c    ****     {
+ 103:usb_uart.c    ****     }
+ 104:usb_uart.c    ****     USBUART_PutCRLF() ;
+ 181              		.loc 1 104 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 6
+
+
+ 182 000a FFF7FEFF 		bl	USBUART_PutCRLF
+ 183              	.LVL14:
+ 184 000e 08BD     		pop	{r3, pc}
+ 185              		.cfi_endproc
+ 186              	.LFE68:
+ 187              		.size	usbuart_puteol, .-usbuart_puteol
+ 188              		.section	.text.usbuart_putchar,"ax",%progbits
+ 189              		.align	2
+ 190              		.global	usbuart_putchar
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.type	usbuart_putchar, %function
+ 194              	usbuart_putchar:
+ 195              	.LFB69:
+ 105:usb_uart.c    **** }
+ 106:usb_uart.c    **** 
+ 107:usb_uart.c    **** void usbuart_putchar(char c)
+ 108:usb_uart.c    **** {
+ 196              		.loc 1 108 0
+ 197              		.cfi_startproc
+ 198              		@ args = 0, pretend = 0, frame = 0
+ 199              		@ frame_needed = 0, uses_anonymous_args = 0
+ 200              	.LVL15:
+ 201 0000 10B5     		push	{r4, lr}
+ 202              		.cfi_def_cfa_offset 8
+ 203              		.cfi_offset 4, -8
+ 204              		.cfi_offset 14, -4
+ 205 0002 0446     		mov	r4, r0
+ 206              	.LVL16:
+ 207              	.L19:
+ 109:usb_uart.c    ****     /* Wait until component is ready to send data to host. */
+ 110:usb_uart.c    ****     while (0u == USBUART_CDCIsReady())
+ 208              		.loc 1 110 0 discriminator 1
+ 209 0004 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 210              	.LVL17:
+ 211 0008 0028     		cmp	r0, #0
+ 212 000a FBD0     		beq	.L19
+ 111:usb_uart.c    ****     {
+ 112:usb_uart.c    ****     }
+ 113:usb_uart.c    ****     USBUART_PutChar(c);
+ 213              		.loc 1 113 0
+ 214 000c 2046     		mov	r0, r4
+ 215 000e FFF7FEFF 		bl	USBUART_PutChar
+ 216              	.LVL18:
+ 217 0012 10BD     		pop	{r4, pc}
+ 218              		.cfi_endproc
+ 219              	.LFE69:
+ 220              		.size	usbuart_putchar, .-usbuart_putchar
+ 221              		.global	EP1
+ 222              		.global	EP3
+ 223              		.global	rx_flag
+ 224              		.data
+ 225              		.align	2
+ 226              		.type	EP1, %object
+ 227              		.size	EP1, 4
+ 228              	EP1:
+ 229 0000 00000000 		.word	.LC0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 7
+
+
+ 230              		.type	EP3, %object
+ 231              		.size	EP3, 4
+ 232              	EP3:
+ 233 0004 20000000 		.word	.LC1
+ 234              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 235              		.align	2
+ 236              	.LC0:
+ 237 0000 55534255 		.ascii	"USBUart EP 1 ISR Exit Callback \000"
+ 237      61727420 
+ 237      45502031 
+ 237      20495352 
+ 237      20457869 
+ 238              	.LC1:
+ 239 0020 55534255 		.ascii	"USBUart EP 3 ISR Exit Callback \000"
+ 239      61727420 
+ 239      45502033 
+ 239      20495352 
+ 239      20457869 
+ 240              		.bss
+ 241              		.set	.LANCHOR0,. + 0
+ 242              		.type	rx_flag, %object
+ 243              		.size	rx_flag, 1
+ 244              	rx_flag:
+ 245 0000 00       		.space	1
+ 246              		.text
+ 247              	.Letext0:
+ 248              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 249              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 250              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 251              		.file 5 "Generated_Source\\PSoC5/USBUART.h"
+ 252              		.file 6 "Generated_Source\\PSoC5/USBUART_cdc.h"
+ 253              		.section	.debug_info,"",%progbits
+ 254              	.Ldebug_info0:
+ 255 0000 B0020000 		.4byte	0x2b0
+ 256 0004 0400     		.2byte	0x4
+ 257 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 258 000a 04       		.byte	0x4
+ 259 000b 01       		.uleb128 0x1
+ 260 000c 07020000 		.4byte	.LASF35
+ 261 0010 0C       		.byte	0xc
+ 262 0011 EF010000 		.4byte	.LASF36
+ 263 0015 E4000000 		.4byte	.LASF37
+ 264 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 265 001d 00000000 		.4byte	0
+ 266 0021 00000000 		.4byte	.Ldebug_line0
+ 267 0025 02       		.uleb128 0x2
+ 268 0026 01       		.byte	0x1
+ 269 0027 06       		.byte	0x6
+ 270 0028 DC020000 		.4byte	.LASF0
+ 271 002c 03       		.uleb128 0x3
+ 272 002d 00000000 		.4byte	.LASF4
+ 273 0031 02       		.byte	0x2
+ 274 0032 1D       		.byte	0x1d
+ 275 0033 37000000 		.4byte	0x37
+ 276 0037 02       		.uleb128 0x2
+ 277 0038 01       		.byte	0x1
+ 278 0039 08       		.byte	0x8
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 8
+
+
+ 279 003a 9F000000 		.4byte	.LASF1
+ 280 003e 02       		.uleb128 0x2
+ 281 003f 02       		.byte	0x2
+ 282 0040 05       		.byte	0x5
+ 283 0041 40010000 		.4byte	.LASF2
+ 284 0045 02       		.uleb128 0x2
+ 285 0046 02       		.byte	0x2
+ 286 0047 07       		.byte	0x7
+ 287 0048 14000000 		.4byte	.LASF3
+ 288 004c 03       		.uleb128 0x3
+ 289 004d 0A000000 		.4byte	.LASF5
+ 290 0051 02       		.byte	0x2
+ 291 0052 3F       		.byte	0x3f
+ 292 0053 57000000 		.4byte	0x57
+ 293 0057 02       		.uleb128 0x2
+ 294 0058 04       		.byte	0x4
+ 295 0059 05       		.byte	0x5
+ 296 005a A8020000 		.4byte	.LASF6
+ 297 005e 02       		.uleb128 0x2
+ 298 005f 04       		.byte	0x4
+ 299 0060 07       		.byte	0x7
+ 300 0061 B5000000 		.4byte	.LASF7
+ 301 0065 02       		.uleb128 0x2
+ 302 0066 08       		.byte	0x8
+ 303 0067 05       		.byte	0x5
+ 304 0068 DC010000 		.4byte	.LASF8
+ 305 006c 02       		.uleb128 0x2
+ 306 006d 08       		.byte	0x8
+ 307 006e 07       		.byte	0x7
+ 308 006f 86010000 		.4byte	.LASF9
+ 309 0073 04       		.uleb128 0x4
+ 310 0074 04       		.byte	0x4
+ 311 0075 05       		.byte	0x5
+ 312 0076 696E7400 		.ascii	"int\000"
+ 313 007a 02       		.uleb128 0x2
+ 314 007b 04       		.byte	0x4
+ 315 007c 07       		.byte	0x7
+ 316 007d 68010000 		.4byte	.LASF10
+ 317 0081 03       		.uleb128 0x3
+ 318 0082 9D010000 		.4byte	.LASF11
+ 319 0086 03       		.byte	0x3
+ 320 0087 18       		.byte	0x18
+ 321 0088 2C000000 		.4byte	0x2c
+ 322 008c 03       		.uleb128 0x3
+ 323 008d CB010000 		.4byte	.LASF12
+ 324 0091 03       		.byte	0x3
+ 325 0092 2C       		.byte	0x2c
+ 326 0093 4C000000 		.4byte	0x4c
+ 327 0097 02       		.uleb128 0x2
+ 328 0098 04       		.byte	0x4
+ 329 0099 04       		.byte	0x4
+ 330 009a 99000000 		.4byte	.LASF13
+ 331 009e 02       		.uleb128 0x2
+ 332 009f 08       		.byte	0x8
+ 333 00a0 04       		.byte	0x4
+ 334 00a1 39000000 		.4byte	.LASF14
+ 335 00a5 02       		.uleb128 0x2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 9
+
+
+ 336 00a6 01       		.byte	0x1
+ 337 00a7 08       		.byte	0x8
+ 338 00a8 EA010000 		.4byte	.LASF15
+ 339 00ac 02       		.uleb128 0x2
+ 340 00ad 08       		.byte	0x8
+ 341 00ae 04       		.byte	0x4
+ 342 00af B1020000 		.4byte	.LASF16
+ 343 00b3 02       		.uleb128 0x2
+ 344 00b4 04       		.byte	0x4
+ 345 00b5 07       		.byte	0x7
+ 346 00b6 D3010000 		.4byte	.LASF17
+ 347 00ba 05       		.uleb128 0x5
+ 348 00bb 04       		.byte	0x4
+ 349 00bc A5000000 		.4byte	0xa5
+ 350 00c0 06       		.uleb128 0x6
+ 351 00c1 81000000 		.4byte	0x81
+ 352 00c5 07       		.uleb128 0x7
+ 353 00c6 FA010000 		.4byte	.LASF18
+ 354 00ca 01       		.byte	0x1
+ 355 00cb 1F       		.byte	0x1f
+ 356 00cc 00000000 		.4byte	.LFB64
+ 357 00d0 1C000000 		.4byte	.LFE64-.LFB64
+ 358 00d4 01       		.uleb128 0x1
+ 359 00d5 9C       		.byte	0x9c
+ 360 00d6 0E010000 		.4byte	0x10e
+ 361 00da 08       		.uleb128 0x8
+ 362 00db 0A000000 		.4byte	.LVL0
+ 363 00df 4D020000 		.4byte	0x24d
+ 364 00e3 F2000000 		.4byte	0xf2
+ 365 00e7 09       		.uleb128 0x9
+ 366 00e8 01       		.uleb128 0x1
+ 367 00e9 50       		.byte	0x50
+ 368 00ea 01       		.uleb128 0x1
+ 369 00eb 30       		.byte	0x30
+ 370 00ec 09       		.uleb128 0x9
+ 371 00ed 01       		.uleb128 0x1
+ 372 00ee 51       		.byte	0x51
+ 373 00ef 01       		.uleb128 0x1
+ 374 00f0 31       		.byte	0x31
+ 375 00f1 00       		.byte	0
+ 376 00f2 0A       		.uleb128 0xa
+ 377 00f3 0E000000 		.4byte	.LVL1
+ 378 00f7 59020000 		.4byte	0x259
+ 379 00fb 0A       		.uleb128 0xa
+ 380 00fc 14000000 		.4byte	.LVL2
+ 381 0100 65020000 		.4byte	0x265
+ 382 0104 0A       		.uleb128 0xa
+ 383 0105 1A000000 		.4byte	.LVL3
+ 384 0109 71020000 		.4byte	0x271
+ 385 010d 00       		.byte	0
+ 386 010e 07       		.uleb128 0x7
+ 387 010f E8020000 		.4byte	.LASF19
+ 388 0113 01       		.byte	0x1
+ 389 0114 38       		.byte	0x38
+ 390 0115 00000000 		.4byte	.LFB65
+ 391 0119 14000000 		.4byte	.LFE65-.LFB65
+ 392 011d 01       		.uleb128 0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 10
+
+
+ 393 011e 9C       		.byte	0x9c
+ 394 011f 3F010000 		.4byte	0x13f
+ 395 0123 0A       		.uleb128 0xa
+ 396 0124 06000000 		.4byte	.LVL4
+ 397 0128 59020000 		.4byte	0x259
+ 398 012c 0A       		.uleb128 0xa
+ 399 012d 0C000000 		.4byte	.LVL5
+ 400 0131 65020000 		.4byte	0x265
+ 401 0135 0A       		.uleb128 0xa
+ 402 0136 12000000 		.4byte	.LVL6
+ 403 013a 71020000 		.4byte	0x271
+ 404 013e 00       		.byte	0
+ 405 013f 07       		.uleb128 0x7
+ 406 0140 7B000000 		.4byte	.LASF20
+ 407 0144 01       		.byte	0x1
+ 408 0145 4A       		.byte	0x4a
+ 409 0146 00000000 		.4byte	.LFB66
+ 410 014a 1C000000 		.4byte	.LFE66-.LFB66
+ 411 014e 01       		.uleb128 0x1
+ 412 014f 9C       		.byte	0x9c
+ 413 0150 67010000 		.4byte	0x167
+ 414 0154 0A       		.uleb128 0xa
+ 415 0155 06000000 		.4byte	.LVL7
+ 416 0159 65020000 		.4byte	0x265
+ 417 015d 0A       		.uleb128 0xa
+ 418 015e 0C000000 		.4byte	.LVL8
+ 419 0162 7C020000 		.4byte	0x27c
+ 420 0166 00       		.byte	0
+ 421 0167 07       		.uleb128 0x7
+ 422 0168 B9010000 		.4byte	.LASF21
+ 423 016c 01       		.byte	0x1
+ 424 016d 59       		.byte	0x59
+ 425 016e 00000000 		.4byte	.LFB67
+ 426 0172 14000000 		.4byte	.LFE67-.LFB67
+ 427 0176 01       		.uleb128 0x1
+ 428 0177 9C       		.byte	0x9c
+ 429 0178 A5010000 		.4byte	0x1a5
+ 430 017c 0B       		.uleb128 0xb
+ 431 017d 73747200 		.ascii	"str\000"
+ 432 0181 01       		.byte	0x1
+ 433 0182 59       		.byte	0x59
+ 434 0183 BA000000 		.4byte	0xba
+ 435 0187 00000000 		.4byte	.LLST0
+ 436 018b 0A       		.uleb128 0xa
+ 437 018c 08000000 		.4byte	.LVL11
+ 438 0190 87020000 		.4byte	0x287
+ 439 0194 0C       		.uleb128 0xc
+ 440 0195 12000000 		.4byte	.LVL12
+ 441 0199 92020000 		.4byte	0x292
+ 442 019d 09       		.uleb128 0x9
+ 443 019e 01       		.uleb128 0x1
+ 444 019f 50       		.byte	0x50
+ 445 01a0 02       		.uleb128 0x2
+ 446 01a1 74       		.byte	0x74
+ 447 01a2 00       		.sleb128 0
+ 448 01a3 00       		.byte	0
+ 449 01a4 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 11
+
+
+ 450 01a5 07       		.uleb128 0x7
+ 451 01a6 59000000 		.4byte	.LASF22
+ 452 01aa 01       		.byte	0x1
+ 453 01ab 62       		.byte	0x62
+ 454 01ac 00000000 		.4byte	.LFB68
+ 455 01b0 10000000 		.4byte	.LFE68-.LFB68
+ 456 01b4 01       		.uleb128 0x1
+ 457 01b5 9C       		.byte	0x9c
+ 458 01b6 CD010000 		.4byte	0x1cd
+ 459 01ba 0A       		.uleb128 0xa
+ 460 01bb 06000000 		.4byte	.LVL13
+ 461 01bf 87020000 		.4byte	0x287
+ 462 01c3 0A       		.uleb128 0xa
+ 463 01c4 0E000000 		.4byte	.LVL14
+ 464 01c8 9D020000 		.4byte	0x29d
+ 465 01cc 00       		.byte	0
+ 466 01cd 07       		.uleb128 0x7
+ 467 01ce C7000000 		.4byte	.LASF23
+ 468 01d2 01       		.byte	0x1
+ 469 01d3 6B       		.byte	0x6b
+ 470 01d4 00000000 		.4byte	.LFB69
+ 471 01d8 14000000 		.4byte	.LFE69-.LFB69
+ 472 01dc 01       		.uleb128 0x1
+ 473 01dd 9C       		.byte	0x9c
+ 474 01de 09020000 		.4byte	0x209
+ 475 01e2 0B       		.uleb128 0xb
+ 476 01e3 6300     		.ascii	"c\000"
+ 477 01e5 01       		.byte	0x1
+ 478 01e6 6B       		.byte	0x6b
+ 479 01e7 A5000000 		.4byte	0xa5
+ 480 01eb 1E000000 		.4byte	.LLST1
+ 481 01ef 0A       		.uleb128 0xa
+ 482 01f0 08000000 		.4byte	.LVL17
+ 483 01f4 87020000 		.4byte	0x287
+ 484 01f8 0C       		.uleb128 0xc
+ 485 01f9 12000000 		.4byte	.LVL18
+ 486 01fd A8020000 		.4byte	0x2a8
+ 487 0201 09       		.uleb128 0x9
+ 488 0202 01       		.uleb128 0x1
+ 489 0203 50       		.byte	0x50
+ 490 0204 02       		.uleb128 0x2
+ 491 0205 74       		.byte	0x74
+ 492 0206 00       		.sleb128 0
+ 493 0207 00       		.byte	0
+ 494 0208 00       		.byte	0
+ 495 0209 0D       		.uleb128 0xd
+ 496 020a D7000000 		.4byte	.LASF24
+ 497 020e 04       		.byte	0x4
+ 498 020f 1207     		.2byte	0x712
+ 499 0211 15020000 		.4byte	0x215
+ 500 0215 06       		.uleb128 0x6
+ 501 0216 8C000000 		.4byte	0x8c
+ 502 021a 0E       		.uleb128 0xe
+ 503 021b AD000000 		.4byte	.LASF25
+ 504 021f 01       		.byte	0x1
+ 505 0220 16       		.byte	0x16
+ 506 0221 C0000000 		.4byte	0xc0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 12
+
+
+ 507 0225 05       		.uleb128 0x5
+ 508 0226 03       		.byte	0x3
+ 509 0227 00000000 		.4byte	rx_flag
+ 510 022b 0F       		.uleb128 0xf
+ 511 022c 45503300 		.ascii	"EP3\000"
+ 512 0230 01       		.byte	0x1
+ 513 0231 1C       		.byte	0x1c
+ 514 0232 BA000000 		.4byte	0xba
+ 515 0236 05       		.uleb128 0x5
+ 516 0237 03       		.byte	0x3
+ 517 0238 00000000 		.4byte	EP3
+ 518 023c 0F       		.uleb128 0xf
+ 519 023d 45503100 		.ascii	"EP1\000"
+ 520 0241 01       		.byte	0x1
+ 521 0242 1D       		.byte	0x1d
+ 522 0243 BA000000 		.4byte	0xba
+ 523 0247 05       		.uleb128 0x5
+ 524 0248 03       		.byte	0x3
+ 525 0249 00000000 		.4byte	EP1
+ 526 024d 10       		.uleb128 0x10
+ 527 024e 5A010000 		.4byte	.LASF26
+ 528 0252 5A010000 		.4byte	.LASF26
+ 529 0256 05       		.byte	0x5
+ 530 0257 2A01     		.2byte	0x12a
+ 531 0259 10       		.uleb128 0x10
+ 532 025a BD020000 		.4byte	.LASF27
+ 533 025e BD020000 		.4byte	.LASF27
+ 534 0262 05       		.byte	0x5
+ 535 0263 2E01     		.2byte	0x12e
+ 536 0265 10       		.uleb128 0x10
+ 537 0266 40000000 		.4byte	.LASF28
+ 538 026a 40000000 		.4byte	.LASF28
+ 539 026e 05       		.byte	0x5
+ 540 026f 2D01     		.2byte	0x12d
+ 541 0271 11       		.uleb128 0x11
+ 542 0272 75010000 		.4byte	.LASF29
+ 543 0276 75010000 		.4byte	.LASF29
+ 544 027a 06       		.byte	0x6
+ 545 027b 22       		.byte	0x22
+ 546 027c 11       		.uleb128 0x11
+ 547 027d A5010000 		.4byte	.LASF30
+ 548 0281 A5010000 		.4byte	.LASF30
+ 549 0285 06       		.byte	0x6
+ 550 0286 29       		.byte	0x29
+ 551 0287 11       		.uleb128 0x11
+ 552 0288 68000000 		.4byte	.LASF31
+ 553 028c 68000000 		.4byte	.LASF31
+ 554 0290 06       		.byte	0x6
+ 555 0291 28       		.byte	0x28
+ 556 0292 11       		.uleb128 0x11
+ 557 0293 27000000 		.4byte	.LASF32
+ 558 0297 27000000 		.4byte	.LASF32
+ 559 029b 06       		.byte	0x6
+ 560 029c 24       		.byte	0x24
+ 561 029d 11       		.uleb128 0x11
+ 562 029e 30010000 		.4byte	.LASF33
+ 563 02a2 30010000 		.4byte	.LASF33
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 13
+
+
+ 564 02a6 06       		.byte	0x6
+ 565 02a7 26       		.byte	0x26
+ 566 02a8 11       		.uleb128 0x11
+ 567 02a9 4A010000 		.4byte	.LASF34
+ 568 02ad 4A010000 		.4byte	.LASF34
+ 569 02b1 06       		.byte	0x6
+ 570 02b2 25       		.byte	0x25
+ 571 02b3 00       		.byte	0
+ 572              		.section	.debug_abbrev,"",%progbits
+ 573              	.Ldebug_abbrev0:
+ 574 0000 01       		.uleb128 0x1
+ 575 0001 11       		.uleb128 0x11
+ 576 0002 01       		.byte	0x1
+ 577 0003 25       		.uleb128 0x25
+ 578 0004 0E       		.uleb128 0xe
+ 579 0005 13       		.uleb128 0x13
+ 580 0006 0B       		.uleb128 0xb
+ 581 0007 03       		.uleb128 0x3
+ 582 0008 0E       		.uleb128 0xe
+ 583 0009 1B       		.uleb128 0x1b
+ 584 000a 0E       		.uleb128 0xe
+ 585 000b 55       		.uleb128 0x55
+ 586 000c 17       		.uleb128 0x17
+ 587 000d 11       		.uleb128 0x11
+ 588 000e 01       		.uleb128 0x1
+ 589 000f 10       		.uleb128 0x10
+ 590 0010 17       		.uleb128 0x17
+ 591 0011 00       		.byte	0
+ 592 0012 00       		.byte	0
+ 593 0013 02       		.uleb128 0x2
+ 594 0014 24       		.uleb128 0x24
+ 595 0015 00       		.byte	0
+ 596 0016 0B       		.uleb128 0xb
+ 597 0017 0B       		.uleb128 0xb
+ 598 0018 3E       		.uleb128 0x3e
+ 599 0019 0B       		.uleb128 0xb
+ 600 001a 03       		.uleb128 0x3
+ 601 001b 0E       		.uleb128 0xe
+ 602 001c 00       		.byte	0
+ 603 001d 00       		.byte	0
+ 604 001e 03       		.uleb128 0x3
+ 605 001f 16       		.uleb128 0x16
+ 606 0020 00       		.byte	0
+ 607 0021 03       		.uleb128 0x3
+ 608 0022 0E       		.uleb128 0xe
+ 609 0023 3A       		.uleb128 0x3a
+ 610 0024 0B       		.uleb128 0xb
+ 611 0025 3B       		.uleb128 0x3b
+ 612 0026 0B       		.uleb128 0xb
+ 613 0027 49       		.uleb128 0x49
+ 614 0028 13       		.uleb128 0x13
+ 615 0029 00       		.byte	0
+ 616 002a 00       		.byte	0
+ 617 002b 04       		.uleb128 0x4
+ 618 002c 24       		.uleb128 0x24
+ 619 002d 00       		.byte	0
+ 620 002e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 14
+
+
+ 621 002f 0B       		.uleb128 0xb
+ 622 0030 3E       		.uleb128 0x3e
+ 623 0031 0B       		.uleb128 0xb
+ 624 0032 03       		.uleb128 0x3
+ 625 0033 08       		.uleb128 0x8
+ 626 0034 00       		.byte	0
+ 627 0035 00       		.byte	0
+ 628 0036 05       		.uleb128 0x5
+ 629 0037 0F       		.uleb128 0xf
+ 630 0038 00       		.byte	0
+ 631 0039 0B       		.uleb128 0xb
+ 632 003a 0B       		.uleb128 0xb
+ 633 003b 49       		.uleb128 0x49
+ 634 003c 13       		.uleb128 0x13
+ 635 003d 00       		.byte	0
+ 636 003e 00       		.byte	0
+ 637 003f 06       		.uleb128 0x6
+ 638 0040 35       		.uleb128 0x35
+ 639 0041 00       		.byte	0
+ 640 0042 49       		.uleb128 0x49
+ 641 0043 13       		.uleb128 0x13
+ 642 0044 00       		.byte	0
+ 643 0045 00       		.byte	0
+ 644 0046 07       		.uleb128 0x7
+ 645 0047 2E       		.uleb128 0x2e
+ 646 0048 01       		.byte	0x1
+ 647 0049 3F       		.uleb128 0x3f
+ 648 004a 19       		.uleb128 0x19
+ 649 004b 03       		.uleb128 0x3
+ 650 004c 0E       		.uleb128 0xe
+ 651 004d 3A       		.uleb128 0x3a
+ 652 004e 0B       		.uleb128 0xb
+ 653 004f 3B       		.uleb128 0x3b
+ 654 0050 0B       		.uleb128 0xb
+ 655 0051 27       		.uleb128 0x27
+ 656 0052 19       		.uleb128 0x19
+ 657 0053 11       		.uleb128 0x11
+ 658 0054 01       		.uleb128 0x1
+ 659 0055 12       		.uleb128 0x12
+ 660 0056 06       		.uleb128 0x6
+ 661 0057 40       		.uleb128 0x40
+ 662 0058 18       		.uleb128 0x18
+ 663 0059 9742     		.uleb128 0x2117
+ 664 005b 19       		.uleb128 0x19
+ 665 005c 01       		.uleb128 0x1
+ 666 005d 13       		.uleb128 0x13
+ 667 005e 00       		.byte	0
+ 668 005f 00       		.byte	0
+ 669 0060 08       		.uleb128 0x8
+ 670 0061 898201   		.uleb128 0x4109
+ 671 0064 01       		.byte	0x1
+ 672 0065 11       		.uleb128 0x11
+ 673 0066 01       		.uleb128 0x1
+ 674 0067 31       		.uleb128 0x31
+ 675 0068 13       		.uleb128 0x13
+ 676 0069 01       		.uleb128 0x1
+ 677 006a 13       		.uleb128 0x13
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 15
+
+
+ 678 006b 00       		.byte	0
+ 679 006c 00       		.byte	0
+ 680 006d 09       		.uleb128 0x9
+ 681 006e 8A8201   		.uleb128 0x410a
+ 682 0071 00       		.byte	0
+ 683 0072 02       		.uleb128 0x2
+ 684 0073 18       		.uleb128 0x18
+ 685 0074 9142     		.uleb128 0x2111
+ 686 0076 18       		.uleb128 0x18
+ 687 0077 00       		.byte	0
+ 688 0078 00       		.byte	0
+ 689 0079 0A       		.uleb128 0xa
+ 690 007a 898201   		.uleb128 0x4109
+ 691 007d 00       		.byte	0
+ 692 007e 11       		.uleb128 0x11
+ 693 007f 01       		.uleb128 0x1
+ 694 0080 31       		.uleb128 0x31
+ 695 0081 13       		.uleb128 0x13
+ 696 0082 00       		.byte	0
+ 697 0083 00       		.byte	0
+ 698 0084 0B       		.uleb128 0xb
+ 699 0085 05       		.uleb128 0x5
+ 700 0086 00       		.byte	0
+ 701 0087 03       		.uleb128 0x3
+ 702 0088 08       		.uleb128 0x8
+ 703 0089 3A       		.uleb128 0x3a
+ 704 008a 0B       		.uleb128 0xb
+ 705 008b 3B       		.uleb128 0x3b
+ 706 008c 0B       		.uleb128 0xb
+ 707 008d 49       		.uleb128 0x49
+ 708 008e 13       		.uleb128 0x13
+ 709 008f 02       		.uleb128 0x2
+ 710 0090 17       		.uleb128 0x17
+ 711 0091 00       		.byte	0
+ 712 0092 00       		.byte	0
+ 713 0093 0C       		.uleb128 0xc
+ 714 0094 898201   		.uleb128 0x4109
+ 715 0097 01       		.byte	0x1
+ 716 0098 11       		.uleb128 0x11
+ 717 0099 01       		.uleb128 0x1
+ 718 009a 31       		.uleb128 0x31
+ 719 009b 13       		.uleb128 0x13
+ 720 009c 00       		.byte	0
+ 721 009d 00       		.byte	0
+ 722 009e 0D       		.uleb128 0xd
+ 723 009f 34       		.uleb128 0x34
+ 724 00a0 00       		.byte	0
+ 725 00a1 03       		.uleb128 0x3
+ 726 00a2 0E       		.uleb128 0xe
+ 727 00a3 3A       		.uleb128 0x3a
+ 728 00a4 0B       		.uleb128 0xb
+ 729 00a5 3B       		.uleb128 0x3b
+ 730 00a6 05       		.uleb128 0x5
+ 731 00a7 49       		.uleb128 0x49
+ 732 00a8 13       		.uleb128 0x13
+ 733 00a9 3F       		.uleb128 0x3f
+ 734 00aa 19       		.uleb128 0x19
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 16
+
+
+ 735 00ab 3C       		.uleb128 0x3c
+ 736 00ac 19       		.uleb128 0x19
+ 737 00ad 00       		.byte	0
+ 738 00ae 00       		.byte	0
+ 739 00af 0E       		.uleb128 0xe
+ 740 00b0 34       		.uleb128 0x34
+ 741 00b1 00       		.byte	0
+ 742 00b2 03       		.uleb128 0x3
+ 743 00b3 0E       		.uleb128 0xe
+ 744 00b4 3A       		.uleb128 0x3a
+ 745 00b5 0B       		.uleb128 0xb
+ 746 00b6 3B       		.uleb128 0x3b
+ 747 00b7 0B       		.uleb128 0xb
+ 748 00b8 49       		.uleb128 0x49
+ 749 00b9 13       		.uleb128 0x13
+ 750 00ba 3F       		.uleb128 0x3f
+ 751 00bb 19       		.uleb128 0x19
+ 752 00bc 02       		.uleb128 0x2
+ 753 00bd 18       		.uleb128 0x18
+ 754 00be 00       		.byte	0
+ 755 00bf 00       		.byte	0
+ 756 00c0 0F       		.uleb128 0xf
+ 757 00c1 34       		.uleb128 0x34
+ 758 00c2 00       		.byte	0
+ 759 00c3 03       		.uleb128 0x3
+ 760 00c4 08       		.uleb128 0x8
+ 761 00c5 3A       		.uleb128 0x3a
+ 762 00c6 0B       		.uleb128 0xb
+ 763 00c7 3B       		.uleb128 0x3b
+ 764 00c8 0B       		.uleb128 0xb
+ 765 00c9 49       		.uleb128 0x49
+ 766 00ca 13       		.uleb128 0x13
+ 767 00cb 3F       		.uleb128 0x3f
+ 768 00cc 19       		.uleb128 0x19
+ 769 00cd 02       		.uleb128 0x2
+ 770 00ce 18       		.uleb128 0x18
+ 771 00cf 00       		.byte	0
+ 772 00d0 00       		.byte	0
+ 773 00d1 10       		.uleb128 0x10
+ 774 00d2 2E       		.uleb128 0x2e
+ 775 00d3 00       		.byte	0
+ 776 00d4 3F       		.uleb128 0x3f
+ 777 00d5 19       		.uleb128 0x19
+ 778 00d6 3C       		.uleb128 0x3c
+ 779 00d7 19       		.uleb128 0x19
+ 780 00d8 6E       		.uleb128 0x6e
+ 781 00d9 0E       		.uleb128 0xe
+ 782 00da 03       		.uleb128 0x3
+ 783 00db 0E       		.uleb128 0xe
+ 784 00dc 3A       		.uleb128 0x3a
+ 785 00dd 0B       		.uleb128 0xb
+ 786 00de 3B       		.uleb128 0x3b
+ 787 00df 05       		.uleb128 0x5
+ 788 00e0 00       		.byte	0
+ 789 00e1 00       		.byte	0
+ 790 00e2 11       		.uleb128 0x11
+ 791 00e3 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 17
+
+
+ 792 00e4 00       		.byte	0
+ 793 00e5 3F       		.uleb128 0x3f
+ 794 00e6 19       		.uleb128 0x19
+ 795 00e7 3C       		.uleb128 0x3c
+ 796 00e8 19       		.uleb128 0x19
+ 797 00e9 6E       		.uleb128 0x6e
+ 798 00ea 0E       		.uleb128 0xe
+ 799 00eb 03       		.uleb128 0x3
+ 800 00ec 0E       		.uleb128 0xe
+ 801 00ed 3A       		.uleb128 0x3a
+ 802 00ee 0B       		.uleb128 0xb
+ 803 00ef 3B       		.uleb128 0x3b
+ 804 00f0 0B       		.uleb128 0xb
+ 805 00f1 00       		.byte	0
+ 806 00f2 00       		.byte	0
+ 807 00f3 00       		.byte	0
+ 808              		.section	.debug_loc,"",%progbits
+ 809              	.Ldebug_loc0:
+ 810              	.LLST0:
+ 811 0000 00000000 		.4byte	.LVL9
+ 812 0004 04000000 		.4byte	.LVL10
+ 813 0008 0100     		.2byte	0x1
+ 814 000a 50       		.byte	0x50
+ 815 000b 04000000 		.4byte	.LVL10
+ 816 000f 14000000 		.4byte	.LFE67
+ 817 0013 0100     		.2byte	0x1
+ 818 0015 54       		.byte	0x54
+ 819 0016 00000000 		.4byte	0
+ 820 001a 00000000 		.4byte	0
+ 821              	.LLST1:
+ 822 001e 00000000 		.4byte	.LVL15
+ 823 0022 04000000 		.4byte	.LVL16
+ 824 0026 0100     		.2byte	0x1
+ 825 0028 50       		.byte	0x50
+ 826 0029 04000000 		.4byte	.LVL16
+ 827 002d 14000000 		.4byte	.LFE69
+ 828 0031 0400     		.2byte	0x4
+ 829 0033 F3       		.byte	0xf3
+ 830 0034 01       		.uleb128 0x1
+ 831 0035 50       		.byte	0x50
+ 832 0036 9F       		.byte	0x9f
+ 833 0037 00000000 		.4byte	0
+ 834 003b 00000000 		.4byte	0
+ 835              		.section	.debug_aranges,"",%progbits
+ 836 0000 44000000 		.4byte	0x44
+ 837 0004 0200     		.2byte	0x2
+ 838 0006 00000000 		.4byte	.Ldebug_info0
+ 839 000a 04       		.byte	0x4
+ 840 000b 00       		.byte	0
+ 841 000c 0000     		.2byte	0
+ 842 000e 0000     		.2byte	0
+ 843 0010 00000000 		.4byte	.LFB64
+ 844 0014 1C000000 		.4byte	.LFE64-.LFB64
+ 845 0018 00000000 		.4byte	.LFB65
+ 846 001c 14000000 		.4byte	.LFE65-.LFB65
+ 847 0020 00000000 		.4byte	.LFB66
+ 848 0024 1C000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 18
+
+
+ 849 0028 00000000 		.4byte	.LFB67
+ 850 002c 14000000 		.4byte	.LFE67-.LFB67
+ 851 0030 00000000 		.4byte	.LFB68
+ 852 0034 10000000 		.4byte	.LFE68-.LFB68
+ 853 0038 00000000 		.4byte	.LFB69
+ 854 003c 14000000 		.4byte	.LFE69-.LFB69
+ 855 0040 00000000 		.4byte	0
+ 856 0044 00000000 		.4byte	0
+ 857              		.section	.debug_ranges,"",%progbits
+ 858              	.Ldebug_ranges0:
+ 859 0000 00000000 		.4byte	.LFB64
+ 860 0004 1C000000 		.4byte	.LFE64
+ 861 0008 00000000 		.4byte	.LFB65
+ 862 000c 14000000 		.4byte	.LFE65
+ 863 0010 00000000 		.4byte	.LFB66
+ 864 0014 1C000000 		.4byte	.LFE66
+ 865 0018 00000000 		.4byte	.LFB67
+ 866 001c 14000000 		.4byte	.LFE67
+ 867 0020 00000000 		.4byte	.LFB68
+ 868 0024 10000000 		.4byte	.LFE68
+ 869 0028 00000000 		.4byte	.LFB69
+ 870 002c 14000000 		.4byte	.LFE69
+ 871 0030 00000000 		.4byte	0
+ 872 0034 00000000 		.4byte	0
+ 873              		.section	.debug_line,"",%progbits
+ 874              	.Ldebug_line0:
+ 875 0000 E1010000 		.section	.debug_str,"MS",%progbits,1
+ 875      02006101 
+ 875      00000201 
+ 875      FB0E0D00 
+ 875      01010101 
+ 876              	.LASF4:
+ 877 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 877      6E74385F 
+ 877      7400
+ 878              	.LASF5:
+ 879 000a 5F5F696E 		.ascii	"__int32_t\000"
+ 879      7433325F 
+ 879      7400
+ 880              	.LASF3:
+ 881 0014 73686F72 		.ascii	"short unsigned int\000"
+ 881      7420756E 
+ 881      7369676E 
+ 881      65642069 
+ 881      6E7400
+ 882              	.LASF32:
+ 883 0027 55534255 		.ascii	"USBUART_PutString\000"
+ 883      4152545F 
+ 883      50757453 
+ 883      7472696E 
+ 883      6700
+ 884              	.LASF14:
+ 885 0039 646F7562 		.ascii	"double\000"
+ 885      6C6500
+ 886              	.LASF28:
+ 887 0040 55534255 		.ascii	"USBUART_GetConfiguration\000"
+ 887      4152545F 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 19
+
+
+ 887      47657443 
+ 887      6F6E6669 
+ 887      67757261 
+ 888              	.LASF22:
+ 889 0059 75736275 		.ascii	"usbuart_puteol\000"
+ 889      6172745F 
+ 889      70757465 
+ 889      6F6C00
+ 890              	.LASF31:
+ 891 0068 55534255 		.ascii	"USBUART_CDCIsReady\000"
+ 891      4152545F 
+ 891      43444349 
+ 891      73526561 
+ 891      647900
+ 892              	.LASF20:
+ 893 007b 55534255 		.ascii	"USBUART_EP_3_ISR_ExitCallback\000"
+ 893      4152545F 
+ 893      45505F33 
+ 893      5F495352 
+ 893      5F457869 
+ 894              	.LASF13:
+ 895 0099 666C6F61 		.ascii	"float\000"
+ 895      7400
+ 896              	.LASF1:
+ 897 009f 756E7369 		.ascii	"unsigned char\000"
+ 897      676E6564 
+ 897      20636861 
+ 897      7200
+ 898              	.LASF25:
+ 899 00ad 72785F66 		.ascii	"rx_flag\000"
+ 899      6C616700 
+ 900              	.LASF7:
+ 901 00b5 6C6F6E67 		.ascii	"long unsigned int\000"
+ 901      20756E73 
+ 901      69676E65 
+ 901      6420696E 
+ 901      7400
+ 902              	.LASF23:
+ 903 00c7 75736275 		.ascii	"usbuart_putchar\000"
+ 903      6172745F 
+ 903      70757463 
+ 903      68617200 
+ 904              	.LASF24:
+ 905 00d7 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 905      52784275 
+ 905      66666572 
+ 905      00
+ 906              	.LASF37:
+ 907 00e4 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ 907      73657273 
+ 907      5C696E67 
+ 907      616E5C44 
+ 907      6F63756D 
+ 908 0112 655F706C 		.ascii	"e_player\\VGMPlayer_v0.7.cydsn\000"
+ 908      61796572 
+ 908      5C56474D 
+ 908      506C6179 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 20
+
+
+ 908      65725F76 
+ 909              	.LASF33:
+ 910 0130 55534255 		.ascii	"USBUART_PutCRLF\000"
+ 910      4152545F 
+ 910      50757443 
+ 910      524C4600 
+ 911              	.LASF2:
+ 912 0140 73686F72 		.ascii	"short int\000"
+ 912      7420696E 
+ 912      7400
+ 913              	.LASF34:
+ 914 014a 55534255 		.ascii	"USBUART_PutChar\000"
+ 914      4152545F 
+ 914      50757443 
+ 914      68617200 
+ 915              	.LASF26:
+ 916 015a 55534255 		.ascii	"USBUART_Start\000"
+ 916      4152545F 
+ 916      53746172 
+ 916      7400
+ 917              	.LASF10:
+ 918 0168 756E7369 		.ascii	"unsigned int\000"
+ 918      676E6564 
+ 918      20696E74 
+ 918      00
+ 919              	.LASF29:
+ 920 0175 55534255 		.ascii	"USBUART_CDC_Init\000"
+ 920      4152545F 
+ 920      4344435F 
+ 920      496E6974 
+ 920      00
+ 921              	.LASF9:
+ 922 0186 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 922      206C6F6E 
+ 922      6720756E 
+ 922      7369676E 
+ 922      65642069 
+ 923              	.LASF11:
+ 924 019d 75696E74 		.ascii	"uint8_t\000"
+ 924      385F7400 
+ 925              	.LASF30:
+ 926 01a5 55534255 		.ascii	"USBUART_DataIsReady\000"
+ 926      4152545F 
+ 926      44617461 
+ 926      49735265 
+ 926      61647900 
+ 927              	.LASF21:
+ 928 01b9 75736275 		.ascii	"usbuart_putstring\000"
+ 928      6172745F 
+ 928      70757473 
+ 928      7472696E 
+ 928      6700
+ 929              	.LASF12:
+ 930 01cb 696E7433 		.ascii	"int32_t\000"
+ 930      325F7400 
+ 931              	.LASF17:
+ 932 01d3 73697A65 		.ascii	"sizetype\000"
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 21
+
+
+ 932      74797065 
+ 932      00
+ 933              	.LASF8:
+ 934 01dc 6C6F6E67 		.ascii	"long long int\000"
+ 934      206C6F6E 
+ 934      6720696E 
+ 934      7400
+ 935              	.LASF15:
+ 936 01ea 63686172 		.ascii	"char\000"
+ 936      00
+ 937              	.LASF36:
+ 938 01ef 7573625F 		.ascii	"usb_uart.c\000"
+ 938      75617274 
+ 938      2E6300
+ 939              	.LASF18:
+ 940 01fa 75736275 		.ascii	"usbuart_init\000"
+ 940      6172745F 
+ 940      696E6974 
+ 940      00
+ 941              	.LASF35:
+ 942 0207 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 942      43313120 
+ 942      352E342E 
+ 942      31203230 
+ 942      31363036 
+ 943 023a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 943      20726576 
+ 943      6973696F 
+ 943      6E203233 
+ 943      37373135 
+ 944 026d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects -finline-fu"
+ 944      66756E63 
+ 944      74696F6E 
+ 944      2D736563 
+ 944      74696F6E 
+ 945 02a0 6E637469 		.ascii	"nctions\000"
+ 945      6F6E7300 
+ 946              	.LASF6:
+ 947 02a8 6C6F6E67 		.ascii	"long int\000"
+ 947      20696E74 
+ 947      00
+ 948              	.LASF16:
+ 949 02b1 6C6F6E67 		.ascii	"long double\000"
+ 949      20646F75 
+ 949      626C6500 
+ 950              	.LASF27:
+ 951 02bd 55534255 		.ascii	"USBUART_IsConfigurationChanged\000"
+ 951      4152545F 
+ 951      4973436F 
+ 951      6E666967 
+ 951      75726174 
+ 952              	.LASF0:
+ 953 02dc 7369676E 		.ascii	"signed char\000"
+ 953      65642063 
+ 953      68617200 
+ 954              	.LASF19:
+ 955 02e8 55534255 		.ascii	"USBUART_EP_2_ISR_EntryCallback\000"
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccZDnRts.s 			page 22
+
+
+ 955      4152545F 
+ 955      45505F32 
+ 955      5F495352 
+ 955      5F456E74 
+ 956              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

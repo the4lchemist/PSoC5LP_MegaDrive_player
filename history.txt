@@ -1,0 +1,11 @@
+- SoundTest         :   first test with YM2612
+- VGMPlayer_v0.1    :   playback from flash memory (revenge of shinobi VGM)
+- VGMPlayer_v0.2    :   playback from flash memory (same of v0.1 with 3 VGMs)
+- VGMPlayer_v0.3    :   direct playback from USBFS with IRQ and manual DMA
+- VGMPlayer_v0.4    :   playback from USBFS with command buffering and manual DMA (NOT TESTED)
+- VGMPlayer_v0.5    :   direct playback from USBFS with 44100 tick ISR (EXPERIMENTAL ONLY)
+- VGMPlayer_v0.6    :   playback from USBFS with 64-bytes dual-buffering algorithm, 44100 tick ISR, and manual DMA
+- VGMPlayer_v0.7    :   playback from USBFS with 64-bytes N-buffering algorithm, 44100 tick ISR, and manual DMA
+
+
+

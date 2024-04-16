@@ -1,0 +1,9 @@
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\SoundTest.cydsn\SoundTest.cyprj|fe7929b0-a410-4a00-a070-c2ea9eec7aaf
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|8fda0f2a-bdd2-48cf-953c-35f1c44639c9
+C:\Users\ingan\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|2f17776d-096a-4aeb-abc4-ba42c4743181
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|f3a50903-a615-491e-821e-d32d47e7ec38
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|6e5da996-d150-41e7-aec8-46f488728e98
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|ce84940b-1f4c-4384-be5d-0dd57eaf0efe
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.1.cydsn\VGMPlayer_v0.1.cyprj|6599051f-9503-4625-ac16-3d5ecbf0d3bd
+C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\Timer_ISR_example.cydsn\Timer_ISR_example.cyprj|371e2b02-f90e-431b-9015-c2ebe870f79e
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|55bd3b4b-524e-4f9c-972e-190c0f3281b4

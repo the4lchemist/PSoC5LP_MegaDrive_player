@@ -1,0 +1,2782 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.sampleRateIRQ,"ax",%progbits
+  20              		.align	2
+  21              		.global	sampleRateIRQ
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	sampleRateIRQ, %function
+  25              	sampleRateIRQ:
+  26              	.LFB64:
+  27              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** #include "project.h"
+  13:main.c        **** #include "stdio.h"
+  14:main.c        **** #include "tty_utils.h"
+  15:main.c        **** #include "utils.h"
+  16:main.c        **** #include "usb_uart.h"
+  17:main.c        **** 
+  18:main.c        **** #define INIT_BUF        8
+  19:main.c        **** #define GET16(a,b)      (a + (b << 8));
+  20:main.c        **** 
+  21:main.c        **** extern uint8_t rx_flag;
+  22:main.c        **** extern uint16_t count;
+  23:main.c        **** extern uint8_t buffer[USBUART_BUFFER_SIZE][BUF_LEN];
+  24:main.c        **** //extern uint8_t buffer;
+  25:main.c        **** extern uint8_t *pitem;
+  26:main.c        **** extern uint8_t *pplay;
+  27:main.c        **** 
+  28:main.c        **** uint8_t isrFlag = 0;
+  29:main.c        **** 
+  30:main.c        **** void ym2612_write_step (uint8_t data);
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 2
+
+
+  31:main.c        **** void ym2612_write(uint8_t reg, uint8_t data, uint8_t port);
+  32:main.c        **** void sn76489_write(uint8_t data);
+  33:main.c        **** void ym2612_reset();
+  34:main.c        **** void ym2612_init (void);
+  35:main.c        **** void SilenceAllChannels();
+  36:main.c        **** void init_hardware(void);
+  37:main.c        **** 
+  38:main.c        **** CY_ISR(sampleRateIRQ){
+  28              		.loc 1 38 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  39:main.c        ****     isrFlag = 1;
+  33              		.loc 1 39 0
+  34 0000 0122     		movs	r2, #1
+  35 0002 014B     		ldr	r3, .L2
+  36 0004 1A70     		strb	r2, [r3]
+  37 0006 7047     		bx	lr
+  38              	.L3:
+  39              		.align	2
+  40              	.L2:
+  41 0008 00000000 		.word	.LANCHOR0
+  42              		.cfi_endproc
+  43              	.LFE64:
+  44              		.size	sampleRateIRQ, .-sampleRateIRQ
+  45              		.section	.text.ym2612_write_step,"ax",%progbits
+  46              		.align	2
+  47              		.global	ym2612_write_step
+  48              		.thumb
+  49              		.thumb_func
+  50              		.type	ym2612_write_step, %function
+  51              	ym2612_write_step:
+  52              	.LFB67:
+  40:main.c        **** }
+  41:main.c        **** 
+  42:main.c        **** int main(void) {
+  43:main.c        ****     
+  44:main.c        ****     uint32_t test = 0;
+  45:main.c        ****     uint16_t waitData = 0;
+  46:main.c        ****     //uint8_t noWait = 0;
+  47:main.c        ****     uint8_t start_flag = 0;
+  48:main.c        **** 
+  49:main.c        ****     init_hardware();
+  50:main.c        ****     isr_1_StartEx(sampleRateIRQ);
+  51:main.c        ****     while (0u == USBUART_CDCIsReady());
+  52:main.c        ****     USBUART_PutString("\0");
+  53:main.c        **** 
+  54:main.c        ****     for(;;)
+  55:main.c        ****     {
+  56:main.c        ****         // initial buffering of INIT_BUF samples
+  57:main.c        ****         if (pitem > pplay + INIT_BUF)
+  58:main.c        ****         {
+  59:main.c        ****             start_flag = 1;
+  60:main.c        ****         }
+  61:main.c        ****         
+  62:main.c        ****         if ((start_flag == 1) && (isrFlag == 1))
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 3
+
+
+  63:main.c        ****         {     
+  64:main.c        ****             if (waitData == 0)
+  65:main.c        ****             {
+  66:main.c        ****                         
+  67:main.c        ****                 switch (*pplay) {
+  68:main.c        ****                     
+  69:main.c        ****                     case 0x50: // 0x50 	dd 	PSG (SN76489/SN76496) write value dd
+  70:main.c        ****                         
+  71:main.c        ****                         sn76489_write(*(pplay + 1));
+  72:main.c        ****                         break;
+  73:main.c        ****                     
+  74:main.c        ****                     case 0x52: // 0x52 	aa dd  YM2612 port 0, write value dd to register aa
+  75:main.c        ****                     case 0x53: // 0x53 	aa dd  YM2612 port 1, write value dd to register aa
+  76:main.c        ****                         
+  77:main.c        ****                         ym2612_write(*(pplay + 1), *(pplay + 2), *pplay & 0x01);
+  78:main.c        ****                         break;
+  79:main.c        ****                     
+  80:main.c        ****                     case 0x61: // 0x61 	nn nn 	Wait n samples, n can range from 0 to 65535 (approx 
+  81:main.c        ****                         waitData = GET16(*(pplay + 1), *(pplay + 2));
+  82:main.c        ****                         if (waitData == 0)
+  83:main.c        ****                         {
+  84:main.c        ****                             //noWait = 1;
+  85:main.c        ****                             continue;
+  86:main.c        ****                         }
+  87:main.c        ****                         //else
+  88:main.c        ****                         //{
+  89:main.c        ****                         //    waitData--;
+  90:main.c        ****                         //}
+  91:main.c        ****                         break;
+  92:main.c        ****                     
+  93:main.c        ****                     case 0x62: // wait 735 samples (60th of a second), a shortcut for 0x61 0xdf 0x0
+  94:main.c        ****                         waitData = 735 - 1;
+  95:main.c        ****                         break;
+  96:main.c        ****                     
+  97:main.c        ****                     case 0x63: // wait 882 samples (50th of a second), a shortcut for 0x61 0x72 0x0
+  98:main.c        ****                         waitData = 882 - 1;
+  99:main.c        ****                         break;
+ 100:main.c        ****                         
+ 101:main.c        ****                     case  0x70:
+ 102:main.c        ****                     case  0x71:
+ 103:main.c        ****                     case  0x72:
+ 104:main.c        ****                     case  0x73:
+ 105:main.c        ****                     case  0x74:
+ 106:main.c        ****                     case  0x75:
+ 107:main.c        ****                     case  0x76:
+ 108:main.c        ****                     case  0x77:
+ 109:main.c        ****                     case  0x78:
+ 110:main.c        ****                     case  0x79:
+ 111:main.c        ****                     case  0x7A:
+ 112:main.c        ****                     case  0x7B:   
+ 113:main.c        ****                     case  0x7C:
+ 114:main.c        ****                     case  0x7D:
+ 115:main.c        ****                     case  0x7E:
+ 116:main.c        ****                     case  0x7F: // 0x7n 	wait n+1 samples, n can range from 0 to 15.               
+ 117:main.c        ****                         waitData = *pplay & 0x0f; // this is actually (n+1)
+ 118:main.c        ****                         break;
+ 119:main.c        ****                     
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 4
+
+
+ 120:main.c        ****                     case 0x80:
+ 121:main.c        ****                     case 0x81:
+ 122:main.c        ****                     case 0x82:
+ 123:main.c        ****                     case 0x83:
+ 124:main.c        ****                     case 0x84:
+ 125:main.c        ****                     case 0x85:
+ 126:main.c        ****                     case 0x86:
+ 127:main.c        ****                     case 0x87:
+ 128:main.c        ****                     case 0x88:
+ 129:main.c        ****                     case 0x89:
+ 130:main.c        ****                     case 0x8a:
+ 131:main.c        ****                     case 0x8b:
+ 132:main.c        ****                     case 0x8c:
+ 133:main.c        ****                     case 0x8d:
+ 134:main.c        ****                     case 0x8e:
+ 135:main.c        ****                     case 0x8f: // 0x8n      YM2612 port 0 address 2A write from the data bank, then
+ 136:main.c        **** 
+ 137:main.c        ****                         ym2612_write(0x2a, *(pplay + 1), 0x00);
+ 138:main.c        ****                         waitData = (*pplay & 0x0f);
+ 139:main.c        ****                         if (waitData == 0)
+ 140:main.c        ****                         {
+ 141:main.c        ****                             //noWait = 1; // if 0x80, don't wait for the next ISR (repeat parser lo
+ 142:main.c        ****                             continue;
+ 143:main.c        ****                         }
+ 144:main.c        ****                         //else
+ 145:main.c        ****                         //{
+ 146:main.c        ****                         //    waitData--; // else wait n samples
+ 147:main.c        ****                         //}
+ 148:main.c        ****                         break;
+ 149:main.c        ****                     
+ 150:main.c        ****                     case 0x66: // EOF
+ 151:main.c        ****                         
+ 152:main.c        ****                         start_flag = 0;
+ 153:main.c        ****                         break;
+ 154:main.c        ****                         
+ 155:main.c        ****                     default: break;
+ 156:main.c        ****                 }
+ 157:main.c        ****                 
+ 158:main.c        ****                 // increment circular buffer ptr
+ 159:main.c        ****                 pplay = (pitem > pplay) ? &buffer[0][0] + (((uint8_t)pplay + USBUART_BUFFER_SIZE) %
+ 160:main.c        ****             }
+ 161:main.c        ****             else
+ 162:main.c        ****             {
+ 163:main.c        ****                 waitData--;
+ 164:main.c        ****             }
+ 165:main.c        ****             
+ 166:main.c        ****             // check for noWait flag
+ 167:main.c        ****             //if (noWait != 1)
+ 168:main.c        ****             //{
+ 169:main.c        ****                 isrFlag = 0;
+ 170:main.c        ****                 pplay = (uint8_t *) (((int)pplay + 1) % BUF_LEN);
+ 171:main.c        ****                 test += count;
+ 172:main.c        ****             //}
+ 173:main.c        ****             //else
+ 174:main.c        ****             //{
+ 175:main.c        ****             //    noWait = 0;
+ 176:main.c        ****             //}
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 5
+
+
+ 177:main.c        ****             
+ 178:main.c        ****         }
+ 179:main.c        ****         
+ 180:main.c        ****         // check for incoming data from USB CDC
+ 181:main.c        ****         if (rx_flag == 1)
+ 182:main.c        ****         {
+ 183:main.c        ****             count = USBUART_GetAll(pitem);
+ 184:main.c        ****             pitem = (pitem >= pplay) ? (uint8_t *) &buffer[0][0] + (((uint8_t) pitem + USBUART_BUFF
+ 185:main.c        ****             rx_flag = 0;
+ 186:main.c        ****         }
+ 187:main.c        ****     }  
+ 188:main.c        **** }
+ 189:main.c        **** 
+ 190:main.c        **** void init_hardware(void) 
+ 191:main.c        **** {
+ 192:main.c        ****     SilenceAllChannels();
+ 193:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 194:main.c        **** 
+ 195:main.c        ****     tty_init() ;
+ 196:main.c        **** }
+ 197:main.c        **** 
+ 198:main.c        **** void ym2612_write_step (uint8_t data)
+ 199:main.c        **** {
+  53              		.loc 1 199 0
+  54              		.cfi_startproc
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+  57              	.LVL0:
+  58 0000 10B5     		push	{r4, lr}
+  59              		.cfi_def_cfa_offset 8
+  60              		.cfi_offset 4, -8
+  61              		.cfi_offset 14, -4
+  62 0002 0446     		mov	r4, r0
+ 200:main.c        ****   // CS Pin low
+ 201:main.c        ****   YM_CS_Write(0);
+  63              		.loc 1 201 0
+  64 0004 0020     		movs	r0, #0
+  65              	.LVL1:
+  66 0006 FFF7FEFF 		bl	YM_CS_Write
+  67              	.LVL2:
+ 202:main.c        ****   // DATA to bus
+ 203:main.c        ****   YM_Data_Write(data);
+  68              		.loc 1 203 0
+  69 000a 2046     		mov	r0, r4
+  70 000c FFF7FEFF 		bl	YM_Data_Write
+  71              	.LVL3:
+ 204:main.c        ****   // WR data
+ 205:main.c        ****   YM_WR_Write(0);
+  72              		.loc 1 205 0
+  73 0010 0020     		movs	r0, #0
+  74 0012 FFF7FEFF 		bl	YM_WR_Write
+  75              	.LVL4:
+ 206:main.c        ****   YM_RD_Write(1);
+  76              		.loc 1 206 0
+  77 0016 0120     		movs	r0, #1
+  78 0018 FFF7FEFF 		bl	YM_RD_Write
+  79              	.LVL5:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 6
+
+
+ 207:main.c        ****   //CyDelayCycles(1);
+ 208:main.c        ****   CyDelayUs(3);
+  80              		.loc 1 208 0
+  81 001c 0320     		movs	r0, #3
+  82 001e FFF7FEFF 		bl	CyDelayUs
+  83              	.LVL6:
+ 209:main.c        ****   YM_WR_Write(1);
+  84              		.loc 1 209 0
+  85 0022 0120     		movs	r0, #1
+  86 0024 FFF7FEFF 		bl	YM_WR_Write
+  87              	.LVL7:
+ 210:main.c        ****   YM_RD_Write(0);
+  88              		.loc 1 210 0
+  89 0028 0020     		movs	r0, #0
+  90 002a FFF7FEFF 		bl	YM_RD_Write
+  91              	.LVL8:
+ 211:main.c        ****   // CS Pin high
+ 212:main.c        ****   YM_CS_Write(1);
+  92              		.loc 1 212 0
+  93 002e 0120     		movs	r0, #1
+  94 0030 FFF7FEFF 		bl	YM_CS_Write
+  95              	.LVL9:
+ 213:main.c        ****   CyDelayUs(3);
+  96              		.loc 1 213 0
+  97 0034 0320     		movs	r0, #3
+  98 0036 FFF7FEFF 		bl	CyDelayUs
+  99              	.LVL10:
+ 100 003a 10BD     		pop	{r4, pc}
+ 101              		.cfi_endproc
+ 102              	.LFE67:
+ 103              		.size	ym2612_write_step, .-ym2612_write_step
+ 104              		.section	.text.ym2612_write,"ax",%progbits
+ 105              		.align	2
+ 106              		.global	ym2612_write
+ 107              		.thumb
+ 108              		.thumb_func
+ 109              		.type	ym2612_write, %function
+ 110              	ym2612_write:
+ 111              	.LFB68:
+ 214:main.c        ****   //CyDelayCycles(1);
+ 215:main.c        **** }
+ 216:main.c        **** 
+ 217:main.c        **** void ym2612_write(uint8_t reg, uint8_t data, uint8_t port)
+ 218:main.c        **** {
+ 112              		.loc 1 218 0
+ 113              		.cfi_startproc
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116              	.LVL11:
+ 117 0000 38B5     		push	{r3, r4, r5, lr}
+ 118              		.cfi_def_cfa_offset 16
+ 119              		.cfi_offset 3, -16
+ 120              		.cfi_offset 4, -12
+ 121              		.cfi_offset 5, -8
+ 122              		.cfi_offset 14, -4
+ 123 0002 0546     		mov	r5, r0
+ 124 0004 0C46     		mov	r4, r1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 7
+
+
+ 219:main.c        ****   // A1 selects part0 (channels 1-3) or part1 (channels 1-6)
+ 220:main.c        ****   YM_A1_Write(port);
+ 125              		.loc 1 220 0
+ 126 0006 1046     		mov	r0, r2
+ 127              	.LVL12:
+ 128 0008 FFF7FEFF 		bl	YM_A1_Write
+ 129              	.LVL13:
+ 221:main.c        ****   YM_A0_Write(0);
+ 130              		.loc 1 221 0
+ 131 000c 0020     		movs	r0, #0
+ 132 000e FFF7FEFF 		bl	YM_A0_Write
+ 133              	.LVL14:
+ 222:main.c        ****   // write register selection
+ 223:main.c        ****   ym2612_write_step(reg);
+ 134              		.loc 1 223 0
+ 135 0012 2846     		mov	r0, r5
+ 136 0014 FFF7FEFF 		bl	ym2612_write_step
+ 137              	.LVL15:
+ 224:main.c        ****   // data part 0 (channels 1-3)
+ 225:main.c        ****   // A1 low, A0 high
+ 226:main.c        ****   YM_A0_Write(1);
+ 138              		.loc 1 226 0
+ 139 0018 0120     		movs	r0, #1
+ 140 001a FFF7FEFF 		bl	YM_A0_Write
+ 141              	.LVL16:
+ 227:main.c        ****   ym2612_write_step(data);
+ 142              		.loc 1 227 0
+ 143 001e 2046     		mov	r0, r4
+ 144 0020 FFF7FEFF 		bl	ym2612_write_step
+ 145              	.LVL17:
+ 146 0024 38BD     		pop	{r3, r4, r5, pc}
+ 147              		.cfi_endproc
+ 148              	.LFE68:
+ 149              		.size	ym2612_write, .-ym2612_write
+ 150 0026 00BF     		.section	.text.sn76489_write,"ax",%progbits
+ 151              		.align	2
+ 152              		.global	sn76489_write
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.type	sn76489_write, %function
+ 156              	sn76489_write:
+ 157              	.LFB69:
+ 228:main.c        **** }
+ 229:main.c        **** 
+ 230:main.c        **** void sn76489_write(uint8_t data)
+ 231:main.c        **** {
+ 158              		.loc 1 231 0
+ 159              		.cfi_startproc
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162              	.LVL18:
+ 163 0000 10B5     		push	{r4, lr}
+ 164              		.cfi_def_cfa_offset 8
+ 165              		.cfi_offset 4, -8
+ 166              		.cfi_offset 14, -4
+ 167 0002 0446     		mov	r4, r0
+ 232:main.c        ****   //data = flip_byte(data);  
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 8
+
+
+ 233:main.c        ****   SN_WE_Write(1);
+ 168              		.loc 1 233 0
+ 169 0004 0120     		movs	r0, #1
+ 170              	.LVL19:
+ 171 0006 FFF7FEFF 		bl	SN_WE_Write
+ 172              	.LVL20:
+ 234:main.c        ****   YM_Data_Write(data);
+ 173              		.loc 1 234 0
+ 174 000a 2046     		mov	r0, r4
+ 175 000c FFF7FEFF 		bl	YM_Data_Write
+ 176              	.LVL21:
+ 235:main.c        ****   SN_WE_Write(0);
+ 177              		.loc 1 235 0
+ 178 0010 0020     		movs	r0, #0
+ 179 0012 FFF7FEFF 		bl	SN_WE_Write
+ 180              	.LVL22:
+ 236:main.c        ****   //CyDelayCycles(1);
+ 237:main.c        ****   CyDelayUs(10);
+ 181              		.loc 1 237 0
+ 182 0016 0A20     		movs	r0, #10
+ 183 0018 FFF7FEFF 		bl	CyDelayUs
+ 184              	.LVL23:
+ 238:main.c        ****   SN_WE_Write(1);
+ 185              		.loc 1 238 0
+ 186 001c 0120     		movs	r0, #1
+ 187 001e FFF7FEFF 		bl	SN_WE_Write
+ 188              	.LVL24:
+ 189 0022 10BD     		pop	{r4, pc}
+ 190              		.cfi_endproc
+ 191              	.LFE69:
+ 192              		.size	sn76489_write, .-sn76489_write
+ 193              		.section	.text.ym2612_reset,"ax",%progbits
+ 194              		.align	2
+ 195              		.global	ym2612_reset
+ 196              		.thumb
+ 197              		.thumb_func
+ 198              		.type	ym2612_reset, %function
+ 199              	ym2612_reset:
+ 200              	.LFB70:
+ 239:main.c        **** }
+ 240:main.c        **** 
+ 241:main.c        **** void ym2612_reset()
+ 242:main.c        **** {
+ 201              		.loc 1 242 0
+ 202              		.cfi_startproc
+ 203              		@ args = 0, pretend = 0, frame = 0
+ 204              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205 0000 08B5     		push	{r3, lr}
+ 206              		.cfi_def_cfa_offset 8
+ 207              		.cfi_offset 3, -8
+ 208              		.cfi_offset 14, -4
+ 243:main.c        ****   //YM_IC_Write(0);
+ 244:main.c        ****   //CyDelayUs(1);
+ 245:main.c        ****   //YM_IC_Write(1);
+ 246:main.c        ****   YM_IC_Write(0);
+ 209              		.loc 1 246 0
+ 210 0002 0020     		movs	r0, #0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 9
+
+
+ 211 0004 FFF7FEFF 		bl	YM_IC_Write
+ 212              	.LVL25:
+ 247:main.c        ****   CyDelay(10);
+ 213              		.loc 1 247 0
+ 214 0008 0A20     		movs	r0, #10
+ 215 000a FFF7FEFF 		bl	CyDelay
+ 216              	.LVL26:
+ 248:main.c        ****   YM_IC_Write(1);
+ 217              		.loc 1 248 0
+ 218 000e 0120     		movs	r0, #1
+ 219 0010 FFF7FEFF 		bl	YM_IC_Write
+ 220              	.LVL27:
+ 249:main.c        ****   CyDelay(10);  
+ 221              		.loc 1 249 0
+ 222 0014 0A20     		movs	r0, #10
+ 223 0016 FFF7FEFF 		bl	CyDelay
+ 224              	.LVL28:
+ 225 001a 08BD     		pop	{r3, pc}
+ 226              		.cfi_endproc
+ 227              	.LFE70:
+ 228              		.size	ym2612_reset, .-ym2612_reset
+ 229              		.section	.text.ym2612_init,"ax",%progbits
+ 230              		.align	2
+ 231              		.global	ym2612_init
+ 232              		.thumb
+ 233              		.thumb_func
+ 234              		.type	ym2612_init, %function
+ 235              	ym2612_init:
+ 236              	.LFB71:
+ 250:main.c        ****   // Silence channel-0 to channel-6
+ 251:main.c        ****   //for (uint8_t ch = 0; ch <= 6; ++ch)
+ 252:main.c        ****   //  ym2612_write(0x28, ch, 0);
+ 253:main.c        **** }
+ 254:main.c        **** 
+ 255:main.c        **** void ym2612_init (void)
+ 256:main.c        **** {
+ 237              		.loc 1 256 0
+ 238              		.cfi_startproc
+ 239              		@ args = 0, pretend = 0, frame = 0
+ 240              		@ frame_needed = 0, uses_anonymous_args = 0
+ 241 0000 08B5     		push	{r3, lr}
+ 242              		.cfi_def_cfa_offset 8
+ 243              		.cfi_offset 3, -8
+ 244              		.cfi_offset 14, -4
+ 257:main.c        ****   YM_CS_Write(1);
+ 245              		.loc 1 257 0
+ 246 0002 0120     		movs	r0, #1
+ 247 0004 FFF7FEFF 		bl	YM_CS_Write
+ 248              	.LVL29:
+ 258:main.c        ****   YM_WR_Write(1);
+ 249              		.loc 1 258 0
+ 250 0008 0120     		movs	r0, #1
+ 251 000a FFF7FEFF 		bl	YM_WR_Write
+ 252              	.LVL30:
+ 259:main.c        ****   YM_RD_Write(1);
+ 253              		.loc 1 259 0
+ 254 000e 0120     		movs	r0, #1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 10
+
+
+ 255 0010 FFF7FEFF 		bl	YM_RD_Write
+ 256              	.LVL31:
+ 260:main.c        ****   YM_IC_Write(1);
+ 257              		.loc 1 260 0
+ 258 0014 0120     		movs	r0, #1
+ 259 0016 FFF7FEFF 		bl	YM_IC_Write
+ 260              	.LVL32:
+ 261:main.c        ****   YM_A0_Write(0);
+ 261              		.loc 1 261 0
+ 262 001a 0020     		movs	r0, #0
+ 263 001c FFF7FEFF 		bl	YM_A0_Write
+ 264              	.LVL33:
+ 262:main.c        ****   YM_A1_Write(0);
+ 265              		.loc 1 262 0
+ 266 0020 0020     		movs	r0, #0
+ 267 0022 FFF7FEFF 		bl	YM_A1_Write
+ 268              	.LVL34:
+ 263:main.c        ****   YM_Data_Write(0xff);
+ 269              		.loc 1 263 0
+ 270 0026 FF20     		movs	r0, #255
+ 271 0028 FFF7FEFF 		bl	YM_Data_Write
+ 272              	.LVL35:
+ 273 002c 08BD     		pop	{r3, pc}
+ 274              		.cfi_endproc
+ 275              	.LFE71:
+ 276              		.size	ym2612_init, .-ym2612_init
+ 277 002e 00BF     		.section	.text.SilenceAllChannels,"ax",%progbits
+ 278              		.align	2
+ 279              		.global	SilenceAllChannels
+ 280              		.thumb
+ 281              		.thumb_func
+ 282              		.type	SilenceAllChannels, %function
+ 283              	SilenceAllChannels:
+ 284              	.LFB72:
+ 264:main.c        **** }
+ 265:main.c        **** 
+ 266:main.c        **** void SilenceAllChannels()
+ 267:main.c        **** {  
+ 285              		.loc 1 267 0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 289 0000 08B5     		push	{r3, lr}
+ 290              		.cfi_def_cfa_offset 8
+ 291              		.cfi_offset 3, -8
+ 292              		.cfi_offset 14, -4
+ 268:main.c        ****   sn76489_write(0x9f);
+ 293              		.loc 1 268 0
+ 294 0002 9F20     		movs	r0, #159
+ 295 0004 FFF7FEFF 		bl	sn76489_write
+ 296              	.LVL36:
+ 269:main.c        ****   sn76489_write(0xbf);
+ 297              		.loc 1 269 0
+ 298 0008 BF20     		movs	r0, #191
+ 299 000a FFF7FEFF 		bl	sn76489_write
+ 300              	.LVL37:
+ 270:main.c        ****   sn76489_write(0xdf);
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 11
+
+
+ 301              		.loc 1 270 0
+ 302 000e DF20     		movs	r0, #223
+ 303 0010 FFF7FEFF 		bl	sn76489_write
+ 304              	.LVL38:
+ 271:main.c        ****   sn76489_write(0xff);
+ 305              		.loc 1 271 0
+ 306 0014 FF20     		movs	r0, #255
+ 307 0016 FFF7FEFF 		bl	sn76489_write
+ 308              	.LVL39:
+ 272:main.c        **** 
+ 273:main.c        ****   ym2612_init();
+ 309              		.loc 1 273 0
+ 310 001a FFF7FEFF 		bl	ym2612_init
+ 311              	.LVL40:
+ 274:main.c        ****   ym2612_reset();
+ 312              		.loc 1 274 0
+ 313 001e FFF7FEFF 		bl	ym2612_reset
+ 314              	.LVL41:
+ 315 0022 08BD     		pop	{r3, pc}
+ 316              		.cfi_endproc
+ 317              	.LFE72:
+ 318              		.size	SilenceAllChannels, .-SilenceAllChannels
+ 319              		.section	.text.init_hardware,"ax",%progbits
+ 320              		.align	2
+ 321              		.global	init_hardware
+ 322              		.thumb
+ 323              		.thumb_func
+ 324              		.type	init_hardware, %function
+ 325              	init_hardware:
+ 326              	.LFB66:
+ 191:main.c        ****     SilenceAllChannels();
+ 327              		.loc 1 191 0
+ 328              		.cfi_startproc
+ 329              		@ args = 0, pretend = 0, frame = 0
+ 330              		@ frame_needed = 0, uses_anonymous_args = 0
+ 331 0000 08B5     		push	{r3, lr}
+ 332              		.cfi_def_cfa_offset 8
+ 333              		.cfi_offset 3, -8
+ 334              		.cfi_offset 14, -4
+ 192:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 335              		.loc 1 192 0
+ 336 0002 FFF7FEFF 		bl	SilenceAllChannels
+ 337              	.LVL42:
+ 193:main.c        **** 
+ 338              		.loc 1 193 0
+ 339              		.syntax unified
+ 340              	@ 193 "main.c" 1
+ 341 0006 62B6     		CPSIE   i
+ 342              	@ 0 "" 2
+ 195:main.c        **** }
+ 343              		.loc 1 195 0
+ 344              		.thumb
+ 345              		.syntax unified
+ 346 0008 FFF7FEFF 		bl	tty_init
+ 347              	.LVL43:
+ 348 000c 08BD     		pop	{r3, pc}
+ 349              		.cfi_endproc
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 12
+
+
+ 350              	.LFE66:
+ 351              		.size	init_hardware, .-init_hardware
+ 352 000e 00BF     		.section	.text.main,"ax",%progbits
+ 353              		.align	2
+ 354              		.global	main
+ 355              		.thumb
+ 356              		.thumb_func
+ 357              		.type	main, %function
+ 358              	main:
+ 359              	.LFB65:
+  42:main.c        ****     
+ 360              		.loc 1 42 0
+ 361              		.cfi_startproc
+ 362              		@ args = 0, pretend = 0, frame = 0
+ 363              		@ frame_needed = 0, uses_anonymous_args = 0
+ 364 0000 70B5     		push	{r4, r5, r6, lr}
+ 365              		.cfi_def_cfa_offset 16
+ 366              		.cfi_offset 4, -16
+ 367              		.cfi_offset 5, -12
+ 368              		.cfi_offset 6, -8
+ 369              		.cfi_offset 14, -4
+ 370              	.LVL44:
+  49:main.c        ****     isr_1_StartEx(sampleRateIRQ);
+ 371              		.loc 1 49 0
+ 372 0002 FFF7FEFF 		bl	init_hardware
+ 373              	.LVL45:
+  50:main.c        ****     while (0u == USBUART_CDCIsReady());
+ 374              		.loc 1 50 0
+ 375 0006 5A48     		ldr	r0, .L42
+ 376 0008 FFF7FEFF 		bl	isr_1_StartEx
+ 377              	.LVL46:
+ 378              	.L19:
+  51:main.c        ****     USBUART_PutString("\0");
+ 379              		.loc 1 51 0 discriminator 1
+ 380 000c FFF7FEFF 		bl	USBUART_CDCIsReady
+ 381              	.LVL47:
+ 382 0010 0028     		cmp	r0, #0
+ 383 0012 FBD0     		beq	.L19
+  52:main.c        **** 
+ 384              		.loc 1 52 0
+ 385 0014 5748     		ldr	r0, .L42+4
+ 386 0016 FFF7FEFF 		bl	USBUART_PutString
+ 387              	.LVL48:
+  47:main.c        **** 
+ 388              		.loc 1 47 0
+ 389 001a 0024     		movs	r4, #0
+  45:main.c        ****     //uint8_t noWait = 0;
+ 390              		.loc 1 45 0
+ 391 001c 2546     		mov	r5, r4
+ 392              	.LVL49:
+ 393              	.L20:
+  57:main.c        ****         {
+ 394              		.loc 1 57 0
+ 395 001e 564B     		ldr	r3, .L42+8
+ 396 0020 1B68     		ldr	r3, [r3]
+ 397 0022 03F10801 		add	r1, r3, #8
+ 398 0026 554A     		ldr	r2, .L42+12
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 13
+
+
+ 399 0028 1268     		ldr	r2, [r2]
+ 400 002a 9142     		cmp	r1, r2
+ 401 002c 00D2     		bcs	.L21
+  59:main.c        ****         }
+ 402              		.loc 1 59 0
+ 403 002e 0124     		movs	r4, #1
+ 404              	.LVL50:
+ 405              	.L21:
+  62:main.c        ****         {     
+ 406              		.loc 1 62 0
+ 407 0030 002C     		cmp	r4, #0
+ 408 0032 7BD0     		beq	.L22
+  62:main.c        ****         {     
+ 409              		.loc 1 62 0 is_stmt 0 discriminator 1
+ 410 0034 524A     		ldr	r2, .L42+16
+ 411 0036 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 412 0038 012A     		cmp	r2, #1
+ 413 003a 77D1     		bne	.L22
+  64:main.c        ****             {
+ 414              		.loc 1 64 0 is_stmt 1
+ 415 003c 002D     		cmp	r5, #0
+ 416 003e 64D1     		bne	.L23
+  67:main.c        ****                     
+ 417              		.loc 1 67 0
+ 418 0040 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 419 0042 A2F15001 		sub	r1, r2, #80
+ 420 0046 3F29     		cmp	r1, #63
+ 421 0048 4AD8     		bhi	.L29
+ 422 004a DFE801F0 		tbb	[pc, r1]
+ 423              	.L26:
+ 424 004e 20       		.byte	(.L25-.L26)/2
+ 425 004f 49       		.byte	(.L29-.L26)/2
+ 426 0050 24       		.byte	(.L27-.L26)/2
+ 427 0051 24       		.byte	(.L27-.L26)/2
+ 428 0052 49       		.byte	(.L29-.L26)/2
+ 429 0053 49       		.byte	(.L29-.L26)/2
+ 430 0054 49       		.byte	(.L29-.L26)/2
+ 431 0055 49       		.byte	(.L29-.L26)/2
+ 432 0056 49       		.byte	(.L29-.L26)/2
+ 433 0057 49       		.byte	(.L29-.L26)/2
+ 434 0058 49       		.byte	(.L29-.L26)/2
+ 435 0059 49       		.byte	(.L29-.L26)/2
+ 436 005a 49       		.byte	(.L29-.L26)/2
+ 437 005b 49       		.byte	(.L29-.L26)/2
+ 438 005c 49       		.byte	(.L29-.L26)/2
+ 439 005d 49       		.byte	(.L29-.L26)/2
+ 440 005e 49       		.byte	(.L29-.L26)/2
+ 441 005f 2B       		.byte	(.L28-.L26)/2
+ 442 0060 47       		.byte	(.L40-.L26)/2
+ 443 0061 33       		.byte	(.L30-.L26)/2
+ 444 0062 49       		.byte	(.L29-.L26)/2
+ 445 0063 49       		.byte	(.L29-.L26)/2
+ 446 0064 45       		.byte	(.L31-.L26)/2
+ 447 0065 49       		.byte	(.L29-.L26)/2
+ 448 0066 49       		.byte	(.L29-.L26)/2
+ 449 0067 49       		.byte	(.L29-.L26)/2
+ 450 0068 49       		.byte	(.L29-.L26)/2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 14
+
+
+ 451 0069 49       		.byte	(.L29-.L26)/2
+ 452 006a 49       		.byte	(.L29-.L26)/2
+ 453 006b 49       		.byte	(.L29-.L26)/2
+ 454 006c 49       		.byte	(.L29-.L26)/2
+ 455 006d 49       		.byte	(.L29-.L26)/2
+ 456 006e 36       		.byte	(.L32-.L26)/2
+ 457 006f 36       		.byte	(.L32-.L26)/2
+ 458 0070 36       		.byte	(.L32-.L26)/2
+ 459 0071 36       		.byte	(.L32-.L26)/2
+ 460 0072 36       		.byte	(.L32-.L26)/2
+ 461 0073 36       		.byte	(.L32-.L26)/2
+ 462 0074 36       		.byte	(.L32-.L26)/2
+ 463 0075 36       		.byte	(.L32-.L26)/2
+ 464 0076 36       		.byte	(.L32-.L26)/2
+ 465 0077 36       		.byte	(.L32-.L26)/2
+ 466 0078 36       		.byte	(.L32-.L26)/2
+ 467 0079 36       		.byte	(.L32-.L26)/2
+ 468 007a 36       		.byte	(.L32-.L26)/2
+ 469 007b 36       		.byte	(.L32-.L26)/2
+ 470 007c 36       		.byte	(.L32-.L26)/2
+ 471 007d 36       		.byte	(.L32-.L26)/2
+ 472 007e 39       		.byte	(.L33-.L26)/2
+ 473 007f 39       		.byte	(.L33-.L26)/2
+ 474 0080 39       		.byte	(.L33-.L26)/2
+ 475 0081 39       		.byte	(.L33-.L26)/2
+ 476 0082 39       		.byte	(.L33-.L26)/2
+ 477 0083 39       		.byte	(.L33-.L26)/2
+ 478 0084 39       		.byte	(.L33-.L26)/2
+ 479 0085 39       		.byte	(.L33-.L26)/2
+ 480 0086 39       		.byte	(.L33-.L26)/2
+ 481 0087 39       		.byte	(.L33-.L26)/2
+ 482 0088 39       		.byte	(.L33-.L26)/2
+ 483 0089 39       		.byte	(.L33-.L26)/2
+ 484 008a 39       		.byte	(.L33-.L26)/2
+ 485 008b 39       		.byte	(.L33-.L26)/2
+ 486 008c 39       		.byte	(.L33-.L26)/2
+ 487 008d 39       		.byte	(.L33-.L26)/2
+ 488              		.p2align 1
+ 489              	.L25:
+  71:main.c        ****                         break;
+ 490              		.loc 1 71 0
+ 491 008e 5878     		ldrb	r0, [r3, #1]	@ zero_extendqisi2
+ 492 0090 FFF7FEFF 		bl	sn76489_write
+ 493              	.LVL51:
+  72:main.c        ****                     
+ 494              		.loc 1 72 0
+ 495 0094 24E0     		b	.L29
+ 496              	.L27:
+  77:main.c        ****                         break;
+ 497              		.loc 1 77 0
+ 498 0096 02F00102 		and	r2, r2, #1
+ 499 009a 9978     		ldrb	r1, [r3, #2]	@ zero_extendqisi2
+ 500 009c 5878     		ldrb	r0, [r3, #1]	@ zero_extendqisi2
+ 501 009e FFF7FEFF 		bl	ym2612_write
+ 502              	.LVL52:
+  78:main.c        ****                     
+ 503              		.loc 1 78 0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 15
+
+
+ 504 00a2 1DE0     		b	.L29
+ 505              	.L28:
+  81:main.c        ****                         if (waitData == 0)
+ 506              		.loc 1 81 0
+ 507 00a4 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 508 00a6 9D78     		ldrb	r5, [r3, #2]	@ zero_extendqisi2
+ 509              	.LVL53:
+ 510 00a8 02EB0525 		add	r5, r2, r5, lsl #8
+ 511 00ac ADB2     		uxth	r5, r5
+ 512              	.LVL54:
+  82:main.c        ****                         {
+ 513              		.loc 1 82 0
+ 514 00ae 002D     		cmp	r5, #0
+ 515 00b0 B5D0     		beq	.L20
+ 516 00b2 15E0     		b	.L29
+ 517              	.L30:
+ 518              	.LVL55:
+  98:main.c        ****                         break;
+ 519              		.loc 1 98 0
+ 520 00b4 40F27135 		movw	r5, #881
+  99:main.c        ****                         
+ 521              		.loc 1 99 0
+ 522 00b8 12E0     		b	.L29
+ 523              	.LVL56:
+ 524              	.L32:
+ 117:main.c        ****                         break;
+ 525              		.loc 1 117 0
+ 526 00ba 02F00F05 		and	r5, r2, #15
+ 527              	.LVL57:
+ 118:main.c        ****                     
+ 528              		.loc 1 118 0
+ 529 00be 0FE0     		b	.L29
+ 530              	.L33:
+ 137:main.c        ****                         waitData = (*pplay & 0x0f);
+ 531              		.loc 1 137 0
+ 532 00c0 0022     		movs	r2, #0
+ 533 00c2 5978     		ldrb	r1, [r3, #1]	@ zero_extendqisi2
+ 534 00c4 2A20     		movs	r0, #42
+ 535 00c6 FFF7FEFF 		bl	ym2612_write
+ 536              	.LVL58:
+ 138:main.c        ****                         if (waitData == 0)
+ 537              		.loc 1 138 0
+ 538 00ca 2B4B     		ldr	r3, .L42+8
+ 539 00cc 1B68     		ldr	r3, [r3]
+ 540 00ce 1D78     		ldrb	r5, [r3]	@ zero_extendqisi2
+ 541              	.LVL59:
+ 139:main.c        ****                         {
+ 542              		.loc 1 139 0
+ 543 00d0 15F00F05 		ands	r5, r5, #15
+ 544              	.LVL60:
+ 545 00d4 A3D0     		beq	.L20
+ 546 00d6 03E0     		b	.L29
+ 547              	.LVL61:
+ 548              	.L31:
+ 152:main.c        ****                         break;
+ 549              		.loc 1 152 0
+ 550 00d8 0024     		movs	r4, #0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 16
+
+
+ 153:main.c        ****                         
+ 551              		.loc 1 153 0
+ 552 00da 01E0     		b	.L29
+ 553              	.LVL62:
+ 554              	.L40:
+  94:main.c        ****                         break;
+ 555              		.loc 1 94 0
+ 556 00dc 40F2DE25 		movw	r5, #734
+ 557              	.LVL63:
+ 558              	.L29:
+ 159:main.c        ****             }
+ 559              		.loc 1 159 0
+ 560 00e0 264B     		ldr	r3, .L42+12
+ 561 00e2 1A68     		ldr	r2, [r3]
+ 562 00e4 244B     		ldr	r3, .L42+8
+ 563 00e6 1B68     		ldr	r3, [r3]
+ 564 00e8 9A42     		cmp	r2, r3
+ 565 00ea 0BD9     		bls	.L35
+ 159:main.c        ****             }
+ 566              		.loc 1 159 0 is_stmt 0 discriminator 1
+ 567 00ec DBB2     		uxtb	r3, r3
+ 568 00ee DA1C     		adds	r2, r3, #3
+ 569 00f0 244B     		ldr	r3, .L42+20
+ 570 00f2 A3FB0213 		umull	r1, r3, r3, r2
+ 571 00f6 5909     		lsrs	r1, r3, #5
+ 572 00f8 01EB4103 		add	r3, r1, r1, lsl #1
+ 573 00fc 1901     		lsls	r1, r3, #4
+ 574 00fe 511A     		subs	r1, r2, r1
+ 575 0100 214B     		ldr	r3, .L42+24
+ 576 0102 0B44     		add	r3, r3, r1
+ 577              	.L35:
+ 159:main.c        ****             }
+ 578              		.loc 1 159 0 discriminator 4
+ 579 0104 1C4A     		ldr	r2, .L42+8
+ 580 0106 1360     		str	r3, [r2]
+ 581 0108 01E0     		b	.L36
+ 582              	.L23:
+ 163:main.c        ****             }
+ 583              		.loc 1 163 0 is_stmt 1
+ 584 010a 013D     		subs	r5, r5, #1
+ 585              	.LVL64:
+ 586 010c ADB2     		uxth	r5, r5
+ 587              	.LVL65:
+ 588              	.L36:
+ 169:main.c        ****                 pplay = (uint8_t *) (((int)pplay + 1) % BUF_LEN);
+ 589              		.loc 1 169 0
+ 590 010e 0022     		movs	r2, #0
+ 591 0110 1B4B     		ldr	r3, .L42+16
+ 592 0112 1A70     		strb	r2, [r3]
+ 170:main.c        ****                 test += count;
+ 593              		.loc 1 170 0
+ 594 0114 184B     		ldr	r3, .L42+8
+ 595 0116 1B68     		ldr	r3, [r3]
+ 596 0118 0133     		adds	r3, r3, #1
+ 597 011a 1C4A     		ldr	r2, .L42+28
+ 598 011c 1340     		ands	r3, r3, r2
+ 599 011e 03D5     		bpl	.L37
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 17
+
+
+ 600 0120 013B     		subs	r3, r3, #1
+ 601 0122 63F00F03 		orn	r3, r3, #15
+ 602 0126 0133     		adds	r3, r3, #1
+ 603              	.L37:
+ 604 0128 134A     		ldr	r2, .L42+8
+ 605 012a 1360     		str	r3, [r2]
+ 606              	.L22:
+ 181:main.c        ****         {
+ 607              		.loc 1 181 0
+ 608 012c 184B     		ldr	r3, .L42+32
+ 609 012e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 610 0130 012B     		cmp	r3, #1
+ 611 0132 7FF474AF 		bne	.L20
+ 183:main.c        ****             pitem = (pitem >= pplay) ? (uint8_t *) &buffer[0][0] + (((uint8_t) pitem + USBUART_BUFF
+ 612              		.loc 1 183 0
+ 613 0136 114E     		ldr	r6, .L42+12
+ 614 0138 3068     		ldr	r0, [r6]
+ 615 013a FFF7FEFF 		bl	USBUART_GetAll
+ 616              	.LVL66:
+ 617 013e 154B     		ldr	r3, .L42+36
+ 618 0140 1880     		strh	r0, [r3]	@ movhi
+ 184:main.c        ****             rx_flag = 0;
+ 619              		.loc 1 184 0
+ 620 0142 3368     		ldr	r3, [r6]
+ 621 0144 0C4A     		ldr	r2, .L42+8
+ 622 0146 1268     		ldr	r2, [r2]
+ 623 0148 9342     		cmp	r3, r2
+ 624 014a 0BD3     		bcc	.L38
+ 184:main.c        ****             rx_flag = 0;
+ 625              		.loc 1 184 0 is_stmt 0 discriminator 1
+ 626 014c DBB2     		uxtb	r3, r3
+ 627 014e DA1C     		adds	r2, r3, #3
+ 628 0150 0C4B     		ldr	r3, .L42+20
+ 629 0152 A3FB0213 		umull	r1, r3, r3, r2
+ 630 0156 5909     		lsrs	r1, r3, #5
+ 631 0158 01EB4103 		add	r3, r1, r1, lsl #1
+ 632 015c 1901     		lsls	r1, r3, #4
+ 633 015e 511A     		subs	r1, r2, r1
+ 634 0160 094B     		ldr	r3, .L42+24
+ 635 0162 0B44     		add	r3, r3, r1
+ 636              	.L38:
+ 184:main.c        ****             rx_flag = 0;
+ 637              		.loc 1 184 0 discriminator 4
+ 638 0164 054A     		ldr	r2, .L42+12
+ 639 0166 1360     		str	r3, [r2]
+ 185:main.c        ****         }
+ 640              		.loc 1 185 0 is_stmt 1 discriminator 4
+ 641 0168 0022     		movs	r2, #0
+ 642 016a 094B     		ldr	r3, .L42+32
+ 643 016c 1A70     		strb	r2, [r3]
+ 644 016e 56E7     		b	.L20
+ 645              	.L43:
+ 646              		.align	2
+ 647              	.L42:
+ 648 0170 00000000 		.word	sampleRateIRQ
+ 649 0174 00000000 		.word	.LANCHOR1
+ 650 0178 00000000 		.word	pplay
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 18
+
+
+ 651 017c 00000000 		.word	pitem
+ 652 0180 00000000 		.word	.LANCHOR0
+ 653 0184 ABAAAAAA 		.word	-1431655765
+ 654 0188 00000000 		.word	buffer
+ 655 018c 0F000080 		.word	-2147483633
+ 656 0190 00000000 		.word	rx_flag
+ 657 0194 00000000 		.word	count
+ 658              		.cfi_endproc
+ 659              	.LFE65:
+ 660              		.size	main, .-main
+ 661              		.global	isrFlag
+ 662              		.section	.rodata
+ 663              		.align	2
+ 664              		.set	.LANCHOR1,. + 0
+ 665              	.LC0:
+ 666 0000 0000     		.ascii	"\000\000"
+ 667              		.bss
+ 668              		.set	.LANCHOR0,. + 0
+ 669              		.type	isrFlag, %object
+ 670              		.size	isrFlag, 1
+ 671              	isrFlag:
+ 672 0000 00       		.space	1
+ 673              		.text
+ 674              	.Letext0:
+ 675              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 676              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 677              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 678              		.file 5 "Generated_Source\\PSoC5/YM_CS.h"
+ 679              		.file 6 "Generated_Source\\PSoC5/YM_Data.h"
+ 680              		.file 7 "Generated_Source\\PSoC5/YM_WR.h"
+ 681              		.file 8 "Generated_Source\\PSoC5/YM_RD.h"
+ 682              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
+ 683              		.file 10 "Generated_Source\\PSoC5/YM_A1.h"
+ 684              		.file 11 "Generated_Source\\PSoC5/YM_A0.h"
+ 685              		.file 12 "Generated_Source\\PSoC5/SN_WE.h"
+ 686              		.file 13 "Generated_Source\\PSoC5/YM_IC.h"
+ 687              		.file 14 "tty_utils.h"
+ 688              		.file 15 "Generated_Source\\PSoC5/isr_1.h"
+ 689              		.file 16 "Generated_Source\\PSoC5/USBUART_cdc.h"
+ 690              		.section	.debug_info,"",%progbits
+ 691              	.Ldebug_info0:
+ 692 0000 44060000 		.4byte	0x644
+ 693 0004 0400     		.2byte	0x4
+ 694 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 695 000a 04       		.byte	0x4
+ 696 000b 01       		.uleb128 0x1
+ 697 000c BC000000 		.4byte	.LASF56
+ 698 0010 0C       		.byte	0xc
+ 699 0011 9B020000 		.4byte	.LASF57
+ 700 0015 ED010000 		.4byte	.LASF58
+ 701 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 702 001d 00000000 		.4byte	0
+ 703 0021 00000000 		.4byte	.Ldebug_line0
+ 704 0025 02       		.uleb128 0x2
+ 705 0026 01       		.byte	0x1
+ 706 0027 06       		.byte	0x6
+ 707 0028 1C030000 		.4byte	.LASF0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 19
+
+
+ 708 002c 03       		.uleb128 0x3
+ 709 002d 0E000000 		.4byte	.LASF3
+ 710 0031 02       		.byte	0x2
+ 711 0032 1D       		.byte	0x1d
+ 712 0033 37000000 		.4byte	0x37
+ 713 0037 02       		.uleb128 0x2
+ 714 0038 01       		.byte	0x1
+ 715 0039 08       		.byte	0x8
+ 716 003a AE000000 		.4byte	.LASF1
+ 717 003e 02       		.uleb128 0x2
+ 718 003f 02       		.byte	0x2
+ 719 0040 05       		.byte	0x5
+ 720 0041 C8010000 		.4byte	.LASF2
+ 721 0045 03       		.uleb128 0x3
+ 722 0046 AA010000 		.4byte	.LASF4
+ 723 004a 02       		.byte	0x2
+ 724 004b 2B       		.byte	0x2b
+ 725 004c 50000000 		.4byte	0x50
+ 726 0050 02       		.uleb128 0x2
+ 727 0051 02       		.byte	0x2
+ 728 0052 07       		.byte	0x7
+ 729 0053 67010000 		.4byte	.LASF5
+ 730 0057 03       		.uleb128 0x3
+ 731 0058 3F000000 		.4byte	.LASF6
+ 732 005c 02       		.byte	0x2
+ 733 005d 3F       		.byte	0x3f
+ 734 005e 62000000 		.4byte	0x62
+ 735 0062 02       		.uleb128 0x2
+ 736 0063 04       		.byte	0x4
+ 737 0064 05       		.byte	0x5
+ 738 0065 07030000 		.4byte	.LASF7
+ 739 0069 03       		.uleb128 0x3
+ 740 006a 4A010000 		.4byte	.LASF8
+ 741 006e 02       		.byte	0x2
+ 742 006f 41       		.byte	0x41
+ 743 0070 74000000 		.4byte	0x74
+ 744 0074 02       		.uleb128 0x2
+ 745 0075 04       		.byte	0x4
+ 746 0076 07       		.byte	0x7
+ 747 0077 55010000 		.4byte	.LASF9
+ 748 007b 02       		.uleb128 0x2
+ 749 007c 08       		.byte	0x8
+ 750 007d 05       		.byte	0x5
+ 751 007e 8D020000 		.4byte	.LASF10
+ 752 0082 02       		.uleb128 0x2
+ 753 0083 08       		.byte	0x8
+ 754 0084 07       		.byte	0x7
+ 755 0085 4B020000 		.4byte	.LASF11
+ 756 0089 04       		.uleb128 0x4
+ 757 008a 04       		.byte	0x4
+ 758 008b 05       		.byte	0x5
+ 759 008c 696E7400 		.ascii	"int\000"
+ 760 0090 02       		.uleb128 0x2
+ 761 0091 04       		.byte	0x4
+ 762 0092 07       		.byte	0x7
+ 763 0093 3E020000 		.4byte	.LASF12
+ 764 0097 03       		.uleb128 0x3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 20
+
+
+ 765 0098 62020000 		.4byte	.LASF13
+ 766 009c 03       		.byte	0x3
+ 767 009d 18       		.byte	0x18
+ 768 009e 2C000000 		.4byte	0x2c
+ 769 00a2 03       		.uleb128 0x3
+ 770 00a3 E9020000 		.4byte	.LASF14
+ 771 00a7 03       		.byte	0x3
+ 772 00a8 24       		.byte	0x24
+ 773 00a9 45000000 		.4byte	0x45
+ 774 00ad 03       		.uleb128 0x3
+ 775 00ae 76020000 		.4byte	.LASF15
+ 776 00b2 03       		.byte	0x3
+ 777 00b3 2C       		.byte	0x2c
+ 778 00b4 57000000 		.4byte	0x57
+ 779 00b8 03       		.uleb128 0x3
+ 780 00b9 FE020000 		.4byte	.LASF16
+ 781 00bd 03       		.byte	0x3
+ 782 00be 30       		.byte	0x30
+ 783 00bf 69000000 		.4byte	0x69
+ 784 00c3 02       		.uleb128 0x2
+ 785 00c4 04       		.byte	0x4
+ 786 00c5 04       		.byte	0x4
+ 787 00c6 A3000000 		.4byte	.LASF17
+ 788 00ca 02       		.uleb128 0x2
+ 789 00cb 08       		.byte	0x8
+ 790 00cc 04       		.byte	0x4
+ 791 00cd B5010000 		.4byte	.LASF18
+ 792 00d1 02       		.uleb128 0x2
+ 793 00d2 01       		.byte	0x1
+ 794 00d3 08       		.byte	0x8
+ 795 00d4 A2020000 		.4byte	.LASF19
+ 796 00d8 02       		.uleb128 0x2
+ 797 00d9 08       		.byte	0x8
+ 798 00da 04       		.byte	0x4
+ 799 00db 10030000 		.4byte	.LASF20
+ 800 00df 02       		.uleb128 0x2
+ 801 00e0 04       		.byte	0x4
+ 802 00e1 07       		.byte	0x7
+ 803 00e2 84020000 		.4byte	.LASF21
+ 804 00e6 05       		.uleb128 0x5
+ 805 00e7 00000000 		.4byte	.LASF59
+ 806 00eb 01       		.byte	0x1
+ 807 00ec 26       		.byte	0x26
+ 808 00ed 00000000 		.4byte	.LFB64
+ 809 00f1 0C000000 		.4byte	.LFE64-.LFB64
+ 810 00f5 01       		.uleb128 0x1
+ 811 00f6 9C       		.byte	0x9c
+ 812 00f7 06       		.uleb128 0x6
+ 813 00f8 42030000 		.4byte	.LASF22
+ 814 00fc 01       		.byte	0x1
+ 815 00fd C6       		.byte	0xc6
+ 816 00fe 00000000 		.4byte	.LFB67
+ 817 0102 3C000000 		.4byte	.LFE67-.LFB67
+ 818 0106 01       		.uleb128 0x1
+ 819 0107 9C       		.byte	0x9c
+ 820 0108 C4010000 		.4byte	0x1c4
+ 821 010c 07       		.uleb128 0x7
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 21
+
+
+ 822 010d A9000000 		.4byte	.LASF24
+ 823 0111 01       		.byte	0x1
+ 824 0112 C6       		.byte	0xc6
+ 825 0113 97000000 		.4byte	0x97
+ 826 0117 00000000 		.4byte	.LLST0
+ 827 011b 08       		.uleb128 0x8
+ 828 011c 0A000000 		.4byte	.LVL2
+ 829 0120 A2050000 		.4byte	0x5a2
+ 830 0124 2E010000 		.4byte	0x12e
+ 831 0128 09       		.uleb128 0x9
+ 832 0129 01       		.uleb128 0x1
+ 833 012a 50       		.byte	0x50
+ 834 012b 01       		.uleb128 0x1
+ 835 012c 30       		.byte	0x30
+ 836 012d 00       		.byte	0
+ 837 012e 08       		.uleb128 0x8
+ 838 012f 10000000 		.4byte	.LVL3
+ 839 0133 AD050000 		.4byte	0x5ad
+ 840 0137 42010000 		.4byte	0x142
+ 841 013b 09       		.uleb128 0x9
+ 842 013c 01       		.uleb128 0x1
+ 843 013d 50       		.byte	0x50
+ 844 013e 02       		.uleb128 0x2
+ 845 013f 74       		.byte	0x74
+ 846 0140 00       		.sleb128 0
+ 847 0141 00       		.byte	0
+ 848 0142 08       		.uleb128 0x8
+ 849 0143 16000000 		.4byte	.LVL4
+ 850 0147 B8050000 		.4byte	0x5b8
+ 851 014b 55010000 		.4byte	0x155
+ 852 014f 09       		.uleb128 0x9
+ 853 0150 01       		.uleb128 0x1
+ 854 0151 50       		.byte	0x50
+ 855 0152 01       		.uleb128 0x1
+ 856 0153 30       		.byte	0x30
+ 857 0154 00       		.byte	0
+ 858 0155 08       		.uleb128 0x8
+ 859 0156 1C000000 		.4byte	.LVL5
+ 860 015a C3050000 		.4byte	0x5c3
+ 861 015e 68010000 		.4byte	0x168
+ 862 0162 09       		.uleb128 0x9
+ 863 0163 01       		.uleb128 0x1
+ 864 0164 50       		.byte	0x50
+ 865 0165 01       		.uleb128 0x1
+ 866 0166 31       		.byte	0x31
+ 867 0167 00       		.byte	0
+ 868 0168 08       		.uleb128 0x8
+ 869 0169 22000000 		.4byte	.LVL6
+ 870 016d CE050000 		.4byte	0x5ce
+ 871 0171 7B010000 		.4byte	0x17b
+ 872 0175 09       		.uleb128 0x9
+ 873 0176 01       		.uleb128 0x1
+ 874 0177 50       		.byte	0x50
+ 875 0178 01       		.uleb128 0x1
+ 876 0179 33       		.byte	0x33
+ 877 017a 00       		.byte	0
+ 878 017b 08       		.uleb128 0x8
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 22
+
+
+ 879 017c 28000000 		.4byte	.LVL7
+ 880 0180 B8050000 		.4byte	0x5b8
+ 881 0184 8E010000 		.4byte	0x18e
+ 882 0188 09       		.uleb128 0x9
+ 883 0189 01       		.uleb128 0x1
+ 884 018a 50       		.byte	0x50
+ 885 018b 01       		.uleb128 0x1
+ 886 018c 31       		.byte	0x31
+ 887 018d 00       		.byte	0
+ 888 018e 08       		.uleb128 0x8
+ 889 018f 2E000000 		.4byte	.LVL8
+ 890 0193 C3050000 		.4byte	0x5c3
+ 891 0197 A1010000 		.4byte	0x1a1
+ 892 019b 09       		.uleb128 0x9
+ 893 019c 01       		.uleb128 0x1
+ 894 019d 50       		.byte	0x50
+ 895 019e 01       		.uleb128 0x1
+ 896 019f 30       		.byte	0x30
+ 897 01a0 00       		.byte	0
+ 898 01a1 08       		.uleb128 0x8
+ 899 01a2 34000000 		.4byte	.LVL9
+ 900 01a6 A2050000 		.4byte	0x5a2
+ 901 01aa B4010000 		.4byte	0x1b4
+ 902 01ae 09       		.uleb128 0x9
+ 903 01af 01       		.uleb128 0x1
+ 904 01b0 50       		.byte	0x50
+ 905 01b1 01       		.uleb128 0x1
+ 906 01b2 31       		.byte	0x31
+ 907 01b3 00       		.byte	0
+ 908 01b4 0A       		.uleb128 0xa
+ 909 01b5 3A000000 		.4byte	.LVL10
+ 910 01b9 CE050000 		.4byte	0x5ce
+ 911 01bd 09       		.uleb128 0x9
+ 912 01be 01       		.uleb128 0x1
+ 913 01bf 50       		.byte	0x50
+ 914 01c0 01       		.uleb128 0x1
+ 915 01c1 33       		.byte	0x33
+ 916 01c2 00       		.byte	0
+ 917 01c3 00       		.byte	0
+ 918 01c4 06       		.uleb128 0x6
+ 919 01c5 7A010000 		.4byte	.LASF23
+ 920 01c9 01       		.byte	0x1
+ 921 01ca D9       		.byte	0xd9
+ 922 01cb 00000000 		.4byte	.LFB68
+ 923 01cf 26000000 		.4byte	.LFE68-.LFB68
+ 924 01d3 01       		.uleb128 0x1
+ 925 01d4 9C       		.byte	0x9c
+ 926 01d5 5A020000 		.4byte	0x25a
+ 927 01d9 0B       		.uleb128 0xb
+ 928 01da 72656700 		.ascii	"reg\000"
+ 929 01de 01       		.byte	0x1
+ 930 01df D9       		.byte	0xd9
+ 931 01e0 97000000 		.4byte	0x97
+ 932 01e4 21000000 		.4byte	.LLST1
+ 933 01e8 07       		.uleb128 0x7
+ 934 01e9 A9000000 		.4byte	.LASF24
+ 935 01ed 01       		.byte	0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 23
+
+
+ 936 01ee D9       		.byte	0xd9
+ 937 01ef 97000000 		.4byte	0x97
+ 938 01f3 42000000 		.4byte	.LLST2
+ 939 01f7 07       		.uleb128 0x7
+ 940 01f8 BC020000 		.4byte	.LASF25
+ 941 01fc 01       		.byte	0x1
+ 942 01fd D9       		.byte	0xd9
+ 943 01fe 97000000 		.4byte	0x97
+ 944 0202 63000000 		.4byte	.LLST3
+ 945 0206 0C       		.uleb128 0xc
+ 946 0207 0C000000 		.4byte	.LVL13
+ 947 020b D9050000 		.4byte	0x5d9
+ 948 020f 08       		.uleb128 0x8
+ 949 0210 12000000 		.4byte	.LVL14
+ 950 0214 E4050000 		.4byte	0x5e4
+ 951 0218 22020000 		.4byte	0x222
+ 952 021c 09       		.uleb128 0x9
+ 953 021d 01       		.uleb128 0x1
+ 954 021e 50       		.byte	0x50
+ 955 021f 01       		.uleb128 0x1
+ 956 0220 30       		.byte	0x30
+ 957 0221 00       		.byte	0
+ 958 0222 08       		.uleb128 0x8
+ 959 0223 18000000 		.4byte	.LVL15
+ 960 0227 F7000000 		.4byte	0xf7
+ 961 022b 36020000 		.4byte	0x236
+ 962 022f 09       		.uleb128 0x9
+ 963 0230 01       		.uleb128 0x1
+ 964 0231 50       		.byte	0x50
+ 965 0232 02       		.uleb128 0x2
+ 966 0233 75       		.byte	0x75
+ 967 0234 00       		.sleb128 0
+ 968 0235 00       		.byte	0
+ 969 0236 08       		.uleb128 0x8
+ 970 0237 1E000000 		.4byte	.LVL16
+ 971 023b E4050000 		.4byte	0x5e4
+ 972 023f 49020000 		.4byte	0x249
+ 973 0243 09       		.uleb128 0x9
+ 974 0244 01       		.uleb128 0x1
+ 975 0245 50       		.byte	0x50
+ 976 0246 01       		.uleb128 0x1
+ 977 0247 31       		.byte	0x31
+ 978 0248 00       		.byte	0
+ 979 0249 0A       		.uleb128 0xa
+ 980 024a 24000000 		.4byte	.LVL17
+ 981 024e F7000000 		.4byte	0xf7
+ 982 0252 09       		.uleb128 0x9
+ 983 0253 01       		.uleb128 0x1
+ 984 0254 50       		.byte	0x50
+ 985 0255 02       		.uleb128 0x2
+ 986 0256 74       		.byte	0x74
+ 987 0257 00       		.sleb128 0
+ 988 0258 00       		.byte	0
+ 989 0259 00       		.byte	0
+ 990 025a 06       		.uleb128 0x6
+ 991 025b 49000000 		.4byte	.LASF26
+ 992 025f 01       		.byte	0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 24
+
+
+ 993 0260 E6       		.byte	0xe6
+ 994 0261 00000000 		.4byte	.LFB69
+ 995 0265 24000000 		.4byte	.LFE69-.LFB69
+ 996 0269 01       		.uleb128 0x1
+ 997 026a 9C       		.byte	0x9c
+ 998 026b DB020000 		.4byte	0x2db
+ 999 026f 07       		.uleb128 0x7
+ 1000 0270 A9000000 		.4byte	.LASF24
+ 1001 0274 01       		.byte	0x1
+ 1002 0275 E6       		.byte	0xe6
+ 1003 0276 97000000 		.4byte	0x97
+ 1004 027a 84000000 		.4byte	.LLST4
+ 1005 027e 08       		.uleb128 0x8
+ 1006 027f 0A000000 		.4byte	.LVL20
+ 1007 0283 EF050000 		.4byte	0x5ef
+ 1008 0287 91020000 		.4byte	0x291
+ 1009 028b 09       		.uleb128 0x9
+ 1010 028c 01       		.uleb128 0x1
+ 1011 028d 50       		.byte	0x50
+ 1012 028e 01       		.uleb128 0x1
+ 1013 028f 31       		.byte	0x31
+ 1014 0290 00       		.byte	0
+ 1015 0291 08       		.uleb128 0x8
+ 1016 0292 10000000 		.4byte	.LVL21
+ 1017 0296 AD050000 		.4byte	0x5ad
+ 1018 029a A5020000 		.4byte	0x2a5
+ 1019 029e 09       		.uleb128 0x9
+ 1020 029f 01       		.uleb128 0x1
+ 1021 02a0 50       		.byte	0x50
+ 1022 02a1 02       		.uleb128 0x2
+ 1023 02a2 74       		.byte	0x74
+ 1024 02a3 00       		.sleb128 0
+ 1025 02a4 00       		.byte	0
+ 1026 02a5 08       		.uleb128 0x8
+ 1027 02a6 16000000 		.4byte	.LVL22
+ 1028 02aa EF050000 		.4byte	0x5ef
+ 1029 02ae B8020000 		.4byte	0x2b8
+ 1030 02b2 09       		.uleb128 0x9
+ 1031 02b3 01       		.uleb128 0x1
+ 1032 02b4 50       		.byte	0x50
+ 1033 02b5 01       		.uleb128 0x1
+ 1034 02b6 30       		.byte	0x30
+ 1035 02b7 00       		.byte	0
+ 1036 02b8 08       		.uleb128 0x8
+ 1037 02b9 1C000000 		.4byte	.LVL23
+ 1038 02bd CE050000 		.4byte	0x5ce
+ 1039 02c1 CB020000 		.4byte	0x2cb
+ 1040 02c5 09       		.uleb128 0x9
+ 1041 02c6 01       		.uleb128 0x1
+ 1042 02c7 50       		.byte	0x50
+ 1043 02c8 01       		.uleb128 0x1
+ 1044 02c9 3A       		.byte	0x3a
+ 1045 02ca 00       		.byte	0
+ 1046 02cb 0A       		.uleb128 0xa
+ 1047 02cc 22000000 		.4byte	.LVL24
+ 1048 02d0 EF050000 		.4byte	0x5ef
+ 1049 02d4 09       		.uleb128 0x9
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 25
+
+
+ 1050 02d5 01       		.uleb128 0x1
+ 1051 02d6 50       		.byte	0x50
+ 1052 02d7 01       		.uleb128 0x1
+ 1053 02d8 31       		.byte	0x31
+ 1054 02d9 00       		.byte	0
+ 1055 02da 00       		.byte	0
+ 1056 02db 0D       		.uleb128 0xd
+ 1057 02dc CD020000 		.4byte	.LASF28
+ 1058 02e0 01       		.byte	0x1
+ 1059 02e1 F1       		.byte	0xf1
+ 1060 02e2 00000000 		.4byte	.LFB70
+ 1061 02e6 1C000000 		.4byte	.LFE70-.LFB70
+ 1062 02ea 01       		.uleb128 0x1
+ 1063 02eb 9C       		.byte	0x9c
+ 1064 02ec 39030000 		.4byte	0x339
+ 1065 02f0 08       		.uleb128 0x8
+ 1066 02f1 08000000 		.4byte	.LVL25
+ 1067 02f5 FA050000 		.4byte	0x5fa
+ 1068 02f9 03030000 		.4byte	0x303
+ 1069 02fd 09       		.uleb128 0x9
+ 1070 02fe 01       		.uleb128 0x1
+ 1071 02ff 50       		.byte	0x50
+ 1072 0300 01       		.uleb128 0x1
+ 1073 0301 30       		.byte	0x30
+ 1074 0302 00       		.byte	0
+ 1075 0303 08       		.uleb128 0x8
+ 1076 0304 0E000000 		.4byte	.LVL26
+ 1077 0308 05060000 		.4byte	0x605
+ 1078 030c 16030000 		.4byte	0x316
+ 1079 0310 09       		.uleb128 0x9
+ 1080 0311 01       		.uleb128 0x1
+ 1081 0312 50       		.byte	0x50
+ 1082 0313 01       		.uleb128 0x1
+ 1083 0314 3A       		.byte	0x3a
+ 1084 0315 00       		.byte	0
+ 1085 0316 08       		.uleb128 0x8
+ 1086 0317 14000000 		.4byte	.LVL27
+ 1087 031b FA050000 		.4byte	0x5fa
+ 1088 031f 29030000 		.4byte	0x329
+ 1089 0323 09       		.uleb128 0x9
+ 1090 0324 01       		.uleb128 0x1
+ 1091 0325 50       		.byte	0x50
+ 1092 0326 01       		.uleb128 0x1
+ 1093 0327 31       		.byte	0x31
+ 1094 0328 00       		.byte	0
+ 1095 0329 0A       		.uleb128 0xa
+ 1096 032a 1A000000 		.4byte	.LVL28
+ 1097 032e 05060000 		.4byte	0x605
+ 1098 0332 09       		.uleb128 0x9
+ 1099 0333 01       		.uleb128 0x1
+ 1100 0334 50       		.byte	0x50
+ 1101 0335 01       		.uleb128 0x1
+ 1102 0336 3A       		.byte	0x3a
+ 1103 0337 00       		.byte	0
+ 1104 0338 00       		.byte	0
+ 1105 0339 06       		.uleb128 0x6
+ 1106 033a 78000000 		.4byte	.LASF27
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 26
+
+
+ 1107 033e 01       		.byte	0x1
+ 1108 033f FF       		.byte	0xff
+ 1109 0340 00000000 		.4byte	.LFB71
+ 1110 0344 2E000000 		.4byte	.LFE71-.LFB71
+ 1111 0348 01       		.uleb128 0x1
+ 1112 0349 9C       		.byte	0x9c
+ 1113 034a D1030000 		.4byte	0x3d1
+ 1114 034e 08       		.uleb128 0x8
+ 1115 034f 08000000 		.4byte	.LVL29
+ 1116 0353 A2050000 		.4byte	0x5a2
+ 1117 0357 61030000 		.4byte	0x361
+ 1118 035b 09       		.uleb128 0x9
+ 1119 035c 01       		.uleb128 0x1
+ 1120 035d 50       		.byte	0x50
+ 1121 035e 01       		.uleb128 0x1
+ 1122 035f 31       		.byte	0x31
+ 1123 0360 00       		.byte	0
+ 1124 0361 08       		.uleb128 0x8
+ 1125 0362 0E000000 		.4byte	.LVL30
+ 1126 0366 B8050000 		.4byte	0x5b8
+ 1127 036a 74030000 		.4byte	0x374
+ 1128 036e 09       		.uleb128 0x9
+ 1129 036f 01       		.uleb128 0x1
+ 1130 0370 50       		.byte	0x50
+ 1131 0371 01       		.uleb128 0x1
+ 1132 0372 31       		.byte	0x31
+ 1133 0373 00       		.byte	0
+ 1134 0374 08       		.uleb128 0x8
+ 1135 0375 14000000 		.4byte	.LVL31
+ 1136 0379 C3050000 		.4byte	0x5c3
+ 1137 037d 87030000 		.4byte	0x387
+ 1138 0381 09       		.uleb128 0x9
+ 1139 0382 01       		.uleb128 0x1
+ 1140 0383 50       		.byte	0x50
+ 1141 0384 01       		.uleb128 0x1
+ 1142 0385 31       		.byte	0x31
+ 1143 0386 00       		.byte	0
+ 1144 0387 08       		.uleb128 0x8
+ 1145 0388 1A000000 		.4byte	.LVL32
+ 1146 038c FA050000 		.4byte	0x5fa
+ 1147 0390 9A030000 		.4byte	0x39a
+ 1148 0394 09       		.uleb128 0x9
+ 1149 0395 01       		.uleb128 0x1
+ 1150 0396 50       		.byte	0x50
+ 1151 0397 01       		.uleb128 0x1
+ 1152 0398 31       		.byte	0x31
+ 1153 0399 00       		.byte	0
+ 1154 039a 08       		.uleb128 0x8
+ 1155 039b 20000000 		.4byte	.LVL33
+ 1156 039f E4050000 		.4byte	0x5e4
+ 1157 03a3 AD030000 		.4byte	0x3ad
+ 1158 03a7 09       		.uleb128 0x9
+ 1159 03a8 01       		.uleb128 0x1
+ 1160 03a9 50       		.byte	0x50
+ 1161 03aa 01       		.uleb128 0x1
+ 1162 03ab 30       		.byte	0x30
+ 1163 03ac 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 27
+
+
+ 1164 03ad 08       		.uleb128 0x8
+ 1165 03ae 26000000 		.4byte	.LVL34
+ 1166 03b2 D9050000 		.4byte	0x5d9
+ 1167 03b6 C0030000 		.4byte	0x3c0
+ 1168 03ba 09       		.uleb128 0x9
+ 1169 03bb 01       		.uleb128 0x1
+ 1170 03bc 50       		.byte	0x50
+ 1171 03bd 01       		.uleb128 0x1
+ 1172 03be 30       		.byte	0x30
+ 1173 03bf 00       		.byte	0
+ 1174 03c0 0A       		.uleb128 0xa
+ 1175 03c1 2C000000 		.4byte	.LVL35
+ 1176 03c5 AD050000 		.4byte	0x5ad
+ 1177 03c9 09       		.uleb128 0x9
+ 1178 03ca 01       		.uleb128 0x1
+ 1179 03cb 50       		.byte	0x50
+ 1180 03cc 02       		.uleb128 0x2
+ 1181 03cd 09       		.byte	0x9
+ 1182 03ce FF       		.byte	0xff
+ 1183 03cf 00       		.byte	0
+ 1184 03d0 00       		.byte	0
+ 1185 03d1 0E       		.uleb128 0xe
+ 1186 03d2 23000000 		.4byte	.LASF29
+ 1187 03d6 01       		.byte	0x1
+ 1188 03d7 0A01     		.2byte	0x10a
+ 1189 03d9 00000000 		.4byte	.LFB72
+ 1190 03dd 24000000 		.4byte	.LFE72-.LFB72
+ 1191 03e1 01       		.uleb128 0x1
+ 1192 03e2 9C       		.byte	0x9c
+ 1193 03e3 4A040000 		.4byte	0x44a
+ 1194 03e7 08       		.uleb128 0x8
+ 1195 03e8 08000000 		.4byte	.LVL36
+ 1196 03ec 5A020000 		.4byte	0x25a
+ 1197 03f0 FB030000 		.4byte	0x3fb
+ 1198 03f4 09       		.uleb128 0x9
+ 1199 03f5 01       		.uleb128 0x1
+ 1200 03f6 50       		.byte	0x50
+ 1201 03f7 02       		.uleb128 0x2
+ 1202 03f8 09       		.byte	0x9
+ 1203 03f9 9F       		.byte	0x9f
+ 1204 03fa 00       		.byte	0
+ 1205 03fb 08       		.uleb128 0x8
+ 1206 03fc 0E000000 		.4byte	.LVL37
+ 1207 0400 5A020000 		.4byte	0x25a
+ 1208 0404 0F040000 		.4byte	0x40f
+ 1209 0408 09       		.uleb128 0x9
+ 1210 0409 01       		.uleb128 0x1
+ 1211 040a 50       		.byte	0x50
+ 1212 040b 02       		.uleb128 0x2
+ 1213 040c 09       		.byte	0x9
+ 1214 040d BF       		.byte	0xbf
+ 1215 040e 00       		.byte	0
+ 1216 040f 08       		.uleb128 0x8
+ 1217 0410 14000000 		.4byte	.LVL38
+ 1218 0414 5A020000 		.4byte	0x25a
+ 1219 0418 23040000 		.4byte	0x423
+ 1220 041c 09       		.uleb128 0x9
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 28
+
+
+ 1221 041d 01       		.uleb128 0x1
+ 1222 041e 50       		.byte	0x50
+ 1223 041f 02       		.uleb128 0x2
+ 1224 0420 09       		.byte	0x9
+ 1225 0421 DF       		.byte	0xdf
+ 1226 0422 00       		.byte	0
+ 1227 0423 08       		.uleb128 0x8
+ 1228 0424 1A000000 		.4byte	.LVL39
+ 1229 0428 5A020000 		.4byte	0x25a
+ 1230 042c 37040000 		.4byte	0x437
+ 1231 0430 09       		.uleb128 0x9
+ 1232 0431 01       		.uleb128 0x1
+ 1233 0432 50       		.byte	0x50
+ 1234 0433 02       		.uleb128 0x2
+ 1235 0434 09       		.byte	0x9
+ 1236 0435 FF       		.byte	0xff
+ 1237 0436 00       		.byte	0
+ 1238 0437 0C       		.uleb128 0xc
+ 1239 0438 1E000000 		.4byte	.LVL40
+ 1240 043c 39030000 		.4byte	0x339
+ 1241 0440 0C       		.uleb128 0xc
+ 1242 0441 22000000 		.4byte	.LVL41
+ 1243 0445 DB020000 		.4byte	0x2db
+ 1244 0449 00       		.byte	0
+ 1245 044a 06       		.uleb128 0x6
+ 1246 044b 5C030000 		.4byte	.LASF30
+ 1247 044f 01       		.byte	0x1
+ 1248 0450 BE       		.byte	0xbe
+ 1249 0451 00000000 		.4byte	.LFB66
+ 1250 0455 0E000000 		.4byte	.LFE66-.LFB66
+ 1251 0459 01       		.uleb128 0x1
+ 1252 045a 9C       		.byte	0x9c
+ 1253 045b 72040000 		.4byte	0x472
+ 1254 045f 0C       		.uleb128 0xc
+ 1255 0460 06000000 		.4byte	.LVL42
+ 1256 0464 D1030000 		.4byte	0x3d1
+ 1257 0468 0C       		.uleb128 0xc
+ 1258 0469 0C000000 		.4byte	.LVL43
+ 1259 046d 10060000 		.4byte	0x610
+ 1260 0471 00       		.byte	0
+ 1261 0472 0F       		.uleb128 0xf
+ 1262 0473 E8010000 		.4byte	.LASF60
+ 1263 0477 01       		.byte	0x1
+ 1264 0478 2A       		.byte	0x2a
+ 1265 0479 89000000 		.4byte	0x89
+ 1266 047d 00000000 		.4byte	.LFB65
+ 1267 0481 98010000 		.4byte	.LFE65-.LFB65
+ 1268 0485 01       		.uleb128 0x1
+ 1269 0486 9C       		.byte	0x9c
+ 1270 0487 2D050000 		.4byte	0x52d
+ 1271 048b 10       		.uleb128 0x10
+ 1272 048c 39020000 		.4byte	.LASF31
+ 1273 0490 01       		.byte	0x1
+ 1274 0491 2C       		.byte	0x2c
+ 1275 0492 B8000000 		.4byte	0xb8
+ 1276 0496 A5000000 		.4byte	.LLST5
+ 1277 049a 10       		.uleb128 0x10
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 29
+
+
+ 1278 049b 36000000 		.4byte	.LASF32
+ 1279 049f 01       		.byte	0x1
+ 1280 04a0 2D       		.byte	0x2d
+ 1281 04a1 A2000000 		.4byte	0xa2
+ 1282 04a5 B9000000 		.4byte	.LLST6
+ 1283 04a9 10       		.uleb128 0x10
+ 1284 04aa 18000000 		.4byte	.LASF33
+ 1285 04ae 01       		.byte	0x1
+ 1286 04af 2F       		.byte	0x2f
+ 1287 04b0 97000000 		.4byte	0x97
+ 1288 04b4 35010000 		.4byte	.LLST7
+ 1289 04b8 0C       		.uleb128 0xc
+ 1290 04b9 06000000 		.4byte	.LVL45
+ 1291 04bd 4A040000 		.4byte	0x44a
+ 1292 04c1 08       		.uleb128 0x8
+ 1293 04c2 0C000000 		.4byte	.LVL46
+ 1294 04c6 1B060000 		.4byte	0x61b
+ 1295 04ca D8040000 		.4byte	0x4d8
+ 1296 04ce 09       		.uleb128 0x9
+ 1297 04cf 01       		.uleb128 0x1
+ 1298 04d0 50       		.byte	0x50
+ 1299 04d1 05       		.uleb128 0x5
+ 1300 04d2 03       		.byte	0x3
+ 1301 04d3 00000000 		.4byte	sampleRateIRQ
+ 1302 04d7 00       		.byte	0
+ 1303 04d8 0C       		.uleb128 0xc
+ 1304 04d9 10000000 		.4byte	.LVL47
+ 1305 04dd 26060000 		.4byte	0x626
+ 1306 04e1 08       		.uleb128 0x8
+ 1307 04e2 1A000000 		.4byte	.LVL48
+ 1308 04e6 31060000 		.4byte	0x631
+ 1309 04ea F8040000 		.4byte	0x4f8
+ 1310 04ee 09       		.uleb128 0x9
+ 1311 04ef 01       		.uleb128 0x1
+ 1312 04f0 50       		.byte	0x50
+ 1313 04f1 05       		.uleb128 0x5
+ 1314 04f2 03       		.byte	0x3
+ 1315 04f3 00000000 		.4byte	.LANCHOR1
+ 1316 04f7 00       		.byte	0
+ 1317 04f8 0C       		.uleb128 0xc
+ 1318 04f9 94000000 		.4byte	.LVL51
+ 1319 04fd 5A020000 		.4byte	0x25a
+ 1320 0501 0C       		.uleb128 0xc
+ 1321 0502 A2000000 		.4byte	.LVL52
+ 1322 0506 C4010000 		.4byte	0x1c4
+ 1323 050a 08       		.uleb128 0x8
+ 1324 050b CA000000 		.4byte	.LVL58
+ 1325 050f C4010000 		.4byte	0x1c4
+ 1326 0513 23050000 		.4byte	0x523
+ 1327 0517 09       		.uleb128 0x9
+ 1328 0518 01       		.uleb128 0x1
+ 1329 0519 50       		.byte	0x50
+ 1330 051a 02       		.uleb128 0x2
+ 1331 051b 08       		.byte	0x8
+ 1332 051c 2A       		.byte	0x2a
+ 1333 051d 09       		.uleb128 0x9
+ 1334 051e 01       		.uleb128 0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 30
+
+
+ 1335 051f 52       		.byte	0x52
+ 1336 0520 01       		.uleb128 0x1
+ 1337 0521 30       		.byte	0x30
+ 1338 0522 00       		.byte	0
+ 1339 0523 0C       		.uleb128 0xc
+ 1340 0524 3E010000 		.4byte	.LVL66
+ 1341 0528 3C060000 		.4byte	0x63c
+ 1342 052c 00       		.byte	0
+ 1343 052d 11       		.uleb128 0x11
+ 1344 052e 95010000 		.4byte	.LASF34
+ 1345 0532 04       		.byte	0x4
+ 1346 0533 1207     		.2byte	0x712
+ 1347 0535 39050000 		.4byte	0x539
+ 1348 0539 12       		.uleb128 0x12
+ 1349 053a AD000000 		.4byte	0xad
+ 1350 053e 13       		.uleb128 0x13
+ 1351 053f A2010000 		.4byte	.LASF35
+ 1352 0543 01       		.byte	0x1
+ 1353 0544 15       		.byte	0x15
+ 1354 0545 97000000 		.4byte	0x97
+ 1355 0549 13       		.uleb128 0x13
+ 1356 054a C1020000 		.4byte	.LASF36
+ 1357 054e 01       		.byte	0x1
+ 1358 054f 16       		.byte	0x16
+ 1359 0550 A2000000 		.4byte	0xa2
+ 1360 0554 14       		.uleb128 0x14
+ 1361 0555 97000000 		.4byte	0x97
+ 1362 0559 6A050000 		.4byte	0x56a
+ 1363 055d 15       		.uleb128 0x15
+ 1364 055e DF000000 		.4byte	0xdf
+ 1365 0562 02       		.byte	0x2
+ 1366 0563 15       		.uleb128 0x15
+ 1367 0564 DF000000 		.4byte	0xdf
+ 1368 0568 0F       		.byte	0xf
+ 1369 0569 00       		.byte	0
+ 1370 056a 13       		.uleb128 0x13
+ 1371 056b E2020000 		.4byte	.LASF37
+ 1372 056f 01       		.byte	0x1
+ 1373 0570 17       		.byte	0x17
+ 1374 0571 54050000 		.4byte	0x554
+ 1375 0575 13       		.uleb128 0x13
+ 1376 0576 7E020000 		.4byte	.LASF38
+ 1377 057a 01       		.byte	0x1
+ 1378 057b 19       		.byte	0x19
+ 1379 057c 80050000 		.4byte	0x580
+ 1380 0580 16       		.uleb128 0x16
+ 1381 0581 04       		.byte	0x4
+ 1382 0582 97000000 		.4byte	0x97
+ 1383 0586 13       		.uleb128 0x13
+ 1384 0587 C7020000 		.4byte	.LASF39
+ 1385 058b 01       		.byte	0x1
+ 1386 058c 1A       		.byte	0x1a
+ 1387 058d 80050000 		.4byte	0x580
+ 1388 0591 17       		.uleb128 0x17
+ 1389 0592 DA020000 		.4byte	.LASF40
+ 1390 0596 01       		.byte	0x1
+ 1391 0597 1C       		.byte	0x1c
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 31
+
+
+ 1392 0598 97000000 		.4byte	0x97
+ 1393 059c 05       		.uleb128 0x5
+ 1394 059d 03       		.byte	0x3
+ 1395 059e 00000000 		.4byte	isrFlag
+ 1396 05a2 18       		.uleb128 0x18
+ 1397 05a3 BC010000 		.4byte	.LASF41
+ 1398 05a7 BC010000 		.4byte	.LASF41
+ 1399 05ab 05       		.byte	0x5
+ 1400 05ac 26       		.byte	0x26
+ 1401 05ad 18       		.uleb128 0x18
+ 1402 05ae 87010000 		.4byte	.LASF42
+ 1403 05b2 87010000 		.4byte	.LASF42
+ 1404 05b6 06       		.byte	0x6
+ 1405 05b7 26       		.byte	0x26
+ 1406 05b8 18       		.uleb128 0x18
+ 1407 05b9 6A020000 		.4byte	.LASF43
+ 1408 05bd 6A020000 		.4byte	.LASF43
+ 1409 05c1 07       		.byte	0x7
+ 1410 05c2 26       		.byte	0x26
+ 1411 05c3 18       		.uleb128 0x18
+ 1412 05c4 84000000 		.4byte	.LASF44
+ 1413 05c8 84000000 		.4byte	.LASF44
+ 1414 05cc 08       		.byte	0x8
+ 1415 05cd 26       		.byte	0x26
+ 1416 05ce 18       		.uleb128 0x18
+ 1417 05cf D2010000 		.4byte	.LASF45
+ 1418 05d3 D2010000 		.4byte	.LASF45
+ 1419 05d7 09       		.byte	0x9
+ 1420 05d8 77       		.byte	0x77
+ 1421 05d9 18       		.uleb128 0x18
+ 1422 05da F2020000 		.4byte	.LASF46
+ 1423 05de F2020000 		.4byte	.LASF46
+ 1424 05e2 0A       		.byte	0xa
+ 1425 05e3 26       		.byte	0x26
+ 1426 05e4 18       		.uleb128 0x18
+ 1427 05e5 B0020000 		.4byte	.LASF47
+ 1428 05e9 B0020000 		.4byte	.LASF47
+ 1429 05ed 0B       		.byte	0xb
+ 1430 05ee 26       		.byte	0x26
+ 1431 05ef 18       		.uleb128 0x18
+ 1432 05f0 DC010000 		.4byte	.LASF48
+ 1433 05f4 DC010000 		.4byte	.LASF48
+ 1434 05f8 0C       		.byte	0xc
+ 1435 05f9 26       		.byte	0x26
+ 1436 05fa 18       		.uleb128 0x18
+ 1437 05fb 28030000 		.4byte	.LASF49
+ 1438 05ff 28030000 		.4byte	.LASF49
+ 1439 0603 0D       		.byte	0xd
+ 1440 0604 26       		.byte	0x26
+ 1441 0605 18       		.uleb128 0x18
+ 1442 0606 54030000 		.4byte	.LASF50
+ 1443 060a 54030000 		.4byte	.LASF50
+ 1444 060e 09       		.byte	0x9
+ 1445 060f 76       		.byte	0x76
+ 1446 0610 18       		.uleb128 0x18
+ 1447 0611 A7020000 		.4byte	.LASF51
+ 1448 0615 A7020000 		.4byte	.LASF51
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 32
+
+
+ 1449 0619 0E       		.byte	0xe
+ 1450 061a 0D       		.byte	0xd
+ 1451 061b 18       		.uleb128 0x18
+ 1452 061c 34030000 		.4byte	.LASF52
+ 1453 0620 34030000 		.4byte	.LASF52
+ 1454 0624 0F       		.byte	0xf
+ 1455 0625 18       		.byte	0x18
+ 1456 0626 18       		.uleb128 0x18
+ 1457 0627 90000000 		.4byte	.LASF53
+ 1458 062b 90000000 		.4byte	.LASF53
+ 1459 062f 10       		.byte	0x10
+ 1460 0630 28       		.byte	0x28
+ 1461 0631 18       		.uleb128 0x18
+ 1462 0632 66000000 		.4byte	.LASF54
+ 1463 0636 66000000 		.4byte	.LASF54
+ 1464 063a 10       		.byte	0x10
+ 1465 063b 24       		.byte	0x24
+ 1466 063c 18       		.uleb128 0x18
+ 1467 063d 57000000 		.4byte	.LASF55
+ 1468 0641 57000000 		.4byte	.LASF55
+ 1469 0645 10       		.byte	0x10
+ 1470 0646 2B       		.byte	0x2b
+ 1471 0647 00       		.byte	0
+ 1472              		.section	.debug_abbrev,"",%progbits
+ 1473              	.Ldebug_abbrev0:
+ 1474 0000 01       		.uleb128 0x1
+ 1475 0001 11       		.uleb128 0x11
+ 1476 0002 01       		.byte	0x1
+ 1477 0003 25       		.uleb128 0x25
+ 1478 0004 0E       		.uleb128 0xe
+ 1479 0005 13       		.uleb128 0x13
+ 1480 0006 0B       		.uleb128 0xb
+ 1481 0007 03       		.uleb128 0x3
+ 1482 0008 0E       		.uleb128 0xe
+ 1483 0009 1B       		.uleb128 0x1b
+ 1484 000a 0E       		.uleb128 0xe
+ 1485 000b 55       		.uleb128 0x55
+ 1486 000c 17       		.uleb128 0x17
+ 1487 000d 11       		.uleb128 0x11
+ 1488 000e 01       		.uleb128 0x1
+ 1489 000f 10       		.uleb128 0x10
+ 1490 0010 17       		.uleb128 0x17
+ 1491 0011 00       		.byte	0
+ 1492 0012 00       		.byte	0
+ 1493 0013 02       		.uleb128 0x2
+ 1494 0014 24       		.uleb128 0x24
+ 1495 0015 00       		.byte	0
+ 1496 0016 0B       		.uleb128 0xb
+ 1497 0017 0B       		.uleb128 0xb
+ 1498 0018 3E       		.uleb128 0x3e
+ 1499 0019 0B       		.uleb128 0xb
+ 1500 001a 03       		.uleb128 0x3
+ 1501 001b 0E       		.uleb128 0xe
+ 1502 001c 00       		.byte	0
+ 1503 001d 00       		.byte	0
+ 1504 001e 03       		.uleb128 0x3
+ 1505 001f 16       		.uleb128 0x16
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 33
+
+
+ 1506 0020 00       		.byte	0
+ 1507 0021 03       		.uleb128 0x3
+ 1508 0022 0E       		.uleb128 0xe
+ 1509 0023 3A       		.uleb128 0x3a
+ 1510 0024 0B       		.uleb128 0xb
+ 1511 0025 3B       		.uleb128 0x3b
+ 1512 0026 0B       		.uleb128 0xb
+ 1513 0027 49       		.uleb128 0x49
+ 1514 0028 13       		.uleb128 0x13
+ 1515 0029 00       		.byte	0
+ 1516 002a 00       		.byte	0
+ 1517 002b 04       		.uleb128 0x4
+ 1518 002c 24       		.uleb128 0x24
+ 1519 002d 00       		.byte	0
+ 1520 002e 0B       		.uleb128 0xb
+ 1521 002f 0B       		.uleb128 0xb
+ 1522 0030 3E       		.uleb128 0x3e
+ 1523 0031 0B       		.uleb128 0xb
+ 1524 0032 03       		.uleb128 0x3
+ 1525 0033 08       		.uleb128 0x8
+ 1526 0034 00       		.byte	0
+ 1527 0035 00       		.byte	0
+ 1528 0036 05       		.uleb128 0x5
+ 1529 0037 2E       		.uleb128 0x2e
+ 1530 0038 00       		.byte	0
+ 1531 0039 3F       		.uleb128 0x3f
+ 1532 003a 19       		.uleb128 0x19
+ 1533 003b 03       		.uleb128 0x3
+ 1534 003c 0E       		.uleb128 0xe
+ 1535 003d 3A       		.uleb128 0x3a
+ 1536 003e 0B       		.uleb128 0xb
+ 1537 003f 3B       		.uleb128 0x3b
+ 1538 0040 0B       		.uleb128 0xb
+ 1539 0041 27       		.uleb128 0x27
+ 1540 0042 19       		.uleb128 0x19
+ 1541 0043 11       		.uleb128 0x11
+ 1542 0044 01       		.uleb128 0x1
+ 1543 0045 12       		.uleb128 0x12
+ 1544 0046 06       		.uleb128 0x6
+ 1545 0047 40       		.uleb128 0x40
+ 1546 0048 18       		.uleb128 0x18
+ 1547 0049 9742     		.uleb128 0x2117
+ 1548 004b 19       		.uleb128 0x19
+ 1549 004c 00       		.byte	0
+ 1550 004d 00       		.byte	0
+ 1551 004e 06       		.uleb128 0x6
+ 1552 004f 2E       		.uleb128 0x2e
+ 1553 0050 01       		.byte	0x1
+ 1554 0051 3F       		.uleb128 0x3f
+ 1555 0052 19       		.uleb128 0x19
+ 1556 0053 03       		.uleb128 0x3
+ 1557 0054 0E       		.uleb128 0xe
+ 1558 0055 3A       		.uleb128 0x3a
+ 1559 0056 0B       		.uleb128 0xb
+ 1560 0057 3B       		.uleb128 0x3b
+ 1561 0058 0B       		.uleb128 0xb
+ 1562 0059 27       		.uleb128 0x27
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 34
+
+
+ 1563 005a 19       		.uleb128 0x19
+ 1564 005b 11       		.uleb128 0x11
+ 1565 005c 01       		.uleb128 0x1
+ 1566 005d 12       		.uleb128 0x12
+ 1567 005e 06       		.uleb128 0x6
+ 1568 005f 40       		.uleb128 0x40
+ 1569 0060 18       		.uleb128 0x18
+ 1570 0061 9742     		.uleb128 0x2117
+ 1571 0063 19       		.uleb128 0x19
+ 1572 0064 01       		.uleb128 0x1
+ 1573 0065 13       		.uleb128 0x13
+ 1574 0066 00       		.byte	0
+ 1575 0067 00       		.byte	0
+ 1576 0068 07       		.uleb128 0x7
+ 1577 0069 05       		.uleb128 0x5
+ 1578 006a 00       		.byte	0
+ 1579 006b 03       		.uleb128 0x3
+ 1580 006c 0E       		.uleb128 0xe
+ 1581 006d 3A       		.uleb128 0x3a
+ 1582 006e 0B       		.uleb128 0xb
+ 1583 006f 3B       		.uleb128 0x3b
+ 1584 0070 0B       		.uleb128 0xb
+ 1585 0071 49       		.uleb128 0x49
+ 1586 0072 13       		.uleb128 0x13
+ 1587 0073 02       		.uleb128 0x2
+ 1588 0074 17       		.uleb128 0x17
+ 1589 0075 00       		.byte	0
+ 1590 0076 00       		.byte	0
+ 1591 0077 08       		.uleb128 0x8
+ 1592 0078 898201   		.uleb128 0x4109
+ 1593 007b 01       		.byte	0x1
+ 1594 007c 11       		.uleb128 0x11
+ 1595 007d 01       		.uleb128 0x1
+ 1596 007e 31       		.uleb128 0x31
+ 1597 007f 13       		.uleb128 0x13
+ 1598 0080 01       		.uleb128 0x1
+ 1599 0081 13       		.uleb128 0x13
+ 1600 0082 00       		.byte	0
+ 1601 0083 00       		.byte	0
+ 1602 0084 09       		.uleb128 0x9
+ 1603 0085 8A8201   		.uleb128 0x410a
+ 1604 0088 00       		.byte	0
+ 1605 0089 02       		.uleb128 0x2
+ 1606 008a 18       		.uleb128 0x18
+ 1607 008b 9142     		.uleb128 0x2111
+ 1608 008d 18       		.uleb128 0x18
+ 1609 008e 00       		.byte	0
+ 1610 008f 00       		.byte	0
+ 1611 0090 0A       		.uleb128 0xa
+ 1612 0091 898201   		.uleb128 0x4109
+ 1613 0094 01       		.byte	0x1
+ 1614 0095 11       		.uleb128 0x11
+ 1615 0096 01       		.uleb128 0x1
+ 1616 0097 31       		.uleb128 0x31
+ 1617 0098 13       		.uleb128 0x13
+ 1618 0099 00       		.byte	0
+ 1619 009a 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 35
+
+
+ 1620 009b 0B       		.uleb128 0xb
+ 1621 009c 05       		.uleb128 0x5
+ 1622 009d 00       		.byte	0
+ 1623 009e 03       		.uleb128 0x3
+ 1624 009f 08       		.uleb128 0x8
+ 1625 00a0 3A       		.uleb128 0x3a
+ 1626 00a1 0B       		.uleb128 0xb
+ 1627 00a2 3B       		.uleb128 0x3b
+ 1628 00a3 0B       		.uleb128 0xb
+ 1629 00a4 49       		.uleb128 0x49
+ 1630 00a5 13       		.uleb128 0x13
+ 1631 00a6 02       		.uleb128 0x2
+ 1632 00a7 17       		.uleb128 0x17
+ 1633 00a8 00       		.byte	0
+ 1634 00a9 00       		.byte	0
+ 1635 00aa 0C       		.uleb128 0xc
+ 1636 00ab 898201   		.uleb128 0x4109
+ 1637 00ae 00       		.byte	0
+ 1638 00af 11       		.uleb128 0x11
+ 1639 00b0 01       		.uleb128 0x1
+ 1640 00b1 31       		.uleb128 0x31
+ 1641 00b2 13       		.uleb128 0x13
+ 1642 00b3 00       		.byte	0
+ 1643 00b4 00       		.byte	0
+ 1644 00b5 0D       		.uleb128 0xd
+ 1645 00b6 2E       		.uleb128 0x2e
+ 1646 00b7 01       		.byte	0x1
+ 1647 00b8 3F       		.uleb128 0x3f
+ 1648 00b9 19       		.uleb128 0x19
+ 1649 00ba 03       		.uleb128 0x3
+ 1650 00bb 0E       		.uleb128 0xe
+ 1651 00bc 3A       		.uleb128 0x3a
+ 1652 00bd 0B       		.uleb128 0xb
+ 1653 00be 3B       		.uleb128 0x3b
+ 1654 00bf 0B       		.uleb128 0xb
+ 1655 00c0 11       		.uleb128 0x11
+ 1656 00c1 01       		.uleb128 0x1
+ 1657 00c2 12       		.uleb128 0x12
+ 1658 00c3 06       		.uleb128 0x6
+ 1659 00c4 40       		.uleb128 0x40
+ 1660 00c5 18       		.uleb128 0x18
+ 1661 00c6 9742     		.uleb128 0x2117
+ 1662 00c8 19       		.uleb128 0x19
+ 1663 00c9 01       		.uleb128 0x1
+ 1664 00ca 13       		.uleb128 0x13
+ 1665 00cb 00       		.byte	0
+ 1666 00cc 00       		.byte	0
+ 1667 00cd 0E       		.uleb128 0xe
+ 1668 00ce 2E       		.uleb128 0x2e
+ 1669 00cf 01       		.byte	0x1
+ 1670 00d0 3F       		.uleb128 0x3f
+ 1671 00d1 19       		.uleb128 0x19
+ 1672 00d2 03       		.uleb128 0x3
+ 1673 00d3 0E       		.uleb128 0xe
+ 1674 00d4 3A       		.uleb128 0x3a
+ 1675 00d5 0B       		.uleb128 0xb
+ 1676 00d6 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 36
+
+
+ 1677 00d7 05       		.uleb128 0x5
+ 1678 00d8 11       		.uleb128 0x11
+ 1679 00d9 01       		.uleb128 0x1
+ 1680 00da 12       		.uleb128 0x12
+ 1681 00db 06       		.uleb128 0x6
+ 1682 00dc 40       		.uleb128 0x40
+ 1683 00dd 18       		.uleb128 0x18
+ 1684 00de 9742     		.uleb128 0x2117
+ 1685 00e0 19       		.uleb128 0x19
+ 1686 00e1 01       		.uleb128 0x1
+ 1687 00e2 13       		.uleb128 0x13
+ 1688 00e3 00       		.byte	0
+ 1689 00e4 00       		.byte	0
+ 1690 00e5 0F       		.uleb128 0xf
+ 1691 00e6 2E       		.uleb128 0x2e
+ 1692 00e7 01       		.byte	0x1
+ 1693 00e8 3F       		.uleb128 0x3f
+ 1694 00e9 19       		.uleb128 0x19
+ 1695 00ea 03       		.uleb128 0x3
+ 1696 00eb 0E       		.uleb128 0xe
+ 1697 00ec 3A       		.uleb128 0x3a
+ 1698 00ed 0B       		.uleb128 0xb
+ 1699 00ee 3B       		.uleb128 0x3b
+ 1700 00ef 0B       		.uleb128 0xb
+ 1701 00f0 27       		.uleb128 0x27
+ 1702 00f1 19       		.uleb128 0x19
+ 1703 00f2 49       		.uleb128 0x49
+ 1704 00f3 13       		.uleb128 0x13
+ 1705 00f4 8701     		.uleb128 0x87
+ 1706 00f6 19       		.uleb128 0x19
+ 1707 00f7 11       		.uleb128 0x11
+ 1708 00f8 01       		.uleb128 0x1
+ 1709 00f9 12       		.uleb128 0x12
+ 1710 00fa 06       		.uleb128 0x6
+ 1711 00fb 40       		.uleb128 0x40
+ 1712 00fc 18       		.uleb128 0x18
+ 1713 00fd 9742     		.uleb128 0x2117
+ 1714 00ff 19       		.uleb128 0x19
+ 1715 0100 01       		.uleb128 0x1
+ 1716 0101 13       		.uleb128 0x13
+ 1717 0102 00       		.byte	0
+ 1718 0103 00       		.byte	0
+ 1719 0104 10       		.uleb128 0x10
+ 1720 0105 34       		.uleb128 0x34
+ 1721 0106 00       		.byte	0
+ 1722 0107 03       		.uleb128 0x3
+ 1723 0108 0E       		.uleb128 0xe
+ 1724 0109 3A       		.uleb128 0x3a
+ 1725 010a 0B       		.uleb128 0xb
+ 1726 010b 3B       		.uleb128 0x3b
+ 1727 010c 0B       		.uleb128 0xb
+ 1728 010d 49       		.uleb128 0x49
+ 1729 010e 13       		.uleb128 0x13
+ 1730 010f 02       		.uleb128 0x2
+ 1731 0110 17       		.uleb128 0x17
+ 1732 0111 00       		.byte	0
+ 1733 0112 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 37
+
+
+ 1734 0113 11       		.uleb128 0x11
+ 1735 0114 34       		.uleb128 0x34
+ 1736 0115 00       		.byte	0
+ 1737 0116 03       		.uleb128 0x3
+ 1738 0117 0E       		.uleb128 0xe
+ 1739 0118 3A       		.uleb128 0x3a
+ 1740 0119 0B       		.uleb128 0xb
+ 1741 011a 3B       		.uleb128 0x3b
+ 1742 011b 05       		.uleb128 0x5
+ 1743 011c 49       		.uleb128 0x49
+ 1744 011d 13       		.uleb128 0x13
+ 1745 011e 3F       		.uleb128 0x3f
+ 1746 011f 19       		.uleb128 0x19
+ 1747 0120 3C       		.uleb128 0x3c
+ 1748 0121 19       		.uleb128 0x19
+ 1749 0122 00       		.byte	0
+ 1750 0123 00       		.byte	0
+ 1751 0124 12       		.uleb128 0x12
+ 1752 0125 35       		.uleb128 0x35
+ 1753 0126 00       		.byte	0
+ 1754 0127 49       		.uleb128 0x49
+ 1755 0128 13       		.uleb128 0x13
+ 1756 0129 00       		.byte	0
+ 1757 012a 00       		.byte	0
+ 1758 012b 13       		.uleb128 0x13
+ 1759 012c 34       		.uleb128 0x34
+ 1760 012d 00       		.byte	0
+ 1761 012e 03       		.uleb128 0x3
+ 1762 012f 0E       		.uleb128 0xe
+ 1763 0130 3A       		.uleb128 0x3a
+ 1764 0131 0B       		.uleb128 0xb
+ 1765 0132 3B       		.uleb128 0x3b
+ 1766 0133 0B       		.uleb128 0xb
+ 1767 0134 49       		.uleb128 0x49
+ 1768 0135 13       		.uleb128 0x13
+ 1769 0136 3F       		.uleb128 0x3f
+ 1770 0137 19       		.uleb128 0x19
+ 1771 0138 3C       		.uleb128 0x3c
+ 1772 0139 19       		.uleb128 0x19
+ 1773 013a 00       		.byte	0
+ 1774 013b 00       		.byte	0
+ 1775 013c 14       		.uleb128 0x14
+ 1776 013d 01       		.uleb128 0x1
+ 1777 013e 01       		.byte	0x1
+ 1778 013f 49       		.uleb128 0x49
+ 1779 0140 13       		.uleb128 0x13
+ 1780 0141 01       		.uleb128 0x1
+ 1781 0142 13       		.uleb128 0x13
+ 1782 0143 00       		.byte	0
+ 1783 0144 00       		.byte	0
+ 1784 0145 15       		.uleb128 0x15
+ 1785 0146 21       		.uleb128 0x21
+ 1786 0147 00       		.byte	0
+ 1787 0148 49       		.uleb128 0x49
+ 1788 0149 13       		.uleb128 0x13
+ 1789 014a 2F       		.uleb128 0x2f
+ 1790 014b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 38
+
+
+ 1791 014c 00       		.byte	0
+ 1792 014d 00       		.byte	0
+ 1793 014e 16       		.uleb128 0x16
+ 1794 014f 0F       		.uleb128 0xf
+ 1795 0150 00       		.byte	0
+ 1796 0151 0B       		.uleb128 0xb
+ 1797 0152 0B       		.uleb128 0xb
+ 1798 0153 49       		.uleb128 0x49
+ 1799 0154 13       		.uleb128 0x13
+ 1800 0155 00       		.byte	0
+ 1801 0156 00       		.byte	0
+ 1802 0157 17       		.uleb128 0x17
+ 1803 0158 34       		.uleb128 0x34
+ 1804 0159 00       		.byte	0
+ 1805 015a 03       		.uleb128 0x3
+ 1806 015b 0E       		.uleb128 0xe
+ 1807 015c 3A       		.uleb128 0x3a
+ 1808 015d 0B       		.uleb128 0xb
+ 1809 015e 3B       		.uleb128 0x3b
+ 1810 015f 0B       		.uleb128 0xb
+ 1811 0160 49       		.uleb128 0x49
+ 1812 0161 13       		.uleb128 0x13
+ 1813 0162 3F       		.uleb128 0x3f
+ 1814 0163 19       		.uleb128 0x19
+ 1815 0164 02       		.uleb128 0x2
+ 1816 0165 18       		.uleb128 0x18
+ 1817 0166 00       		.byte	0
+ 1818 0167 00       		.byte	0
+ 1819 0168 18       		.uleb128 0x18
+ 1820 0169 2E       		.uleb128 0x2e
+ 1821 016a 00       		.byte	0
+ 1822 016b 3F       		.uleb128 0x3f
+ 1823 016c 19       		.uleb128 0x19
+ 1824 016d 3C       		.uleb128 0x3c
+ 1825 016e 19       		.uleb128 0x19
+ 1826 016f 6E       		.uleb128 0x6e
+ 1827 0170 0E       		.uleb128 0xe
+ 1828 0171 03       		.uleb128 0x3
+ 1829 0172 0E       		.uleb128 0xe
+ 1830 0173 3A       		.uleb128 0x3a
+ 1831 0174 0B       		.uleb128 0xb
+ 1832 0175 3B       		.uleb128 0x3b
+ 1833 0176 0B       		.uleb128 0xb
+ 1834 0177 00       		.byte	0
+ 1835 0178 00       		.byte	0
+ 1836 0179 00       		.byte	0
+ 1837              		.section	.debug_loc,"",%progbits
+ 1838              	.Ldebug_loc0:
+ 1839              	.LLST0:
+ 1840 0000 00000000 		.4byte	.LVL0
+ 1841 0004 06000000 		.4byte	.LVL1
+ 1842 0008 0100     		.2byte	0x1
+ 1843 000a 50       		.byte	0x50
+ 1844 000b 06000000 		.4byte	.LVL1
+ 1845 000f 3C000000 		.4byte	.LFE67
+ 1846 0013 0400     		.2byte	0x4
+ 1847 0015 F3       		.byte	0xf3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 39
+
+
+ 1848 0016 01       		.uleb128 0x1
+ 1849 0017 50       		.byte	0x50
+ 1850 0018 9F       		.byte	0x9f
+ 1851 0019 00000000 		.4byte	0
+ 1852 001d 00000000 		.4byte	0
+ 1853              	.LLST1:
+ 1854 0021 00000000 		.4byte	.LVL11
+ 1855 0025 08000000 		.4byte	.LVL12
+ 1856 0029 0100     		.2byte	0x1
+ 1857 002b 50       		.byte	0x50
+ 1858 002c 08000000 		.4byte	.LVL12
+ 1859 0030 26000000 		.4byte	.LFE68
+ 1860 0034 0400     		.2byte	0x4
+ 1861 0036 F3       		.byte	0xf3
+ 1862 0037 01       		.uleb128 0x1
+ 1863 0038 50       		.byte	0x50
+ 1864 0039 9F       		.byte	0x9f
+ 1865 003a 00000000 		.4byte	0
+ 1866 003e 00000000 		.4byte	0
+ 1867              	.LLST2:
+ 1868 0042 00000000 		.4byte	.LVL11
+ 1869 0046 0B000000 		.4byte	.LVL13-1
+ 1870 004a 0100     		.2byte	0x1
+ 1871 004c 51       		.byte	0x51
+ 1872 004d 0B000000 		.4byte	.LVL13-1
+ 1873 0051 26000000 		.4byte	.LFE68
+ 1874 0055 0400     		.2byte	0x4
+ 1875 0057 F3       		.byte	0xf3
+ 1876 0058 01       		.uleb128 0x1
+ 1877 0059 51       		.byte	0x51
+ 1878 005a 9F       		.byte	0x9f
+ 1879 005b 00000000 		.4byte	0
+ 1880 005f 00000000 		.4byte	0
+ 1881              	.LLST3:
+ 1882 0063 00000000 		.4byte	.LVL11
+ 1883 0067 0B000000 		.4byte	.LVL13-1
+ 1884 006b 0100     		.2byte	0x1
+ 1885 006d 52       		.byte	0x52
+ 1886 006e 0B000000 		.4byte	.LVL13-1
+ 1887 0072 26000000 		.4byte	.LFE68
+ 1888 0076 0400     		.2byte	0x4
+ 1889 0078 F3       		.byte	0xf3
+ 1890 0079 01       		.uleb128 0x1
+ 1891 007a 52       		.byte	0x52
+ 1892 007b 9F       		.byte	0x9f
+ 1893 007c 00000000 		.4byte	0
+ 1894 0080 00000000 		.4byte	0
+ 1895              	.LLST4:
+ 1896 0084 00000000 		.4byte	.LVL18
+ 1897 0088 06000000 		.4byte	.LVL19
+ 1898 008c 0100     		.2byte	0x1
+ 1899 008e 50       		.byte	0x50
+ 1900 008f 06000000 		.4byte	.LVL19
+ 1901 0093 24000000 		.4byte	.LFE69
+ 1902 0097 0400     		.2byte	0x4
+ 1903 0099 F3       		.byte	0xf3
+ 1904 009a 01       		.uleb128 0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 40
+
+
+ 1905 009b 50       		.byte	0x50
+ 1906 009c 9F       		.byte	0x9f
+ 1907 009d 00000000 		.4byte	0
+ 1908 00a1 00000000 		.4byte	0
+ 1909              	.LLST5:
+ 1910 00a5 02000000 		.4byte	.LVL44
+ 1911 00a9 1E000000 		.4byte	.LVL49
+ 1912 00ad 0200     		.2byte	0x2
+ 1913 00af 30       		.byte	0x30
+ 1914 00b0 9F       		.byte	0x9f
+ 1915 00b1 00000000 		.4byte	0
+ 1916 00b5 00000000 		.4byte	0
+ 1917              	.LLST6:
+ 1918 00b9 02000000 		.4byte	.LVL44
+ 1919 00bd 1E000000 		.4byte	.LVL49
+ 1920 00c1 0200     		.2byte	0x2
+ 1921 00c3 30       		.byte	0x30
+ 1922 00c4 9F       		.byte	0x9f
+ 1923 00c5 1E000000 		.4byte	.LVL49
+ 1924 00c9 A8000000 		.4byte	.LVL53
+ 1925 00cd 0100     		.2byte	0x1
+ 1926 00cf 55       		.byte	0x55
+ 1927 00d0 AE000000 		.4byte	.LVL54
+ 1928 00d4 B4000000 		.4byte	.LVL55
+ 1929 00d8 0100     		.2byte	0x1
+ 1930 00da 55       		.byte	0x55
+ 1931 00db B4000000 		.4byte	.LVL55
+ 1932 00df BA000000 		.4byte	.LVL56
+ 1933 00e3 0400     		.2byte	0x4
+ 1934 00e5 0A       		.byte	0xa
+ 1935 00e6 7103     		.2byte	0x371
+ 1936 00e8 9F       		.byte	0x9f
+ 1937 00e9 BA000000 		.4byte	.LVL56
+ 1938 00ed D0000000 		.4byte	.LVL59
+ 1939 00f1 0100     		.2byte	0x1
+ 1940 00f3 55       		.byte	0x55
+ 1941 00f4 D0000000 		.4byte	.LVL59
+ 1942 00f8 D4000000 		.4byte	.LVL60
+ 1943 00fc 0500     		.2byte	0x5
+ 1944 00fe 75       		.byte	0x75
+ 1945 00ff 00       		.sleb128 0
+ 1946 0100 3F       		.byte	0x3f
+ 1947 0101 1A       		.byte	0x1a
+ 1948 0102 9F       		.byte	0x9f
+ 1949 0103 D4000000 		.4byte	.LVL60
+ 1950 0107 D8000000 		.4byte	.LVL61
+ 1951 010b 0A00     		.2byte	0xa
+ 1952 010d 73       		.byte	0x73
+ 1953 010e 00       		.sleb128 0
+ 1954 010f 94       		.byte	0x94
+ 1955 0110 01       		.byte	0x1
+ 1956 0111 3F       		.byte	0x3f
+ 1957 0112 1A       		.byte	0x1a
+ 1958 0113 08       		.byte	0x8
+ 1959 0114 FF       		.byte	0xff
+ 1960 0115 1A       		.byte	0x1a
+ 1961 0116 9F       		.byte	0x9f
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 41
+
+
+ 1962 0117 D8000000 		.4byte	.LVL61
+ 1963 011b 0C010000 		.4byte	.LVL64
+ 1964 011f 0100     		.2byte	0x1
+ 1965 0121 55       		.byte	0x55
+ 1966 0122 0E010000 		.4byte	.LVL65
+ 1967 0126 98010000 		.4byte	.LFE65
+ 1968 012a 0100     		.2byte	0x1
+ 1969 012c 55       		.byte	0x55
+ 1970 012d 00000000 		.4byte	0
+ 1971 0131 00000000 		.4byte	0
+ 1972              	.LLST7:
+ 1973 0135 02000000 		.4byte	.LVL44
+ 1974 0139 1E000000 		.4byte	.LVL49
+ 1975 013d 0200     		.2byte	0x2
+ 1976 013f 30       		.byte	0x30
+ 1977 0140 9F       		.byte	0x9f
+ 1978 0141 1E000000 		.4byte	.LVL49
+ 1979 0145 D8000000 		.4byte	.LVL61
+ 1980 0149 0100     		.2byte	0x1
+ 1981 014b 54       		.byte	0x54
+ 1982 014c D8000000 		.4byte	.LVL61
+ 1983 0150 DC000000 		.4byte	.LVL62
+ 1984 0154 0200     		.2byte	0x2
+ 1985 0156 30       		.byte	0x30
+ 1986 0157 9F       		.byte	0x9f
+ 1987 0158 DC000000 		.4byte	.LVL62
+ 1988 015c 98010000 		.4byte	.LFE65
+ 1989 0160 0100     		.2byte	0x1
+ 1990 0162 54       		.byte	0x54
+ 1991 0163 00000000 		.4byte	0
+ 1992 0167 00000000 		.4byte	0
+ 1993              		.section	.debug_aranges,"",%progbits
+ 1994 0000 5C000000 		.4byte	0x5c
+ 1995 0004 0200     		.2byte	0x2
+ 1996 0006 00000000 		.4byte	.Ldebug_info0
+ 1997 000a 04       		.byte	0x4
+ 1998 000b 00       		.byte	0
+ 1999 000c 0000     		.2byte	0
+ 2000 000e 0000     		.2byte	0
+ 2001 0010 00000000 		.4byte	.LFB64
+ 2002 0014 0C000000 		.4byte	.LFE64-.LFB64
+ 2003 0018 00000000 		.4byte	.LFB67
+ 2004 001c 3C000000 		.4byte	.LFE67-.LFB67
+ 2005 0020 00000000 		.4byte	.LFB68
+ 2006 0024 26000000 		.4byte	.LFE68-.LFB68
+ 2007 0028 00000000 		.4byte	.LFB69
+ 2008 002c 24000000 		.4byte	.LFE69-.LFB69
+ 2009 0030 00000000 		.4byte	.LFB70
+ 2010 0034 1C000000 		.4byte	.LFE70-.LFB70
+ 2011 0038 00000000 		.4byte	.LFB71
+ 2012 003c 2E000000 		.4byte	.LFE71-.LFB71
+ 2013 0040 00000000 		.4byte	.LFB72
+ 2014 0044 24000000 		.4byte	.LFE72-.LFB72
+ 2015 0048 00000000 		.4byte	.LFB66
+ 2016 004c 0E000000 		.4byte	.LFE66-.LFB66
+ 2017 0050 00000000 		.4byte	.LFB65
+ 2018 0054 98010000 		.4byte	.LFE65-.LFB65
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 42
+
+
+ 2019 0058 00000000 		.4byte	0
+ 2020 005c 00000000 		.4byte	0
+ 2021              		.section	.debug_ranges,"",%progbits
+ 2022              	.Ldebug_ranges0:
+ 2023 0000 00000000 		.4byte	.LFB64
+ 2024 0004 0C000000 		.4byte	.LFE64
+ 2025 0008 00000000 		.4byte	.LFB67
+ 2026 000c 3C000000 		.4byte	.LFE67
+ 2027 0010 00000000 		.4byte	.LFB68
+ 2028 0014 26000000 		.4byte	.LFE68
+ 2029 0018 00000000 		.4byte	.LFB69
+ 2030 001c 24000000 		.4byte	.LFE69
+ 2031 0020 00000000 		.4byte	.LFB70
+ 2032 0024 1C000000 		.4byte	.LFE70
+ 2033 0028 00000000 		.4byte	.LFB71
+ 2034 002c 2E000000 		.4byte	.LFE71
+ 2035 0030 00000000 		.4byte	.LFB72
+ 2036 0034 24000000 		.4byte	.LFE72
+ 2037 0038 00000000 		.4byte	.LFB66
+ 2038 003c 0E000000 		.4byte	.LFE66
+ 2039 0040 00000000 		.4byte	.LFB65
+ 2040 0044 98010000 		.4byte	.LFE65
+ 2041 0048 00000000 		.4byte	0
+ 2042 004c 00000000 		.4byte	0
+ 2043              		.section	.debug_line,"",%progbits
+ 2044              	.Ldebug_line0:
+ 2045 0000 E8020000 		.section	.debug_str,"MS",%progbits,1
+ 2045      0200CF01 
+ 2045      00000201 
+ 2045      FB0E0D00 
+ 2045      01010101 
+ 2046              	.LASF59:
+ 2047 0000 73616D70 		.ascii	"sampleRateIRQ\000"
+ 2047      6C655261 
+ 2047      74654952 
+ 2047      5100
+ 2048              	.LASF3:
+ 2049 000e 5F5F7569 		.ascii	"__uint8_t\000"
+ 2049      6E74385F 
+ 2049      7400
+ 2050              	.LASF33:
+ 2051 0018 73746172 		.ascii	"start_flag\000"
+ 2051      745F666C 
+ 2051      616700
+ 2052              	.LASF29:
+ 2053 0023 53696C65 		.ascii	"SilenceAllChannels\000"
+ 2053      6E636541 
+ 2053      6C6C4368 
+ 2053      616E6E65 
+ 2053      6C7300
+ 2054              	.LASF32:
+ 2055 0036 77616974 		.ascii	"waitData\000"
+ 2055      44617461 
+ 2055      00
+ 2056              	.LASF6:
+ 2057 003f 5F5F696E 		.ascii	"__int32_t\000"
+ 2057      7433325F 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 43
+
+
+ 2057      7400
+ 2058              	.LASF26:
+ 2059 0049 736E3736 		.ascii	"sn76489_write\000"
+ 2059      3438395F 
+ 2059      77726974 
+ 2059      6500
+ 2060              	.LASF55:
+ 2061 0057 55534255 		.ascii	"USBUART_GetAll\000"
+ 2061      4152545F 
+ 2061      47657441 
+ 2061      6C6C00
+ 2062              	.LASF54:
+ 2063 0066 55534255 		.ascii	"USBUART_PutString\000"
+ 2063      4152545F 
+ 2063      50757453 
+ 2063      7472696E 
+ 2063      6700
+ 2064              	.LASF27:
+ 2065 0078 796D3236 		.ascii	"ym2612_init\000"
+ 2065      31325F69 
+ 2065      6E697400 
+ 2066              	.LASF44:
+ 2067 0084 594D5F52 		.ascii	"YM_RD_Write\000"
+ 2067      445F5772 
+ 2067      69746500 
+ 2068              	.LASF53:
+ 2069 0090 55534255 		.ascii	"USBUART_CDCIsReady\000"
+ 2069      4152545F 
+ 2069      43444349 
+ 2069      73526561 
+ 2069      647900
+ 2070              	.LASF17:
+ 2071 00a3 666C6F61 		.ascii	"float\000"
+ 2071      7400
+ 2072              	.LASF24:
+ 2073 00a9 64617461 		.ascii	"data\000"
+ 2073      00
+ 2074              	.LASF1:
+ 2075 00ae 756E7369 		.ascii	"unsigned char\000"
+ 2075      676E6564 
+ 2075      20636861 
+ 2075      7200
+ 2076              	.LASF56:
+ 2077 00bc 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2077      43313120 
+ 2077      352E342E 
+ 2077      31203230 
+ 2077      31363036 
+ 2078 00ef 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2078      20726576 
+ 2078      6973696F 
+ 2078      6E203233 
+ 2078      37373135 
+ 2079 0122 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2079      66756E63 
+ 2079      74696F6E 
+ 2079      2D736563 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 44
+
+
+ 2079      74696F6E 
+ 2080              	.LASF8:
+ 2081 014a 5F5F7569 		.ascii	"__uint32_t\000"
+ 2081      6E743332 
+ 2081      5F7400
+ 2082              	.LASF9:
+ 2083 0155 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2083      20756E73 
+ 2083      69676E65 
+ 2083      6420696E 
+ 2083      7400
+ 2084              	.LASF5:
+ 2085 0167 73686F72 		.ascii	"short unsigned int\000"
+ 2085      7420756E 
+ 2085      7369676E 
+ 2085      65642069 
+ 2085      6E7400
+ 2086              	.LASF23:
+ 2087 017a 796D3236 		.ascii	"ym2612_write\000"
+ 2087      31325F77 
+ 2087      72697465 
+ 2087      00
+ 2088              	.LASF42:
+ 2089 0187 594D5F44 		.ascii	"YM_Data_Write\000"
+ 2089      6174615F 
+ 2089      57726974 
+ 2089      6500
+ 2090              	.LASF34:
+ 2091 0195 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2091      52784275 
+ 2091      66666572 
+ 2091      00
+ 2092              	.LASF35:
+ 2093 01a2 72785F66 		.ascii	"rx_flag\000"
+ 2093      6C616700 
+ 2094              	.LASF4:
+ 2095 01aa 5F5F7569 		.ascii	"__uint16_t\000"
+ 2095      6E743136 
+ 2095      5F7400
+ 2096              	.LASF18:
+ 2097 01b5 646F7562 		.ascii	"double\000"
+ 2097      6C6500
+ 2098              	.LASF41:
+ 2099 01bc 594D5F43 		.ascii	"YM_CS_Write\000"
+ 2099      535F5772 
+ 2099      69746500 
+ 2100              	.LASF2:
+ 2101 01c8 73686F72 		.ascii	"short int\000"
+ 2101      7420696E 
+ 2101      7400
+ 2102              	.LASF45:
+ 2103 01d2 43794465 		.ascii	"CyDelayUs\000"
+ 2103      6C617955 
+ 2103      7300
+ 2104              	.LASF48:
+ 2105 01dc 534E5F57 		.ascii	"SN_WE_Write\000"
+ 2105      455F5772 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 45
+
+
+ 2105      69746500 
+ 2106              	.LASF60:
+ 2107 01e8 6D61696E 		.ascii	"main\000"
+ 2107      00
+ 2108              	.LASF58:
+ 2109 01ed 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ 2109      73657273 
+ 2109      5C696E67 
+ 2109      616E5C44 
+ 2109      6F63756D 
+ 2110 021b 655F706C 		.ascii	"e_player\\VGMPlayer_v0.4.cydsn\000"
+ 2110      61796572 
+ 2110      5C56474D 
+ 2110      506C6179 
+ 2110      65725F76 
+ 2111              	.LASF31:
+ 2112 0239 74657374 		.ascii	"test\000"
+ 2112      00
+ 2113              	.LASF12:
+ 2114 023e 756E7369 		.ascii	"unsigned int\000"
+ 2114      676E6564 
+ 2114      20696E74 
+ 2114      00
+ 2115              	.LASF11:
+ 2116 024b 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2116      206C6F6E 
+ 2116      6720756E 
+ 2116      7369676E 
+ 2116      65642069 
+ 2117              	.LASF13:
+ 2118 0262 75696E74 		.ascii	"uint8_t\000"
+ 2118      385F7400 
+ 2119              	.LASF43:
+ 2120 026a 594D5F57 		.ascii	"YM_WR_Write\000"
+ 2120      525F5772 
+ 2120      69746500 
+ 2121              	.LASF15:
+ 2122 0276 696E7433 		.ascii	"int32_t\000"
+ 2122      325F7400 
+ 2123              	.LASF38:
+ 2124 027e 70697465 		.ascii	"pitem\000"
+ 2124      6D00
+ 2125              	.LASF21:
+ 2126 0284 73697A65 		.ascii	"sizetype\000"
+ 2126      74797065 
+ 2126      00
+ 2127              	.LASF10:
+ 2128 028d 6C6F6E67 		.ascii	"long long int\000"
+ 2128      206C6F6E 
+ 2128      6720696E 
+ 2128      7400
+ 2129              	.LASF57:
+ 2130 029b 6D61696E 		.ascii	"main.c\000"
+ 2130      2E6300
+ 2131              	.LASF19:
+ 2132 02a2 63686172 		.ascii	"char\000"
+ 2132      00
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 46
+
+
+ 2133              	.LASF51:
+ 2134 02a7 7474795F 		.ascii	"tty_init\000"
+ 2134      696E6974 
+ 2134      00
+ 2135              	.LASF47:
+ 2136 02b0 594D5F41 		.ascii	"YM_A0_Write\000"
+ 2136      305F5772 
+ 2136      69746500 
+ 2137              	.LASF25:
+ 2138 02bc 706F7274 		.ascii	"port\000"
+ 2138      00
+ 2139              	.LASF36:
+ 2140 02c1 636F756E 		.ascii	"count\000"
+ 2140      7400
+ 2141              	.LASF39:
+ 2142 02c7 70706C61 		.ascii	"pplay\000"
+ 2142      7900
+ 2143              	.LASF28:
+ 2144 02cd 796D3236 		.ascii	"ym2612_reset\000"
+ 2144      31325F72 
+ 2144      65736574 
+ 2144      00
+ 2145              	.LASF40:
+ 2146 02da 69737246 		.ascii	"isrFlag\000"
+ 2146      6C616700 
+ 2147              	.LASF37:
+ 2148 02e2 62756666 		.ascii	"buffer\000"
+ 2148      657200
+ 2149              	.LASF14:
+ 2150 02e9 75696E74 		.ascii	"uint16_t\000"
+ 2150      31365F74 
+ 2150      00
+ 2151              	.LASF46:
+ 2152 02f2 594D5F41 		.ascii	"YM_A1_Write\000"
+ 2152      315F5772 
+ 2152      69746500 
+ 2153              	.LASF16:
+ 2154 02fe 75696E74 		.ascii	"uint32_t\000"
+ 2154      33325F74 
+ 2154      00
+ 2155              	.LASF7:
+ 2156 0307 6C6F6E67 		.ascii	"long int\000"
+ 2156      20696E74 
+ 2156      00
+ 2157              	.LASF20:
+ 2158 0310 6C6F6E67 		.ascii	"long double\000"
+ 2158      20646F75 
+ 2158      626C6500 
+ 2159              	.LASF0:
+ 2160 031c 7369676E 		.ascii	"signed char\000"
+ 2160      65642063 
+ 2160      68617200 
+ 2161              	.LASF49:
+ 2162 0328 594D5F49 		.ascii	"YM_IC_Write\000"
+ 2162      435F5772 
+ 2162      69746500 
+ 2163              	.LASF52:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccGH6SF0.s 			page 47
+
+
+ 2164 0334 6973725F 		.ascii	"isr_1_StartEx\000"
+ 2164      315F5374 
+ 2164      61727445 
+ 2164      7800
+ 2165              	.LASF22:
+ 2166 0342 796D3236 		.ascii	"ym2612_write_step\000"
+ 2166      31325F77 
+ 2166      72697465 
+ 2166      5F737465 
+ 2166      7000
+ 2167              	.LASF50:
+ 2168 0354 43794465 		.ascii	"CyDelay\000"
+ 2168      6C617900 
+ 2169              	.LASF30:
+ 2170 035c 696E6974 		.ascii	"init_hardware\000"
+ 2170      5F686172 
+ 2170      64776172 
+ 2170      6500
+ 2171              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

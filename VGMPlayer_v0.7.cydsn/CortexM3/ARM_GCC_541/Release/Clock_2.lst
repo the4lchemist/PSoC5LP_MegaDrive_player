@@ -1,0 +1,2177 @@
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Clock_2.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Clock_2_Start,"ax",%progbits
+  20              		.align	2
+  21              		.global	Clock_2_Start
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	Clock_2_Start, %function
+  25              	Clock_2_Start:
+  26              	.LFB0:
+  27              		.file 1 "Generated_Source\\PSoC5\\Clock_2.c"
+   1:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+   2:Generated_Source\PSoC5/Clock_2.c **** * File Name: Clock_2.c
+   3:Generated_Source\PSoC5/Clock_2.c **** * Version 2.20
+   4:Generated_Source\PSoC5/Clock_2.c **** *
+   5:Generated_Source\PSoC5/Clock_2.c **** *  Description:
+   6:Generated_Source\PSoC5/Clock_2.c **** *   This file provides the source code to the API for the clock component.
+   7:Generated_Source\PSoC5/Clock_2.c **** *
+   8:Generated_Source\PSoC5/Clock_2.c **** *  Note:
+   9:Generated_Source\PSoC5/Clock_2.c **** *
+  10:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+  11:Generated_Source\PSoC5/Clock_2.c **** * Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+  12:Generated_Source\PSoC5/Clock_2.c **** * You may use this file only in accordance with the license, terms, conditions, 
+  13:Generated_Source\PSoC5/Clock_2.c **** * disclaimers, and limitations in the end user license agreement accompanying 
+  14:Generated_Source\PSoC5/Clock_2.c **** * the software package with which this file was provided.
+  15:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+  16:Generated_Source\PSoC5/Clock_2.c **** 
+  17:Generated_Source\PSoC5/Clock_2.c **** #include <cydevice_trm.h>
+  18:Generated_Source\PSoC5/Clock_2.c **** #include "Clock_2.h"
+  19:Generated_Source\PSoC5/Clock_2.c **** 
+  20:Generated_Source\PSoC5/Clock_2.c **** /* Clock Distribution registers. */
+  21:Generated_Source\PSoC5/Clock_2.c **** #define CLK_DIST_LD              (* (reg8 *) CYREG_CLKDIST_LD)
+  22:Generated_Source\PSoC5/Clock_2.c **** #define CLK_DIST_BCFG2           (* (reg8 *) CYREG_CLKDIST_BCFG2)
+  23:Generated_Source\PSoC5/Clock_2.c **** #define BCFG2_MASK               (0x80u)
+  24:Generated_Source\PSoC5/Clock_2.c **** #define CLK_DIST_DMASK           (* (reg8 *) CYREG_CLKDIST_DMASK)
+  25:Generated_Source\PSoC5/Clock_2.c **** #define CLK_DIST_AMASK           (* (reg8 *) CYREG_CLKDIST_AMASK)
+  26:Generated_Source\PSoC5/Clock_2.c **** 
+  27:Generated_Source\PSoC5/Clock_2.c **** #define HAS_CLKDIST_LD_DISABLE   (CY_PSOC3 || CY_PSOC5LP)
+  28:Generated_Source\PSoC5/Clock_2.c **** 
+  29:Generated_Source\PSoC5/Clock_2.c **** 
+  30:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 2
+
+
+  31:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_Start
+  32:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+  33:Generated_Source\PSoC5/Clock_2.c **** *
+  34:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+  35:Generated_Source\PSoC5/Clock_2.c **** *  Starts the clock. Note that on startup, clocks may be already running if the
+  36:Generated_Source\PSoC5/Clock_2.c **** *  "Start on Reset" option is enabled in the DWR.
+  37:Generated_Source\PSoC5/Clock_2.c **** *
+  38:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+  39:Generated_Source\PSoC5/Clock_2.c **** *  None
+  40:Generated_Source\PSoC5/Clock_2.c **** *
+  41:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+  42:Generated_Source\PSoC5/Clock_2.c **** *  None
+  43:Generated_Source\PSoC5/Clock_2.c **** *
+  44:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+  45:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_Start(void) 
+  46:Generated_Source\PSoC5/Clock_2.c **** {
+  28              		.loc 1 46 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  47:Generated_Source\PSoC5/Clock_2.c ****     /* Set the bit to enable the clock. */
+  48:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_CLKEN |= Clock_2_CLKEN_MASK;
+  33              		.loc 1 48 0
+  34 0000 054A     		ldr	r2, .L2
+  35 0002 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  36 0004 43F00103 		orr	r3, r3, #1
+  37 0008 1370     		strb	r3, [r2]
+  49:Generated_Source\PSoC5/Clock_2.c **** 	Clock_2_CLKSTBY |= Clock_2_CLKSTBY_MASK;
+  38              		.loc 1 49 0
+  39 000a 1032     		adds	r2, r2, #16
+  40 000c 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  41 000e 43F00103 		orr	r3, r3, #1
+  42 0012 1370     		strb	r3, [r2]
+  43 0014 7047     		bx	lr
+  44              	.L3:
+  45 0016 00BF     		.align	2
+  46              	.L2:
+  47 0018 A2430040 		.word	1073759138
+  48              		.cfi_endproc
+  49              	.LFE0:
+  50              		.size	Clock_2_Start, .-Clock_2_Start
+  51              		.section	.text.Clock_2_Stop,"ax",%progbits
+  52              		.align	2
+  53              		.global	Clock_2_Stop
+  54              		.thumb
+  55              		.thumb_func
+  56              		.type	Clock_2_Stop, %function
+  57              	Clock_2_Stop:
+  58              	.LFB1:
+  50:Generated_Source\PSoC5/Clock_2.c **** }
+  51:Generated_Source\PSoC5/Clock_2.c **** 
+  52:Generated_Source\PSoC5/Clock_2.c **** 
+  53:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+  54:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_Stop
+  55:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+  56:Generated_Source\PSoC5/Clock_2.c **** *
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 3
+
+
+  57:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+  58:Generated_Source\PSoC5/Clock_2.c **** *  Stops the clock and returns immediately. This API does not require the
+  59:Generated_Source\PSoC5/Clock_2.c **** *  source clock to be running but may return before the hardware is actually
+  60:Generated_Source\PSoC5/Clock_2.c **** *  disabled. If the settings of the clock are changed after calling this
+  61:Generated_Source\PSoC5/Clock_2.c **** *  function, the clock may glitch when it is started. To avoid the clock
+  62:Generated_Source\PSoC5/Clock_2.c **** *  glitch, use the StopBlock function.
+  63:Generated_Source\PSoC5/Clock_2.c **** *
+  64:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+  65:Generated_Source\PSoC5/Clock_2.c **** *  None
+  66:Generated_Source\PSoC5/Clock_2.c **** *
+  67:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+  68:Generated_Source\PSoC5/Clock_2.c **** *  None
+  69:Generated_Source\PSoC5/Clock_2.c **** *
+  70:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+  71:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_Stop(void) 
+  72:Generated_Source\PSoC5/Clock_2.c **** {
+  59              		.loc 1 72 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              		@ link register save eliminated.
+  73:Generated_Source\PSoC5/Clock_2.c ****     /* Clear the bit to disable the clock. */
+  74:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_CLKEN &= (uint8)(~Clock_2_CLKEN_MASK);
+  64              		.loc 1 74 0
+  65 0000 054A     		ldr	r2, .L5
+  66 0002 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  67 0004 03F0FE03 		and	r3, r3, #254
+  68 0008 1370     		strb	r3, [r2]
+  75:Generated_Source\PSoC5/Clock_2.c **** 	Clock_2_CLKSTBY &= (uint8)(~Clock_2_CLKSTBY_MASK);
+  69              		.loc 1 75 0
+  70 000a 1032     		adds	r2, r2, #16
+  71 000c 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  72 000e 03F0FE03 		and	r3, r3, #254
+  73 0012 1370     		strb	r3, [r2]
+  74 0014 7047     		bx	lr
+  75              	.L6:
+  76 0016 00BF     		.align	2
+  77              	.L5:
+  78 0018 A2430040 		.word	1073759138
+  79              		.cfi_endproc
+  80              	.LFE1:
+  81              		.size	Clock_2_Stop, .-Clock_2_Stop
+  82              		.section	.text.Clock_2_StopBlock,"ax",%progbits
+  83              		.align	2
+  84              		.global	Clock_2_StopBlock
+  85              		.thumb
+  86              		.thumb_func
+  87              		.type	Clock_2_StopBlock, %function
+  88              	Clock_2_StopBlock:
+  89              	.LFB2:
+  76:Generated_Source\PSoC5/Clock_2.c **** }
+  77:Generated_Source\PSoC5/Clock_2.c **** 
+  78:Generated_Source\PSoC5/Clock_2.c **** 
+  79:Generated_Source\PSoC5/Clock_2.c **** #if(CY_PSOC3 || CY_PSOC5LP)
+  80:Generated_Source\PSoC5/Clock_2.c **** 
+  81:Generated_Source\PSoC5/Clock_2.c **** 
+  82:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 4
+
+
+  83:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_StopBlock
+  84:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+  85:Generated_Source\PSoC5/Clock_2.c **** *
+  86:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+  87:Generated_Source\PSoC5/Clock_2.c **** *  Stops the clock and waits for the hardware to actually be disabled before
+  88:Generated_Source\PSoC5/Clock_2.c **** *  returning. This ensures that the clock is never truncated (high part of the
+  89:Generated_Source\PSoC5/Clock_2.c **** *  cycle will terminate before the clock is disabled and the API returns).
+  90:Generated_Source\PSoC5/Clock_2.c **** *  Note that the source clock must be running or this API will never return as
+  91:Generated_Source\PSoC5/Clock_2.c **** *  a stopped clock cannot be disabled.
+  92:Generated_Source\PSoC5/Clock_2.c **** *
+  93:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+  94:Generated_Source\PSoC5/Clock_2.c **** *  None
+  95:Generated_Source\PSoC5/Clock_2.c **** *
+  96:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+  97:Generated_Source\PSoC5/Clock_2.c **** *  None
+  98:Generated_Source\PSoC5/Clock_2.c **** *
+  99:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 100:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_StopBlock(void) 
+ 101:Generated_Source\PSoC5/Clock_2.c **** {
+  90              		.loc 1 101 0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		@ link register save eliminated.
+ 102:Generated_Source\PSoC5/Clock_2.c ****     if ((Clock_2_CLKEN & Clock_2_CLKEN_MASK) != 0u)
+  95              		.loc 1 102 0
+  96 0000 164B     		ldr	r3, .L11
+  97 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  98 0004 13F0010F 		tst	r3, #1
+  99 0008 26D0     		beq	.L7
+ 100              	.LBB2:
+ 103:Generated_Source\PSoC5/Clock_2.c ****     {
+ 104:Generated_Source\PSoC5/Clock_2.c **** #if HAS_CLKDIST_LD_DISABLE
+ 105:Generated_Source\PSoC5/Clock_2.c ****         uint16 oldDivider;
+ 106:Generated_Source\PSoC5/Clock_2.c **** 
+ 107:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_LD = 0u;
+ 101              		.loc 1 107 0
+ 102 000a 154A     		ldr	r2, .L11+4
+ 103 000c 0023     		movs	r3, #0
+ 104 000e 1370     		strb	r3, [r2]
+ 108:Generated_Source\PSoC5/Clock_2.c **** 
+ 109:Generated_Source\PSoC5/Clock_2.c ****         /* Clear all the mask bits except ours. */
+ 110:Generated_Source\PSoC5/Clock_2.c **** #if defined(Clock_2__CFG3)
+ 111:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_AMASK = Clock_2_CLKEN_MASK;
+ 112:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_DMASK = 0x00u;
+ 113:Generated_Source\PSoC5/Clock_2.c **** #else
+ 114:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_DMASK = Clock_2_CLKEN_MASK;
+ 105              		.loc 1 114 0
+ 106 0010 0120     		movs	r0, #1
+ 107 0012 1449     		ldr	r1, .L11+8
+ 108 0014 0870     		strb	r0, [r1]
+ 115:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_AMASK = 0x00u;
+ 109              		.loc 1 115 0
+ 110 0016 0431     		adds	r1, r1, #4
+ 111 0018 0B70     		strb	r3, [r1]
+ 116:Generated_Source\PSoC5/Clock_2.c **** #endif /* Clock_2__CFG3 */
+ 117:Generated_Source\PSoC5/Clock_2.c **** 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 5
+
+
+ 118:Generated_Source\PSoC5/Clock_2.c ****         /* Clear mask of bus clock. */
+ 119:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_BCFG2 &= (uint8)(~BCFG2_MASK);
+ 112              		.loc 1 119 0
+ 113 001a 0C39     		subs	r1, r1, #12
+ 114 001c 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 115 001e 03F07F03 		and	r3, r3, #127
+ 116 0022 0B70     		strb	r3, [r1]
+ 120:Generated_Source\PSoC5/Clock_2.c **** 
+ 121:Generated_Source\PSoC5/Clock_2.c ****         oldDivider = CY_GET_REG16(Clock_2_DIV_PTR);
+ 117              		.loc 1 121 0
+ 118 0024 104B     		ldr	r3, .L11+12
+ 119 0026 1988     		ldrh	r1, [r3]
+ 120 0028 89B2     		uxth	r1, r1
+ 121              	.LVL0:
+ 122:Generated_Source\PSoC5/Clock_2.c ****         CY_SET_REG16(CYREG_CLKDIST_WRK0, oldDivider);
+ 122              		.loc 1 122 0
+ 123 002a 7E3B     		subs	r3, r3, #126
+ 124 002c 1980     		strh	r1, [r3]	@ movhi
+ 123:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_LD = CYCLK_LD_DISABLE | CYCLK_LD_SYNC_EN | CYCLK_LD_LOAD;
+ 125              		.loc 1 123 0
+ 126 002e 0723     		movs	r3, #7
+ 127 0030 1370     		strb	r3, [r2]
+ 128              	.L9:
+ 124:Generated_Source\PSoC5/Clock_2.c **** 
+ 125:Generated_Source\PSoC5/Clock_2.c ****         /* Wait for clock to be disabled */
+ 126:Generated_Source\PSoC5/Clock_2.c ****         while ((CLK_DIST_LD & CYCLK_LD_LOAD) != 0u) { }
+ 129              		.loc 1 126 0 discriminator 1
+ 130 0032 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 131 0034 13F0010F 		tst	r3, #1
+ 132 0038 FBD1     		bne	.L9
+ 127:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 128:Generated_Source\PSoC5/Clock_2.c **** 
+ 129:Generated_Source\PSoC5/Clock_2.c ****         /* Clear the bit to disable the clock. */
+ 130:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_CLKEN &= (uint8)(~Clock_2_CLKEN_MASK);
+ 133              		.loc 1 130 0
+ 134 003a 084A     		ldr	r2, .L11
+ 135 003c 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 136 003e 03F0FE03 		and	r3, r3, #254
+ 137 0042 1370     		strb	r3, [r2]
+ 131:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_CLKSTBY &= (uint8)(~Clock_2_CLKSTBY_MASK);
+ 138              		.loc 1 131 0
+ 139 0044 1032     		adds	r2, r2, #16
+ 140 0046 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 141 0048 03F0FE03 		and	r3, r3, #254
+ 142 004c 1370     		strb	r3, [r2]
+ 132:Generated_Source\PSoC5/Clock_2.c **** 
+ 133:Generated_Source\PSoC5/Clock_2.c **** #if HAS_CLKDIST_LD_DISABLE
+ 134:Generated_Source\PSoC5/Clock_2.c ****         /* Clear the disable bit */
+ 135:Generated_Source\PSoC5/Clock_2.c ****         CLK_DIST_LD = 0x00u;
+ 143              		.loc 1 135 0
+ 144 004e 0022     		movs	r2, #0
+ 145 0050 034B     		ldr	r3, .L11+4
+ 146 0052 1A70     		strb	r2, [r3]
+ 136:Generated_Source\PSoC5/Clock_2.c ****         CY_SET_REG16(Clock_2_DIV_PTR, oldDivider);
+ 147              		.loc 1 136 0
+ 148 0054 7F33     		adds	r3, r3, #127
+ 149 0056 1980     		strh	r1, [r3]	@ movhi
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 6
+
+
+ 150              	.LVL1:
+ 151              	.L7:
+ 152 0058 7047     		bx	lr
+ 153              	.L12:
+ 154 005a 00BF     		.align	2
+ 155              	.L11:
+ 156 005c A2430040 		.word	1073759138
+ 157 0060 01400040 		.word	1073758209
+ 158 0064 10400040 		.word	1073758224
+ 159 0068 80400040 		.word	1073758336
+ 160              	.LBE2:
+ 161              		.cfi_endproc
+ 162              	.LFE2:
+ 163              		.size	Clock_2_StopBlock, .-Clock_2_StopBlock
+ 164              		.section	.text.Clock_2_StandbyPower,"ax",%progbits
+ 165              		.align	2
+ 166              		.global	Clock_2_StandbyPower
+ 167              		.thumb
+ 168              		.thumb_func
+ 169              		.type	Clock_2_StandbyPower, %function
+ 170              	Clock_2_StandbyPower:
+ 171              	.LFB3:
+ 137:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 138:Generated_Source\PSoC5/Clock_2.c ****     }
+ 139:Generated_Source\PSoC5/Clock_2.c **** }
+ 140:Generated_Source\PSoC5/Clock_2.c **** #endif /* (CY_PSOC3 || CY_PSOC5LP) */
+ 141:Generated_Source\PSoC5/Clock_2.c **** 
+ 142:Generated_Source\PSoC5/Clock_2.c **** 
+ 143:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 144:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_StandbyPower
+ 145:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 146:Generated_Source\PSoC5/Clock_2.c **** *
+ 147:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 148:Generated_Source\PSoC5/Clock_2.c **** *  Sets whether the clock is active in standby mode.
+ 149:Generated_Source\PSoC5/Clock_2.c **** *
+ 150:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 151:Generated_Source\PSoC5/Clock_2.c **** *  state:  0 to disable clock during standby, nonzero to enable.
+ 152:Generated_Source\PSoC5/Clock_2.c **** *
+ 153:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 154:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 155:Generated_Source\PSoC5/Clock_2.c **** *
+ 156:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 157:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_StandbyPower(uint8 state) 
+ 158:Generated_Source\PSoC5/Clock_2.c **** {
+ 172              		.loc 1 158 0
+ 173              		.cfi_startproc
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              		@ link register save eliminated.
+ 177              	.LVL2:
+ 159:Generated_Source\PSoC5/Clock_2.c ****     if(state == 0u)
+ 178              		.loc 1 159 0
+ 179 0000 28B9     		cbnz	r0, .L14
+ 160:Generated_Source\PSoC5/Clock_2.c ****     {
+ 161:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_CLKSTBY &= (uint8)(~Clock_2_CLKSTBY_MASK);
+ 180              		.loc 1 161 0
+ 181 0002 064A     		ldr	r2, .L16
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 7
+
+
+ 182 0004 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 183 0006 03F0FE03 		and	r3, r3, #254
+ 184 000a 1370     		strb	r3, [r2]
+ 185 000c 7047     		bx	lr
+ 186              	.L14:
+ 162:Generated_Source\PSoC5/Clock_2.c ****     }
+ 163:Generated_Source\PSoC5/Clock_2.c ****     else
+ 164:Generated_Source\PSoC5/Clock_2.c ****     {
+ 165:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_CLKSTBY |= Clock_2_CLKSTBY_MASK;
+ 187              		.loc 1 165 0
+ 188 000e 034A     		ldr	r2, .L16
+ 189 0010 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 190 0012 43F00103 		orr	r3, r3, #1
+ 191 0016 1370     		strb	r3, [r2]
+ 192 0018 7047     		bx	lr
+ 193              	.L17:
+ 194 001a 00BF     		.align	2
+ 195              	.L16:
+ 196 001c B2430040 		.word	1073759154
+ 197              		.cfi_endproc
+ 198              	.LFE3:
+ 199              		.size	Clock_2_StandbyPower, .-Clock_2_StandbyPower
+ 200              		.section	.text.Clock_2_SetDividerRegister,"ax",%progbits
+ 201              		.align	2
+ 202              		.global	Clock_2_SetDividerRegister
+ 203              		.thumb
+ 204              		.thumb_func
+ 205              		.type	Clock_2_SetDividerRegister, %function
+ 206              	Clock_2_SetDividerRegister:
+ 207              	.LFB4:
+ 166:Generated_Source\PSoC5/Clock_2.c ****     }
+ 167:Generated_Source\PSoC5/Clock_2.c **** }
+ 168:Generated_Source\PSoC5/Clock_2.c **** 
+ 169:Generated_Source\PSoC5/Clock_2.c **** 
+ 170:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 171:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_SetDividerRegister
+ 172:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 173:Generated_Source\PSoC5/Clock_2.c **** *
+ 174:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 175:Generated_Source\PSoC5/Clock_2.c **** *  Modifies the clock divider and, thus, the frequency. When the clock divider
+ 176:Generated_Source\PSoC5/Clock_2.c **** *  register is set to zero or changed from zero, the clock will be temporarily
+ 177:Generated_Source\PSoC5/Clock_2.c **** *  disabled in order to change the SSS mode bit. If the clock is enabled when
+ 178:Generated_Source\PSoC5/Clock_2.c **** *  SetDividerRegister is called, then the source clock must be running.
+ 179:Generated_Source\PSoC5/Clock_2.c **** *
+ 180:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 181:Generated_Source\PSoC5/Clock_2.c **** *  clkDivider:  Divider register value (0-65,535). This value is NOT the
+ 182:Generated_Source\PSoC5/Clock_2.c **** *    divider; the clock hardware divides by clkDivider plus one. For example,
+ 183:Generated_Source\PSoC5/Clock_2.c **** *    to divide the clock by 2, this parameter should be set to 1.
+ 184:Generated_Source\PSoC5/Clock_2.c **** *  restart:  If nonzero, restarts the clock divider: the current clock cycle
+ 185:Generated_Source\PSoC5/Clock_2.c **** *   will be truncated and the new divide value will take effect immediately. If
+ 186:Generated_Source\PSoC5/Clock_2.c **** *   zero, the new divide value will take effect at the end of the current clock
+ 187:Generated_Source\PSoC5/Clock_2.c **** *   cycle.
+ 188:Generated_Source\PSoC5/Clock_2.c **** *
+ 189:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 190:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 191:Generated_Source\PSoC5/Clock_2.c **** *
+ 192:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 8
+
+
+ 193:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_SetDividerRegister(uint16 clkDivider, uint8 restart)
+ 194:Generated_Source\PSoC5/Clock_2.c ****                                 
+ 195:Generated_Source\PSoC5/Clock_2.c **** {
+ 208              		.loc 1 195 0
+ 209              		.cfi_startproc
+ 210              		@ args = 0, pretend = 0, frame = 0
+ 211              		@ frame_needed = 0, uses_anonymous_args = 0
+ 212              		@ link register save eliminated.
+ 213              	.LVL3:
+ 214              	.LBB7:
+ 215              	.LBB8:
+ 196:Generated_Source\PSoC5/Clock_2.c ****     uint8 enabled;
+ 197:Generated_Source\PSoC5/Clock_2.c **** 
+ 198:Generated_Source\PSoC5/Clock_2.c ****     uint8 currSrc = Clock_2_GetSourceRegister();
+ 199:Generated_Source\PSoC5/Clock_2.c ****     uint16 oldDivider = Clock_2_GetDividerRegister();
+ 200:Generated_Source\PSoC5/Clock_2.c **** 
+ 201:Generated_Source\PSoC5/Clock_2.c ****     if (clkDivider != oldDivider)
+ 202:Generated_Source\PSoC5/Clock_2.c ****     {
+ 203:Generated_Source\PSoC5/Clock_2.c ****         enabled = Clock_2_CLKEN & Clock_2_CLKEN_MASK;
+ 204:Generated_Source\PSoC5/Clock_2.c **** 
+ 205:Generated_Source\PSoC5/Clock_2.c ****         if ((currSrc == (uint8)CYCLK_SRC_SEL_CLK_SYNC_D) && ((oldDivider == 0u) || (clkDivider == 0
+ 206:Generated_Source\PSoC5/Clock_2.c ****         {
+ 207:Generated_Source\PSoC5/Clock_2.c ****             /* Moving to/from SSS requires correct ordering to prevent halting the clock    */
+ 208:Generated_Source\PSoC5/Clock_2.c ****             if (oldDivider == 0u)
+ 209:Generated_Source\PSoC5/Clock_2.c ****             {
+ 210:Generated_Source\PSoC5/Clock_2.c ****                 /* Moving away from SSS, set the divider first so when SSS is cleared we    */
+ 211:Generated_Source\PSoC5/Clock_2.c ****                 /* don't halt the clock.  Using the shadow load isn't required as the       */
+ 212:Generated_Source\PSoC5/Clock_2.c ****                 /* divider is ignored while SSS is set.                                     */
+ 213:Generated_Source\PSoC5/Clock_2.c ****                 CY_SET_REG16(Clock_2_DIV_PTR, clkDivider);
+ 214:Generated_Source\PSoC5/Clock_2.c ****                 Clock_2_MOD_SRC &= (uint8)(~CYCLK_SSS);
+ 215:Generated_Source\PSoC5/Clock_2.c ****             }
+ 216:Generated_Source\PSoC5/Clock_2.c ****             else
+ 217:Generated_Source\PSoC5/Clock_2.c ****             {
+ 218:Generated_Source\PSoC5/Clock_2.c ****                 /* Moving to SSS, set SSS which then ignores the divider and we can set     */
+ 219:Generated_Source\PSoC5/Clock_2.c ****                 /* it without bothering with the shadow load.                               */
+ 220:Generated_Source\PSoC5/Clock_2.c ****                 Clock_2_MOD_SRC |= CYCLK_SSS;
+ 221:Generated_Source\PSoC5/Clock_2.c ****                 CY_SET_REG16(Clock_2_DIV_PTR, clkDivider);
+ 222:Generated_Source\PSoC5/Clock_2.c ****             }
+ 223:Generated_Source\PSoC5/Clock_2.c ****         }
+ 224:Generated_Source\PSoC5/Clock_2.c ****         else
+ 225:Generated_Source\PSoC5/Clock_2.c ****         {
+ 226:Generated_Source\PSoC5/Clock_2.c **** 			
+ 227:Generated_Source\PSoC5/Clock_2.c ****             if (enabled != 0u)
+ 228:Generated_Source\PSoC5/Clock_2.c ****             {
+ 229:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_LD = 0x00u;
+ 230:Generated_Source\PSoC5/Clock_2.c **** 
+ 231:Generated_Source\PSoC5/Clock_2.c ****                 /* Clear all the mask bits except ours. */
+ 232:Generated_Source\PSoC5/Clock_2.c **** #if defined(Clock_2__CFG3)
+ 233:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_AMASK = Clock_2_CLKEN_MASK;
+ 234:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_DMASK = 0x00u;
+ 235:Generated_Source\PSoC5/Clock_2.c **** #else
+ 236:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_DMASK = Clock_2_CLKEN_MASK;
+ 237:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_AMASK = 0x00u;
+ 238:Generated_Source\PSoC5/Clock_2.c **** #endif /* Clock_2__CFG3 */
+ 239:Generated_Source\PSoC5/Clock_2.c ****                 /* Clear mask of bus clock. */
+ 240:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_BCFG2 &= (uint8)(~BCFG2_MASK);
+ 241:Generated_Source\PSoC5/Clock_2.c **** 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 9
+
+
+ 242:Generated_Source\PSoC5/Clock_2.c ****                 /* If clock is currently enabled, disable it if async or going from N-to-1*/
+ 243:Generated_Source\PSoC5/Clock_2.c ****                 if (((Clock_2_MOD_SRC & CYCLK_SYNC) == 0u) || (clkDivider == 0u))
+ 244:Generated_Source\PSoC5/Clock_2.c ****                 {
+ 245:Generated_Source\PSoC5/Clock_2.c **** #if HAS_CLKDIST_LD_DISABLE
+ 246:Generated_Source\PSoC5/Clock_2.c ****                     CY_SET_REG16(CYREG_CLKDIST_WRK0, oldDivider);
+ 247:Generated_Source\PSoC5/Clock_2.c ****                     CLK_DIST_LD = CYCLK_LD_DISABLE|CYCLK_LD_SYNC_EN|CYCLK_LD_LOAD;
+ 248:Generated_Source\PSoC5/Clock_2.c **** 
+ 249:Generated_Source\PSoC5/Clock_2.c ****                     /* Wait for clock to be disabled */
+ 250:Generated_Source\PSoC5/Clock_2.c ****                     while ((CLK_DIST_LD & CYCLK_LD_LOAD) != 0u) { }
+ 251:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 252:Generated_Source\PSoC5/Clock_2.c **** 
+ 253:Generated_Source\PSoC5/Clock_2.c ****                     Clock_2_CLKEN &= (uint8)(~Clock_2_CLKEN_MASK);
+ 254:Generated_Source\PSoC5/Clock_2.c **** 
+ 255:Generated_Source\PSoC5/Clock_2.c **** #if HAS_CLKDIST_LD_DISABLE
+ 256:Generated_Source\PSoC5/Clock_2.c ****                     /* Clear the disable bit */
+ 257:Generated_Source\PSoC5/Clock_2.c ****                     CLK_DIST_LD = 0x00u;
+ 258:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 259:Generated_Source\PSoC5/Clock_2.c ****                 }
+ 260:Generated_Source\PSoC5/Clock_2.c ****             }
+ 261:Generated_Source\PSoC5/Clock_2.c **** 
+ 262:Generated_Source\PSoC5/Clock_2.c ****             /* Load divide value. */
+ 263:Generated_Source\PSoC5/Clock_2.c ****             if ((Clock_2_CLKEN & Clock_2_CLKEN_MASK) != 0u)
+ 264:Generated_Source\PSoC5/Clock_2.c ****             {
+ 265:Generated_Source\PSoC5/Clock_2.c ****                 /* If the clock is still enabled, use the shadow registers */
+ 266:Generated_Source\PSoC5/Clock_2.c ****                 CY_SET_REG16(CYREG_CLKDIST_WRK0, clkDivider);
+ 267:Generated_Source\PSoC5/Clock_2.c **** 
+ 268:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_LD = (CYCLK_LD_LOAD | ((restart != 0u) ? CYCLK_LD_SYNC_EN : 0x00u));
+ 269:Generated_Source\PSoC5/Clock_2.c ****                 while ((CLK_DIST_LD & CYCLK_LD_LOAD) != 0u) { }
+ 270:Generated_Source\PSoC5/Clock_2.c ****             }
+ 271:Generated_Source\PSoC5/Clock_2.c ****             else
+ 272:Generated_Source\PSoC5/Clock_2.c ****             {
+ 273:Generated_Source\PSoC5/Clock_2.c ****                 /* If the clock is disabled, set the divider directly */
+ 274:Generated_Source\PSoC5/Clock_2.c ****                 CY_SET_REG16(Clock_2_DIV_PTR, clkDivider);
+ 275:Generated_Source\PSoC5/Clock_2.c **** 				Clock_2_CLKEN |= enabled;
+ 276:Generated_Source\PSoC5/Clock_2.c ****             }
+ 277:Generated_Source\PSoC5/Clock_2.c ****         }
+ 278:Generated_Source\PSoC5/Clock_2.c ****     }
+ 279:Generated_Source\PSoC5/Clock_2.c **** }
+ 280:Generated_Source\PSoC5/Clock_2.c **** 
+ 281:Generated_Source\PSoC5/Clock_2.c **** 
+ 282:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 283:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_GetDividerRegister
+ 284:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 285:Generated_Source\PSoC5/Clock_2.c **** *
+ 286:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 287:Generated_Source\PSoC5/Clock_2.c **** *  Gets the clock divider register value.
+ 288:Generated_Source\PSoC5/Clock_2.c **** *
+ 289:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 290:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 291:Generated_Source\PSoC5/Clock_2.c **** *
+ 292:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 293:Generated_Source\PSoC5/Clock_2.c **** *  Divide value of the clock minus 1. For example, if the clock is set to
+ 294:Generated_Source\PSoC5/Clock_2.c **** *  divide by 2, the return value will be 1.
+ 295:Generated_Source\PSoC5/Clock_2.c **** *
+ 296:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 297:Generated_Source\PSoC5/Clock_2.c **** uint16 Clock_2_GetDividerRegister(void) 
+ 298:Generated_Source\PSoC5/Clock_2.c **** {
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 10
+
+
+ 299:Generated_Source\PSoC5/Clock_2.c ****     return CY_GET_REG16(Clock_2_DIV_PTR);
+ 300:Generated_Source\PSoC5/Clock_2.c **** }
+ 301:Generated_Source\PSoC5/Clock_2.c **** 
+ 302:Generated_Source\PSoC5/Clock_2.c **** 
+ 303:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 304:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_SetModeRegister
+ 305:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 306:Generated_Source\PSoC5/Clock_2.c **** *
+ 307:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 308:Generated_Source\PSoC5/Clock_2.c **** *  Sets flags that control the operating mode of the clock. This function only
+ 309:Generated_Source\PSoC5/Clock_2.c **** *  changes flags from 0 to 1; flags that are already 1 will remain unchanged.
+ 310:Generated_Source\PSoC5/Clock_2.c **** *  To clear flags, use the ClearModeRegister function. The clock must be
+ 311:Generated_Source\PSoC5/Clock_2.c **** *  disabled before changing the mode.
+ 312:Generated_Source\PSoC5/Clock_2.c **** *
+ 313:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 314:Generated_Source\PSoC5/Clock_2.c **** *  clkMode: Bit mask containing the bits to set. For PSoC 3 and PSoC 5,
+ 315:Generated_Source\PSoC5/Clock_2.c **** *   clkMode should be a set of the following optional bits or'ed together.
+ 316:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_EARLY Enable early phase mode. Rising edge of output clock will
+ 317:Generated_Source\PSoC5/Clock_2.c **** *                 occur when the divider count reaches half of the divide
+ 318:Generated_Source\PSoC5/Clock_2.c **** *                 value.
+ 319:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_DUTY  Enable 50% duty cycle output. When enabled, the output clock
+ 320:Generated_Source\PSoC5/Clock_2.c **** *                 is asserted for approximately half of its period. When
+ 321:Generated_Source\PSoC5/Clock_2.c **** *                 disabled, the output clock is asserted for one period of the
+ 322:Generated_Source\PSoC5/Clock_2.c **** *                 source clock.
+ 323:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SYNC  Enable output synchronization to master clock. This should
+ 324:Generated_Source\PSoC5/Clock_2.c **** *                 be enabled for all synchronous clocks.
+ 325:Generated_Source\PSoC5/Clock_2.c **** *   See the Technical Reference Manual for details about setting the mode of
+ 326:Generated_Source\PSoC5/Clock_2.c **** *   the clock. Specifically, see the CLKDIST.DCFG.CFG2 register.
+ 327:Generated_Source\PSoC5/Clock_2.c **** *
+ 328:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 329:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 330:Generated_Source\PSoC5/Clock_2.c **** *
+ 331:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 332:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_SetModeRegister(uint8 modeBitMask) 
+ 333:Generated_Source\PSoC5/Clock_2.c **** {
+ 334:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_MOD_SRC |= modeBitMask & (uint8)Clock_2_MODE_MASK;
+ 335:Generated_Source\PSoC5/Clock_2.c **** }
+ 336:Generated_Source\PSoC5/Clock_2.c **** 
+ 337:Generated_Source\PSoC5/Clock_2.c **** 
+ 338:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 339:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_ClearModeRegister
+ 340:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 341:Generated_Source\PSoC5/Clock_2.c **** *
+ 342:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 343:Generated_Source\PSoC5/Clock_2.c **** *  Clears flags that control the operating mode of the clock. This function
+ 344:Generated_Source\PSoC5/Clock_2.c **** *  only changes flags from 1 to 0; flags that are already 0 will remain
+ 345:Generated_Source\PSoC5/Clock_2.c **** *  unchanged. To set flags, use the SetModeRegister function. The clock must be
+ 346:Generated_Source\PSoC5/Clock_2.c **** *  disabled before changing the mode.
+ 347:Generated_Source\PSoC5/Clock_2.c **** *
+ 348:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 349:Generated_Source\PSoC5/Clock_2.c **** *  clkMode: Bit mask containing the bits to clear. For PSoC 3 and PSoC 5,
+ 350:Generated_Source\PSoC5/Clock_2.c **** *   clkMode should be a set of the following optional bits or'ed together.
+ 351:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_EARLY Enable early phase mode. Rising edge of output clock will
+ 352:Generated_Source\PSoC5/Clock_2.c **** *                 occur when the divider count reaches half of the divide
+ 353:Generated_Source\PSoC5/Clock_2.c **** *                 value.
+ 354:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_DUTY  Enable 50% duty cycle output. When enabled, the output clock
+ 355:Generated_Source\PSoC5/Clock_2.c **** *                 is asserted for approximately half of its period. When
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 11
+
+
+ 356:Generated_Source\PSoC5/Clock_2.c **** *                 disabled, the output clock is asserted for one period of the
+ 357:Generated_Source\PSoC5/Clock_2.c **** *                 source clock.
+ 358:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SYNC  Enable output synchronization to master clock. This should
+ 359:Generated_Source\PSoC5/Clock_2.c **** *                 be enabled for all synchronous clocks.
+ 360:Generated_Source\PSoC5/Clock_2.c **** *   See the Technical Reference Manual for details about setting the mode of
+ 361:Generated_Source\PSoC5/Clock_2.c **** *   the clock. Specifically, see the CLKDIST.DCFG.CFG2 register.
+ 362:Generated_Source\PSoC5/Clock_2.c **** *
+ 363:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 364:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 365:Generated_Source\PSoC5/Clock_2.c **** *
+ 366:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 367:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_ClearModeRegister(uint8 modeBitMask) 
+ 368:Generated_Source\PSoC5/Clock_2.c **** {
+ 369:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_MOD_SRC &= (uint8)(~modeBitMask) | (uint8)(~(uint8)(Clock_2_MODE_MASK));
+ 370:Generated_Source\PSoC5/Clock_2.c **** }
+ 371:Generated_Source\PSoC5/Clock_2.c **** 
+ 372:Generated_Source\PSoC5/Clock_2.c **** 
+ 373:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 374:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_GetModeRegister
+ 375:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 376:Generated_Source\PSoC5/Clock_2.c **** *
+ 377:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 378:Generated_Source\PSoC5/Clock_2.c **** *  Gets the clock mode register value.
+ 379:Generated_Source\PSoC5/Clock_2.c **** *
+ 380:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 381:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 382:Generated_Source\PSoC5/Clock_2.c **** *
+ 383:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 384:Generated_Source\PSoC5/Clock_2.c **** *  Bit mask representing the enabled mode bits. See the SetModeRegister and
+ 385:Generated_Source\PSoC5/Clock_2.c **** *  ClearModeRegister descriptions for details about the mode bits.
+ 386:Generated_Source\PSoC5/Clock_2.c **** *
+ 387:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 388:Generated_Source\PSoC5/Clock_2.c **** uint8 Clock_2_GetModeRegister(void) 
+ 389:Generated_Source\PSoC5/Clock_2.c **** {
+ 390:Generated_Source\PSoC5/Clock_2.c ****     return Clock_2_MOD_SRC & (uint8)(Clock_2_MODE_MASK);
+ 391:Generated_Source\PSoC5/Clock_2.c **** }
+ 392:Generated_Source\PSoC5/Clock_2.c **** 
+ 393:Generated_Source\PSoC5/Clock_2.c **** 
+ 394:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 395:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_SetSourceRegister
+ 396:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 397:Generated_Source\PSoC5/Clock_2.c **** *
+ 398:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 399:Generated_Source\PSoC5/Clock_2.c **** *  Sets the input source of the clock. The clock must be disabled before
+ 400:Generated_Source\PSoC5/Clock_2.c **** *  changing the source. The old and new clock sources must be running.
+ 401:Generated_Source\PSoC5/Clock_2.c **** *
+ 402:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 403:Generated_Source\PSoC5/Clock_2.c **** *  clkSource:  For PSoC 3 and PSoC 5 devices, clkSource should be one of the
+ 404:Generated_Source\PSoC5/Clock_2.c **** *   following input sources:
+ 405:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_SYNC_DIG
+ 406:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_IMO
+ 407:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_XTALM
+ 408:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_ILO
+ 409:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_PLL
+ 410:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_XTALK
+ 411:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_DSI_G
+ 412:Generated_Source\PSoC5/Clock_2.c **** *   - CYCLK_SRC_SEL_DSI_D/CYCLK_SRC_SEL_DSI_A
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 12
+
+
+ 413:Generated_Source\PSoC5/Clock_2.c **** *   See the Technical Reference Manual for details on clock sources.
+ 414:Generated_Source\PSoC5/Clock_2.c **** *
+ 415:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 416:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 417:Generated_Source\PSoC5/Clock_2.c **** *
+ 418:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 419:Generated_Source\PSoC5/Clock_2.c **** void Clock_2_SetSourceRegister(uint8 clkSource) 
+ 420:Generated_Source\PSoC5/Clock_2.c **** {
+ 421:Generated_Source\PSoC5/Clock_2.c ****     uint16 currDiv = Clock_2_GetDividerRegister();
+ 422:Generated_Source\PSoC5/Clock_2.c ****     uint8 oldSrc = Clock_2_GetSourceRegister();
+ 423:Generated_Source\PSoC5/Clock_2.c **** 
+ 424:Generated_Source\PSoC5/Clock_2.c ****     if (((oldSrc != ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D)) && 
+ 425:Generated_Source\PSoC5/Clock_2.c ****         (clkSource == ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D))) && (currDiv == 0u))
+ 426:Generated_Source\PSoC5/Clock_2.c ****     {
+ 427:Generated_Source\PSoC5/Clock_2.c ****         /* Switching to Master and divider is 1, set SSS, which will output master, */
+ 428:Generated_Source\PSoC5/Clock_2.c ****         /* then set the source so we are consistent.                                */
+ 429:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC |= CYCLK_SSS;
+ 430:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC =
+ 431:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 432:Generated_Source\PSoC5/Clock_2.c ****     }
+ 433:Generated_Source\PSoC5/Clock_2.c ****     else if (((oldSrc == ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D)) && 
+ 434:Generated_Source\PSoC5/Clock_2.c ****             (clkSource != ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D))) && (currDiv == 0u))
+ 435:Generated_Source\PSoC5/Clock_2.c ****     {
+ 436:Generated_Source\PSoC5/Clock_2.c ****         /* Switching from Master to not and divider is 1, set source, so we don't   */
+ 437:Generated_Source\PSoC5/Clock_2.c ****         /* lock when we clear SSS.                                                  */
+ 438:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC =
+ 439:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 440:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC &= (uint8)(~CYCLK_SSS);
+ 441:Generated_Source\PSoC5/Clock_2.c ****     }
+ 442:Generated_Source\PSoC5/Clock_2.c ****     else
+ 443:Generated_Source\PSoC5/Clock_2.c ****     {
+ 444:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC =
+ 445:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 446:Generated_Source\PSoC5/Clock_2.c ****     }
+ 447:Generated_Source\PSoC5/Clock_2.c **** }
+ 448:Generated_Source\PSoC5/Clock_2.c **** 
+ 449:Generated_Source\PSoC5/Clock_2.c **** 
+ 450:Generated_Source\PSoC5/Clock_2.c **** /*******************************************************************************
+ 451:Generated_Source\PSoC5/Clock_2.c **** * Function Name: Clock_2_GetSourceRegister
+ 452:Generated_Source\PSoC5/Clock_2.c **** ********************************************************************************
+ 453:Generated_Source\PSoC5/Clock_2.c **** *
+ 454:Generated_Source\PSoC5/Clock_2.c **** * Summary:
+ 455:Generated_Source\PSoC5/Clock_2.c **** *  Gets the input source of the clock.
+ 456:Generated_Source\PSoC5/Clock_2.c **** *
+ 457:Generated_Source\PSoC5/Clock_2.c **** * Parameters:
+ 458:Generated_Source\PSoC5/Clock_2.c **** *  None
+ 459:Generated_Source\PSoC5/Clock_2.c **** *
+ 460:Generated_Source\PSoC5/Clock_2.c **** * Returns:
+ 461:Generated_Source\PSoC5/Clock_2.c **** *  The input source of the clock. See SetSourceRegister for details.
+ 462:Generated_Source\PSoC5/Clock_2.c **** *
+ 463:Generated_Source\PSoC5/Clock_2.c **** *******************************************************************************/
+ 464:Generated_Source\PSoC5/Clock_2.c **** uint8 Clock_2_GetSourceRegister(void) 
+ 465:Generated_Source\PSoC5/Clock_2.c **** {
+ 466:Generated_Source\PSoC5/Clock_2.c ****     return Clock_2_MOD_SRC & Clock_2_SRC_SEL_MSK;
+ 216              		.loc 1 466 0
+ 217 0000 324B     		ldr	r3, .L35
+ 218 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 13
+
+
+ 219 0004 03F00702 		and	r2, r3, #7
+ 220              	.LBE8:
+ 221              	.LBE7:
+ 222              	.LBB9:
+ 223              	.LBB10:
+ 299:Generated_Source\PSoC5/Clock_2.c **** }
+ 224              		.loc 1 299 0
+ 225 0008 314B     		ldr	r3, .L35+4
+ 226 000a 1B88     		ldrh	r3, [r3]
+ 227 000c 9BB2     		uxth	r3, r3
+ 228              	.LBE10:
+ 229              	.LBE9:
+ 201:Generated_Source\PSoC5/Clock_2.c ****     {
+ 230              		.loc 1 201 0
+ 231 000e 9842     		cmp	r0, r3
+ 232 0010 5BD0     		beq	.L34
+ 195:Generated_Source\PSoC5/Clock_2.c ****     uint8 enabled;
+ 233              		.loc 1 195 0
+ 234 0012 70B4     		push	{r4, r5, r6}
+ 235              		.cfi_def_cfa_offset 12
+ 236              		.cfi_offset 4, -12
+ 237              		.cfi_offset 5, -8
+ 238              		.cfi_offset 6, -4
+ 203:Generated_Source\PSoC5/Clock_2.c **** 
+ 239              		.loc 1 203 0
+ 240 0014 2F4C     		ldr	r4, .L35+8
+ 241 0016 2478     		ldrb	r4, [r4]	@ zero_extendqisi2
+ 242 0018 E4B2     		uxtb	r4, r4
+ 243              	.LVL4:
+ 205:Generated_Source\PSoC5/Clock_2.c ****         {
+ 244              		.loc 1 205 0
+ 245 001a 9AB9     		cbnz	r2, .L20
+ 205:Generated_Source\PSoC5/Clock_2.c ****         {
+ 246              		.loc 1 205 0 is_stmt 0 discriminator 1
+ 247 001c 0BB1     		cbz	r3, .L21
+ 205:Generated_Source\PSoC5/Clock_2.c ****         {
+ 248              		.loc 1 205 0 discriminator 2
+ 249 001e 40B1     		cbz	r0, .L22
+ 250 0020 10E0     		b	.L20
+ 251              	.L21:
+ 213:Generated_Source\PSoC5/Clock_2.c ****                 Clock_2_MOD_SRC &= (uint8)(~CYCLK_SSS);
+ 252              		.loc 1 213 0 is_stmt 1
+ 253 0022 2B4B     		ldr	r3, .L35+4
+ 254 0024 1880     		strh	r0, [r3]	@ movhi
+ 214:Generated_Source\PSoC5/Clock_2.c ****             }
+ 255              		.loc 1 214 0
+ 256 0026 294A     		ldr	r2, .L35
+ 257 0028 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 258 002a 03F0BF03 		and	r3, r3, #191
+ 259 002e 1370     		strb	r3, [r2]
+ 260 0030 4AE0     		b	.L18
+ 261              	.L22:
+ 220:Generated_Source\PSoC5/Clock_2.c ****                 CY_SET_REG16(Clock_2_DIV_PTR, clkDivider);
+ 262              		.loc 1 220 0
+ 263 0032 264A     		ldr	r2, .L35
+ 264 0034 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 265 0036 43F04003 		orr	r3, r3, #64
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 14
+
+
+ 266 003a 1370     		strb	r3, [r2]
+ 221:Generated_Source\PSoC5/Clock_2.c ****             }
+ 267              		.loc 1 221 0
+ 268 003c 0022     		movs	r2, #0
+ 269 003e 244B     		ldr	r3, .L35+4
+ 270 0040 1A80     		strh	r2, [r3]	@ movhi
+ 271 0042 41E0     		b	.L18
+ 272              	.L20:
+ 227:Generated_Source\PSoC5/Clock_2.c ****             {
+ 273              		.loc 1 227 0
+ 274 0044 14F00104 		ands	r4, r4, #1
+ 275              	.LVL5:
+ 276 0048 24D0     		beq	.L23
+ 229:Generated_Source\PSoC5/Clock_2.c **** 
+ 277              		.loc 1 229 0
+ 278 004a 0022     		movs	r2, #0
+ 279 004c 224D     		ldr	r5, .L35+12
+ 280 004e 2A70     		strb	r2, [r5]
+ 236:Generated_Source\PSoC5/Clock_2.c ****                 CLK_DIST_AMASK = 0x00u;
+ 281              		.loc 1 236 0
+ 282 0050 0126     		movs	r6, #1
+ 283 0052 0F35     		adds	r5, r5, #15
+ 284 0054 2E70     		strb	r6, [r5]
+ 237:Generated_Source\PSoC5/Clock_2.c **** #endif /* Clock_2__CFG3 */
+ 285              		.loc 1 237 0
+ 286 0056 0435     		adds	r5, r5, #4
+ 287 0058 2A70     		strb	r2, [r5]
+ 240:Generated_Source\PSoC5/Clock_2.c **** 
+ 288              		.loc 1 240 0
+ 289 005a 0C3D     		subs	r5, r5, #12
+ 290 005c 2A78     		ldrb	r2, [r5]	@ zero_extendqisi2
+ 291 005e 02F07F02 		and	r2, r2, #127
+ 292 0062 2A70     		strb	r2, [r5]
+ 243:Generated_Source\PSoC5/Clock_2.c ****                 {
+ 293              		.loc 1 243 0
+ 294 0064 194A     		ldr	r2, .L35
+ 295 0066 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 296 0068 12F0080F 		tst	r2, #8
+ 297 006c 00D0     		beq	.L24
+ 243:Generated_Source\PSoC5/Clock_2.c ****                 {
+ 298              		.loc 1 243 0 is_stmt 0 discriminator 1
+ 299 006e 88B9     		cbnz	r0, .L23
+ 300              	.L24:
+ 246:Generated_Source\PSoC5/Clock_2.c ****                     CLK_DIST_LD = CYCLK_LD_DISABLE|CYCLK_LD_SYNC_EN|CYCLK_LD_LOAD;
+ 301              		.loc 1 246 0 is_stmt 1
+ 302 0070 1A4A     		ldr	r2, .L35+16
+ 303 0072 1380     		strh	r3, [r2]	@ movhi
+ 247:Generated_Source\PSoC5/Clock_2.c **** 
+ 304              		.loc 1 247 0
+ 305 0074 0722     		movs	r2, #7
+ 306 0076 184B     		ldr	r3, .L35+12
+ 307 0078 1A70     		strb	r2, [r3]
+ 250:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 308              		.loc 1 250 0
+ 309 007a 1A46     		mov	r2, r3
+ 310              	.L25:
+ 250:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 15
+
+
+ 311              		.loc 1 250 0 is_stmt 0 discriminator 1
+ 312 007c 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 313 007e 13F0010F 		tst	r3, #1
+ 314 0082 FBD1     		bne	.L25
+ 253:Generated_Source\PSoC5/Clock_2.c **** 
+ 315              		.loc 1 253 0 is_stmt 1
+ 316 0084 134A     		ldr	r2, .L35+8
+ 317 0086 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 318 0088 03F0FE03 		and	r3, r3, #254
+ 319 008c 1370     		strb	r3, [r2]
+ 257:Generated_Source\PSoC5/Clock_2.c **** #endif /* HAS_CLKDIST_LD_DISABLE */
+ 320              		.loc 1 257 0
+ 321 008e 0022     		movs	r2, #0
+ 322 0090 114B     		ldr	r3, .L35+12
+ 323 0092 1A70     		strb	r2, [r3]
+ 324              	.L23:
+ 263:Generated_Source\PSoC5/Clock_2.c ****             {
+ 325              		.loc 1 263 0
+ 326 0094 0F4B     		ldr	r3, .L35+8
+ 327 0096 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 328 0098 13F0010F 		tst	r3, #1
+ 329 009c 0DD0     		beq	.L26
+ 266:Generated_Source\PSoC5/Clock_2.c **** 
+ 330              		.loc 1 266 0
+ 331 009e 0F4B     		ldr	r3, .L35+16
+ 332 00a0 1880     		strh	r0, [r3]	@ movhi
+ 268:Generated_Source\PSoC5/Clock_2.c ****                 while ((CLK_DIST_LD & CYCLK_LD_LOAD) != 0u) { }
+ 333              		.loc 1 268 0
+ 334 00a2 0029     		cmp	r1, #0
+ 335 00a4 14BF     		ite	ne
+ 336 00a6 0322     		movne	r2, #3
+ 337 00a8 0122     		moveq	r2, #1
+ 338 00aa 013B     		subs	r3, r3, #1
+ 339 00ac 1A70     		strb	r2, [r3]
+ 269:Generated_Source\PSoC5/Clock_2.c ****             }
+ 340              		.loc 1 269 0
+ 341 00ae 1A46     		mov	r2, r3
+ 342              	.L28:
+ 269:Generated_Source\PSoC5/Clock_2.c ****             }
+ 343              		.loc 1 269 0 is_stmt 0 discriminator 1
+ 344 00b0 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 345 00b2 13F0010F 		tst	r3, #1
+ 346 00b6 FBD1     		bne	.L28
+ 347 00b8 06E0     		b	.L18
+ 348              	.L26:
+ 274:Generated_Source\PSoC5/Clock_2.c **** 				Clock_2_CLKEN |= enabled;
+ 349              		.loc 1 274 0 is_stmt 1
+ 350 00ba 054B     		ldr	r3, .L35+4
+ 351 00bc 1880     		strh	r0, [r3]	@ movhi
+ 275:Generated_Source\PSoC5/Clock_2.c ****             }
+ 352              		.loc 1 275 0
+ 353 00be 03F22233 		addw	r3, r3, #802
+ 354 00c2 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 355 00c4 1443     		orrs	r4, r4, r2
+ 356 00c6 1C70     		strb	r4, [r3]
+ 357              	.L18:
+ 279:Generated_Source\PSoC5/Clock_2.c **** 
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 16
+
+
+ 358              		.loc 1 279 0
+ 359 00c8 70BC     		pop	{r4, r5, r6}
+ 360              		.cfi_restore 6
+ 361              		.cfi_restore 5
+ 362              		.cfi_restore 4
+ 363              		.cfi_def_cfa_offset 0
+ 364              	.L34:
+ 365 00ca 7047     		bx	lr
+ 366              	.L36:
+ 367              		.align	2
+ 368              	.L35:
+ 369 00cc 82400040 		.word	1073758338
+ 370 00d0 80400040 		.word	1073758336
+ 371 00d4 A2430040 		.word	1073759138
+ 372 00d8 01400040 		.word	1073758209
+ 373 00dc 02400040 		.word	1073758210
+ 374              		.cfi_endproc
+ 375              	.LFE4:
+ 376              		.size	Clock_2_SetDividerRegister, .-Clock_2_SetDividerRegister
+ 377              		.section	.text.Clock_2_GetDividerRegister,"ax",%progbits
+ 378              		.align	2
+ 379              		.global	Clock_2_GetDividerRegister
+ 380              		.thumb
+ 381              		.thumb_func
+ 382              		.type	Clock_2_GetDividerRegister, %function
+ 383              	Clock_2_GetDividerRegister:
+ 384              	.LFB5:
+ 298:Generated_Source\PSoC5/Clock_2.c ****     return CY_GET_REG16(Clock_2_DIV_PTR);
+ 385              		.loc 1 298 0
+ 386              		.cfi_startproc
+ 387              		@ args = 0, pretend = 0, frame = 0
+ 388              		@ frame_needed = 0, uses_anonymous_args = 0
+ 389              		@ link register save eliminated.
+ 299:Generated_Source\PSoC5/Clock_2.c **** }
+ 390              		.loc 1 299 0
+ 391 0000 014B     		ldr	r3, .L38
+ 392 0002 1888     		ldrh	r0, [r3]
+ 300:Generated_Source\PSoC5/Clock_2.c **** 
+ 393              		.loc 1 300 0
+ 394 0004 80B2     		uxth	r0, r0
+ 395 0006 7047     		bx	lr
+ 396              	.L39:
+ 397              		.align	2
+ 398              	.L38:
+ 399 0008 80400040 		.word	1073758336
+ 400              		.cfi_endproc
+ 401              	.LFE5:
+ 402              		.size	Clock_2_GetDividerRegister, .-Clock_2_GetDividerRegister
+ 403              		.section	.text.Clock_2_SetModeRegister,"ax",%progbits
+ 404              		.align	2
+ 405              		.global	Clock_2_SetModeRegister
+ 406              		.thumb
+ 407              		.thumb_func
+ 408              		.type	Clock_2_SetModeRegister, %function
+ 409              	Clock_2_SetModeRegister:
+ 410              	.LFB6:
+ 333:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_MOD_SRC |= modeBitMask & (uint8)Clock_2_MODE_MASK;
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 17
+
+
+ 411              		.loc 1 333 0
+ 412              		.cfi_startproc
+ 413              		@ args = 0, pretend = 0, frame = 0
+ 414              		@ frame_needed = 0, uses_anonymous_args = 0
+ 415              		@ link register save eliminated.
+ 416              	.LVL6:
+ 334:Generated_Source\PSoC5/Clock_2.c **** }
+ 417              		.loc 1 334 0
+ 418 0000 034B     		ldr	r3, .L41
+ 419 0002 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 420 0004 00F0F800 		and	r0, r0, #248
+ 421              	.LVL7:
+ 422 0008 1043     		orrs	r0, r0, r2
+ 423 000a 1870     		strb	r0, [r3]
+ 424 000c 7047     		bx	lr
+ 425              	.L42:
+ 426 000e 00BF     		.align	2
+ 427              	.L41:
+ 428 0010 82400040 		.word	1073758338
+ 429              		.cfi_endproc
+ 430              	.LFE6:
+ 431              		.size	Clock_2_SetModeRegister, .-Clock_2_SetModeRegister
+ 432              		.section	.text.Clock_2_ClearModeRegister,"ax",%progbits
+ 433              		.align	2
+ 434              		.global	Clock_2_ClearModeRegister
+ 435              		.thumb
+ 436              		.thumb_func
+ 437              		.type	Clock_2_ClearModeRegister, %function
+ 438              	Clock_2_ClearModeRegister:
+ 439              	.LFB7:
+ 368:Generated_Source\PSoC5/Clock_2.c ****     Clock_2_MOD_SRC &= (uint8)(~modeBitMask) | (uint8)(~(uint8)(Clock_2_MODE_MASK));
+ 440              		.loc 1 368 0
+ 441              		.cfi_startproc
+ 442              		@ args = 0, pretend = 0, frame = 0
+ 443              		@ frame_needed = 0, uses_anonymous_args = 0
+ 444              		@ link register save eliminated.
+ 445              	.LVL8:
+ 369:Generated_Source\PSoC5/Clock_2.c **** }
+ 446              		.loc 1 369 0
+ 447 0000 034B     		ldr	r3, .L44
+ 448 0002 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 449 0004 C043     		mvns	r0, r0
+ 450              	.LVL9:
+ 451 0006 40F00700 		orr	r0, r0, #7
+ 452 000a 1040     		ands	r0, r0, r2
+ 453 000c 1870     		strb	r0, [r3]
+ 454 000e 7047     		bx	lr
+ 455              	.L45:
+ 456              		.align	2
+ 457              	.L44:
+ 458 0010 82400040 		.word	1073758338
+ 459              		.cfi_endproc
+ 460              	.LFE7:
+ 461              		.size	Clock_2_ClearModeRegister, .-Clock_2_ClearModeRegister
+ 462              		.section	.text.Clock_2_GetModeRegister,"ax",%progbits
+ 463              		.align	2
+ 464              		.global	Clock_2_GetModeRegister
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 18
+
+
+ 465              		.thumb
+ 466              		.thumb_func
+ 467              		.type	Clock_2_GetModeRegister, %function
+ 468              	Clock_2_GetModeRegister:
+ 469              	.LFB8:
+ 389:Generated_Source\PSoC5/Clock_2.c ****     return Clock_2_MOD_SRC & (uint8)(Clock_2_MODE_MASK);
+ 470              		.loc 1 389 0
+ 471              		.cfi_startproc
+ 472              		@ args = 0, pretend = 0, frame = 0
+ 473              		@ frame_needed = 0, uses_anonymous_args = 0
+ 474              		@ link register save eliminated.
+ 390:Generated_Source\PSoC5/Clock_2.c **** }
+ 475              		.loc 1 390 0
+ 476 0000 024B     		ldr	r3, .L47
+ 477 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 391:Generated_Source\PSoC5/Clock_2.c **** 
+ 478              		.loc 1 391 0
+ 479 0004 00F0F800 		and	r0, r0, #248
+ 480 0008 7047     		bx	lr
+ 481              	.L48:
+ 482 000a 00BF     		.align	2
+ 483              	.L47:
+ 484 000c 82400040 		.word	1073758338
+ 485              		.cfi_endproc
+ 486              	.LFE8:
+ 487              		.size	Clock_2_GetModeRegister, .-Clock_2_GetModeRegister
+ 488              		.section	.text.Clock_2_SetSourceRegister,"ax",%progbits
+ 489              		.align	2
+ 490              		.global	Clock_2_SetSourceRegister
+ 491              		.thumb
+ 492              		.thumb_func
+ 493              		.type	Clock_2_SetSourceRegister, %function
+ 494              	Clock_2_SetSourceRegister:
+ 495              	.LFB9:
+ 420:Generated_Source\PSoC5/Clock_2.c ****     uint16 currDiv = Clock_2_GetDividerRegister();
+ 496              		.loc 1 420 0
+ 497              		.cfi_startproc
+ 498              		@ args = 0, pretend = 0, frame = 0
+ 499              		@ frame_needed = 0, uses_anonymous_args = 0
+ 500              		@ link register save eliminated.
+ 501              	.LVL10:
+ 502              	.LBB15:
+ 503              	.LBB16:
+ 299:Generated_Source\PSoC5/Clock_2.c **** }
+ 504              		.loc 1 299 0
+ 505 0000 134B     		ldr	r3, .L53
+ 506 0002 1B88     		ldrh	r3, [r3]
+ 507 0004 9BB2     		uxth	r3, r3
+ 508              	.LBE16:
+ 509              	.LBE15:
+ 510              	.LBB17:
+ 511              	.LBB18:
+ 512              		.loc 1 466 0
+ 513 0006 134A     		ldr	r2, .L53+4
+ 514 0008 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 515              	.LBE18:
+ 516              	.LBE17:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 19
+
+
+ 424:Generated_Source\PSoC5/Clock_2.c ****         (clkSource == ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D))) && (currDiv == 0u))
+ 517              		.loc 1 424 0
+ 518 000a 12F0070F 		tst	r2, #7
+ 519 000e 0BD0     		beq	.L50
+ 424:Generated_Source\PSoC5/Clock_2.c ****         (clkSource == ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D))) && (currDiv == 0u))
+ 520              		.loc 1 424 0 is_stmt 0 discriminator 1
+ 521 0010 B8B9     		cbnz	r0, .L51
+ 425:Generated_Source\PSoC5/Clock_2.c ****     {
+ 522              		.loc 1 425 0 is_stmt 1
+ 523 0012 B3B9     		cbnz	r3, .L51
+ 429:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC =
+ 524              		.loc 1 429 0
+ 525 0014 0F4B     		ldr	r3, .L53+4
+ 526 0016 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 527 0018 42F04002 		orr	r2, r2, #64
+ 528 001c 1A70     		strb	r2, [r3]
+ 431:Generated_Source\PSoC5/Clock_2.c ****     }
+ 529              		.loc 1 431 0
+ 530 001e 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 430:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 531              		.loc 1 430 0
+ 532 0020 02F0F802 		and	r2, r2, #248
+ 533 0024 1A70     		strb	r2, [r3]
+ 534 0026 7047     		bx	lr
+ 535              	.L50:
+ 433:Generated_Source\PSoC5/Clock_2.c ****             (clkSource != ((uint8)CYCLK_SRC_SEL_CLK_SYNC_D))) && (currDiv == 0u))
+ 536              		.loc 1 433 0 discriminator 1
+ 537 0028 58B1     		cbz	r0, .L51
+ 434:Generated_Source\PSoC5/Clock_2.c ****     {
+ 538              		.loc 1 434 0
+ 539 002a 53B9     		cbnz	r3, .L51
+ 439:Generated_Source\PSoC5/Clock_2.c ****         Clock_2_MOD_SRC &= (uint8)(~CYCLK_SSS);
+ 540              		.loc 1 439 0
+ 541 002c 094B     		ldr	r3, .L53+4
+ 542 002e 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 438:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 543              		.loc 1 438 0
+ 544 0030 02F0F802 		and	r2, r2, #248
+ 545 0034 1043     		orrs	r0, r0, r2
+ 546              	.LVL11:
+ 547 0036 1870     		strb	r0, [r3]
+ 440:Generated_Source\PSoC5/Clock_2.c ****     }
+ 548              		.loc 1 440 0
+ 549 0038 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 550 003a 02F0BF02 		and	r2, r2, #191
+ 551 003e 1A70     		strb	r2, [r3]
+ 552 0040 7047     		bx	lr
+ 553              	.LVL12:
+ 554              	.L51:
+ 445:Generated_Source\PSoC5/Clock_2.c ****     }
+ 555              		.loc 1 445 0
+ 556 0042 044A     		ldr	r2, .L53+4
+ 557 0044 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 444:Generated_Source\PSoC5/Clock_2.c ****             (Clock_2_MOD_SRC & (uint8)(~Clock_2_SRC_SEL_MSK)) | clkSource;
+ 558              		.loc 1 444 0
+ 559 0046 03F0F803 		and	r3, r3, #248
+ 560 004a 1843     		orrs	r0, r0, r3
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 20
+
+
+ 561              	.LVL13:
+ 562 004c 1070     		strb	r0, [r2]
+ 563 004e 7047     		bx	lr
+ 564              	.L54:
+ 565              		.align	2
+ 566              	.L53:
+ 567 0050 80400040 		.word	1073758336
+ 568 0054 82400040 		.word	1073758338
+ 569              		.cfi_endproc
+ 570              	.LFE9:
+ 571              		.size	Clock_2_SetSourceRegister, .-Clock_2_SetSourceRegister
+ 572              		.section	.text.Clock_2_GetSourceRegister,"ax",%progbits
+ 573              		.align	2
+ 574              		.global	Clock_2_GetSourceRegister
+ 575              		.thumb
+ 576              		.thumb_func
+ 577              		.type	Clock_2_GetSourceRegister, %function
+ 578              	Clock_2_GetSourceRegister:
+ 579              	.LFB10:
+ 465:Generated_Source\PSoC5/Clock_2.c ****     return Clock_2_MOD_SRC & Clock_2_SRC_SEL_MSK;
+ 580              		.loc 1 465 0
+ 581              		.cfi_startproc
+ 582              		@ args = 0, pretend = 0, frame = 0
+ 583              		@ frame_needed = 0, uses_anonymous_args = 0
+ 584              		@ link register save eliminated.
+ 585              		.loc 1 466 0
+ 586 0000 024B     		ldr	r3, .L56
+ 587 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 467:Generated_Source\PSoC5/Clock_2.c **** }
+ 588              		.loc 1 467 0
+ 589 0004 00F00700 		and	r0, r0, #7
+ 590 0008 7047     		bx	lr
+ 591              	.L57:
+ 592 000a 00BF     		.align	2
+ 593              	.L56:
+ 594 000c 82400040 		.word	1073758338
+ 595              		.cfi_endproc
+ 596              	.LFE10:
+ 597              		.size	Clock_2_GetSourceRegister, .-Clock_2_GetSourceRegister
+ 598              		.text
+ 599              	.Letext0:
+ 600              		.file 2 "Generated_Source\\PSoC5/cytypes.h"
+ 601              		.section	.debug_info,"",%progbits
+ 602              	.Ldebug_info0:
+ 603 0000 99020000 		.4byte	0x299
+ 604 0004 0400     		.2byte	0x4
+ 605 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 606 000a 04       		.byte	0x4
+ 607 000b 01       		.uleb128 0x1
+ 608 000c D3010000 		.4byte	.LASF36
+ 609 0010 0C       		.byte	0xc
+ 610 0011 58000000 		.4byte	.LASF37
+ 611 0015 AC020000 		.4byte	.LASF38
+ 612 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 613 001d 00000000 		.4byte	0
+ 614 0021 00000000 		.4byte	.Ldebug_line0
+ 615 0025 02       		.uleb128 0x2
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 21
+
+
+ 616 0026 01       		.byte	0x1
+ 617 0027 06       		.byte	0x6
+ 618 0028 31010000 		.4byte	.LASF0
+ 619 002c 02       		.uleb128 0x2
+ 620 002d 01       		.byte	0x1
+ 621 002e 08       		.byte	0x8
+ 622 002f FC000000 		.4byte	.LASF1
+ 623 0033 02       		.uleb128 0x2
+ 624 0034 02       		.byte	0x2
+ 625 0035 05       		.byte	0x5
+ 626 0036 33000000 		.4byte	.LASF2
+ 627 003a 02       		.uleb128 0x2
+ 628 003b 02       		.byte	0x2
+ 629 003c 07       		.byte	0x7
+ 630 003d 89010000 		.4byte	.LASF3
+ 631 0041 02       		.uleb128 0x2
+ 632 0042 04       		.byte	0x4
+ 633 0043 05       		.byte	0x5
+ 634 0044 ED000000 		.4byte	.LASF4
+ 635 0048 02       		.uleb128 0x2
+ 636 0049 04       		.byte	0x4
+ 637 004a 07       		.byte	0x7
+ 638 004b 66020000 		.4byte	.LASF5
+ 639 004f 02       		.uleb128 0x2
+ 640 0050 08       		.byte	0x8
+ 641 0051 05       		.byte	0x5
+ 642 0052 DF000000 		.4byte	.LASF6
+ 643 0056 02       		.uleb128 0x2
+ 644 0057 08       		.byte	0x8
+ 645 0058 07       		.byte	0x7
+ 646 0059 3D010000 		.4byte	.LASF7
+ 647 005d 03       		.uleb128 0x3
+ 648 005e 04       		.byte	0x4
+ 649 005f 05       		.byte	0x5
+ 650 0060 696E7400 		.ascii	"int\000"
+ 651 0064 02       		.uleb128 0x2
+ 652 0065 04       		.byte	0x4
+ 653 0066 07       		.byte	0x7
+ 654 0067 54010000 		.4byte	.LASF8
+ 655 006b 04       		.uleb128 0x4
+ 656 006c 8F000000 		.4byte	.LASF9
+ 657 0070 02       		.byte	0x2
+ 658 0071 E401     		.2byte	0x1e4
+ 659 0073 2C000000 		.4byte	0x2c
+ 660 0077 04       		.uleb128 0x4
+ 661 0078 79000000 		.4byte	.LASF10
+ 662 007c 02       		.byte	0x2
+ 663 007d E501     		.2byte	0x1e5
+ 664 007f 3A000000 		.4byte	0x3a
+ 665 0083 02       		.uleb128 0x2
+ 666 0084 04       		.byte	0x4
+ 667 0085 04       		.byte	0x4
+ 668 0086 D9000000 		.4byte	.LASF11
+ 669 008a 02       		.uleb128 0x2
+ 670 008b 08       		.byte	0x8
+ 671 008c 04       		.byte	0x4
+ 672 008d 9D020000 		.4byte	.LASF12
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 22
+
+
+ 673 0091 02       		.uleb128 0x2
+ 674 0092 01       		.byte	0x1
+ 675 0093 08       		.byte	0x8
+ 676 0094 9C010000 		.4byte	.LASF13
+ 677 0098 04       		.uleb128 0x4
+ 678 0099 61020000 		.4byte	.LASF14
+ 679 009d 02       		.byte	0x2
+ 680 009e 8E02     		.2byte	0x28e
+ 681 00a0 A4000000 		.4byte	0xa4
+ 682 00a4 05       		.uleb128 0x5
+ 683 00a5 6B000000 		.4byte	0x6b
+ 684 00a9 04       		.uleb128 0x4
+ 685 00aa 2D000000 		.4byte	.LASF15
+ 686 00ae 02       		.byte	0x2
+ 687 00af 8F02     		.2byte	0x28f
+ 688 00b1 B5000000 		.4byte	0xb5
+ 689 00b5 05       		.uleb128 0x5
+ 690 00b6 77000000 		.4byte	0x77
+ 691 00ba 06       		.uleb128 0x6
+ 692 00bb 61010000 		.4byte	.LASF16
+ 693 00bf 01       		.byte	0x1
+ 694 00c0 2D       		.byte	0x2d
+ 695 00c1 00000000 		.4byte	.LFB0
+ 696 00c5 1C000000 		.4byte	.LFE0-.LFB0
+ 697 00c9 01       		.uleb128 0x1
+ 698 00ca 9C       		.byte	0x9c
+ 699 00cb 06       		.uleb128 0x6
+ 700 00cc 78020000 		.4byte	.LASF17
+ 701 00d0 01       		.byte	0x1
+ 702 00d1 47       		.byte	0x47
+ 703 00d2 00000000 		.4byte	.LFB1
+ 704 00d6 1C000000 		.4byte	.LFE1-.LFB1
+ 705 00da 01       		.uleb128 0x1
+ 706 00db 9C       		.byte	0x9c
+ 707 00dc 07       		.uleb128 0x7
+ 708 00dd 95000000 		.4byte	.LASF18
+ 709 00e1 01       		.byte	0x1
+ 710 00e2 64       		.byte	0x64
+ 711 00e3 00000000 		.4byte	.LFB2
+ 712 00e7 6C000000 		.4byte	.LFE2-.LFB2
+ 713 00eb 01       		.uleb128 0x1
+ 714 00ec 9C       		.byte	0x9c
+ 715 00ed 0B010000 		.4byte	0x10b
+ 716 00f1 08       		.uleb128 0x8
+ 717 00f2 0A000000 		.4byte	.LBB2
+ 718 00f6 62000000 		.4byte	.LBE2-.LBB2
+ 719 00fa 09       		.uleb128 0x9
+ 720 00fb C8010000 		.4byte	.LASF26
+ 721 00ff 01       		.byte	0x1
+ 722 0100 69       		.byte	0x69
+ 723 0101 77000000 		.4byte	0x77
+ 724 0105 00000000 		.4byte	.LLST0
+ 725 0109 00       		.byte	0
+ 726 010a 00       		.byte	0
+ 727 010b 07       		.uleb128 0x7
+ 728 010c A1010000 		.4byte	.LASF19
+ 729 0110 01       		.byte	0x1
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 23
+
+
+ 730 0111 9D       		.byte	0x9d
+ 731 0112 00000000 		.4byte	.LFB3
+ 732 0116 20000000 		.4byte	.LFE3-.LFB3
+ 733 011a 01       		.uleb128 0x1
+ 734 011b 9C       		.byte	0x9c
+ 735 011c 2E010000 		.4byte	0x12e
+ 736 0120 0A       		.uleb128 0xa
+ 737 0121 F6000000 		.4byte	.LASF23
+ 738 0125 01       		.byte	0x1
+ 739 0126 9D       		.byte	0x9d
+ 740 0127 6B000000 		.4byte	0x6b
+ 741 012b 01       		.uleb128 0x1
+ 742 012c 50       		.byte	0x50
+ 743 012d 00       		.byte	0
+ 744 012e 0B       		.uleb128 0xb
+ 745 012f 3D000000 		.4byte	.LASF20
+ 746 0133 01       		.byte	0x1
+ 747 0134 2901     		.2byte	0x129
+ 748 0136 77000000 		.4byte	0x77
+ 749 013a 01       		.byte	0x1
+ 750 013b 0B       		.uleb128 0xb
+ 751 013c 00000000 		.4byte	.LASF21
+ 752 0140 01       		.byte	0x1
+ 753 0141 D001     		.2byte	0x1d0
+ 754 0143 6B000000 		.4byte	0x6b
+ 755 0147 01       		.byte	0x1
+ 756 0148 07       		.uleb128 0x7
+ 757 0149 16010000 		.4byte	.LASF22
+ 758 014d 01       		.byte	0x1
+ 759 014e C1       		.byte	0xc1
+ 760 014f 00000000 		.4byte	.LFB4
+ 761 0153 E0000000 		.4byte	.LFE4-.LFB4
+ 762 0157 01       		.uleb128 0x1
+ 763 0158 9C       		.byte	0x9c
+ 764 0159 BB010000 		.4byte	0x1bb
+ 765 015d 0A       		.uleb128 0xa
+ 766 015e 22000000 		.4byte	.LASF24
+ 767 0162 01       		.byte	0x1
+ 768 0163 C1       		.byte	0xc1
+ 769 0164 77000000 		.4byte	0x77
+ 770 0168 01       		.uleb128 0x1
+ 771 0169 50       		.byte	0x50
+ 772 016a 0A       		.uleb128 0xa
+ 773 016b 80000000 		.4byte	.LASF25
+ 774 016f 01       		.byte	0x1
+ 775 0170 C1       		.byte	0xc1
+ 776 0171 6B000000 		.4byte	0x6b
+ 777 0175 01       		.uleb128 0x1
+ 778 0176 51       		.byte	0x51
+ 779 0177 09       		.uleb128 0x9
+ 780 0178 A4020000 		.4byte	.LASF27
+ 781 017c 01       		.byte	0x1
+ 782 017d C4       		.byte	0xc4
+ 783 017e 6B000000 		.4byte	0x6b
+ 784 0182 13000000 		.4byte	.LLST1
+ 785 0186 0C       		.uleb128 0xc
+ 786 0187 C0010000 		.4byte	.LASF28
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 24
+
+
+ 787 018b 01       		.byte	0x1
+ 788 018c C6       		.byte	0xc6
+ 789 018d 6B000000 		.4byte	0x6b
+ 790 0191 0C       		.uleb128 0xc
+ 791 0192 C8010000 		.4byte	.LASF26
+ 792 0196 01       		.byte	0x1
+ 793 0197 C7       		.byte	0xc7
+ 794 0198 77000000 		.4byte	0x77
+ 795 019c 0D       		.uleb128 0xd
+ 796 019d 3B010000 		.4byte	0x13b
+ 797 01a1 00000000 		.4byte	.LBB7
+ 798 01a5 08000000 		.4byte	.LBE7-.LBB7
+ 799 01a9 01       		.byte	0x1
+ 800 01aa C6       		.byte	0xc6
+ 801 01ab 0D       		.uleb128 0xd
+ 802 01ac 2E010000 		.4byte	0x12e
+ 803 01b0 08000000 		.4byte	.LBB9
+ 804 01b4 06000000 		.4byte	.LBE9-.LBB9
+ 805 01b8 01       		.byte	0x1
+ 806 01b9 C7       		.byte	0xc7
+ 807 01ba 00       		.byte	0
+ 808 01bb 0E       		.uleb128 0xe
+ 809 01bc 2E010000 		.4byte	0x12e
+ 810 01c0 00000000 		.4byte	.LFB5
+ 811 01c4 0C000000 		.4byte	.LFE5-.LFB5
+ 812 01c8 01       		.uleb128 0x1
+ 813 01c9 9C       		.byte	0x9c
+ 814 01ca 0F       		.uleb128 0xf
+ 815 01cb C1000000 		.4byte	.LASF29
+ 816 01cf 01       		.byte	0x1
+ 817 01d0 4C01     		.2byte	0x14c
+ 818 01d2 00000000 		.4byte	.LFB6
+ 819 01d6 14000000 		.4byte	.LFE6-.LFB6
+ 820 01da 01       		.uleb128 0x1
+ 821 01db 9C       		.byte	0x9c
+ 822 01dc F1010000 		.4byte	0x1f1
+ 823 01e0 10       		.uleb128 0x10
+ 824 01e1 0A010000 		.4byte	.LASF30
+ 825 01e5 01       		.byte	0x1
+ 826 01e6 4C01     		.2byte	0x14c
+ 827 01e8 6B000000 		.4byte	0x6b
+ 828 01ec 2A000000 		.4byte	.LLST2
+ 829 01f0 00       		.byte	0
+ 830 01f1 0F       		.uleb128 0xf
+ 831 01f2 A7000000 		.4byte	.LASF31
+ 832 01f6 01       		.byte	0x1
+ 833 01f7 6F01     		.2byte	0x16f
+ 834 01f9 00000000 		.4byte	.LFB7
+ 835 01fd 14000000 		.4byte	.LFE7-.LFB7
+ 836 0201 01       		.uleb128 0x1
+ 837 0202 9C       		.byte	0x9c
+ 838 0203 18020000 		.4byte	0x218
+ 839 0207 10       		.uleb128 0x10
+ 840 0208 0A010000 		.4byte	.LASF30
+ 841 020c 01       		.byte	0x1
+ 842 020d 6F01     		.2byte	0x16f
+ 843 020f 6B000000 		.4byte	0x6b
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 25
+
+
+ 844 0213 4B000000 		.4byte	.LLST3
+ 845 0217 00       		.byte	0
+ 846 0218 11       		.uleb128 0x11
+ 847 0219 85020000 		.4byte	.LASF39
+ 848 021d 01       		.byte	0x1
+ 849 021e 8401     		.2byte	0x184
+ 850 0220 6B000000 		.4byte	0x6b
+ 851 0224 00000000 		.4byte	.LFB8
+ 852 0228 10000000 		.4byte	.LFE8-.LFB8
+ 853 022c 01       		.uleb128 0x1
+ 854 022d 9C       		.byte	0x9c
+ 855 022e 0F       		.uleb128 0xf
+ 856 022f 6F010000 		.4byte	.LASF32
+ 857 0233 01       		.byte	0x1
+ 858 0234 A301     		.2byte	0x1a3
+ 859 0236 00000000 		.4byte	.LFB9
+ 860 023a 58000000 		.4byte	.LFE9-.LFB9
+ 861 023e 01       		.uleb128 0x1
+ 862 023f 9C       		.byte	0x9c
+ 863 0240 8D020000 		.4byte	0x28d
+ 864 0244 10       		.uleb128 0x10
+ 865 0245 B6010000 		.4byte	.LASF33
+ 866 0249 01       		.byte	0x1
+ 867 024a A301     		.2byte	0x1a3
+ 868 024c 6B000000 		.4byte	0x6b
+ 869 0250 6C000000 		.4byte	.LLST4
+ 870 0254 12       		.uleb128 0x12
+ 871 0255 1A000000 		.4byte	.LASF34
+ 872 0259 01       		.byte	0x1
+ 873 025a A501     		.2byte	0x1a5
+ 874 025c 77000000 		.4byte	0x77
+ 875 0260 12       		.uleb128 0x12
+ 876 0261 88000000 		.4byte	.LASF35
+ 877 0265 01       		.byte	0x1
+ 878 0266 A601     		.2byte	0x1a6
+ 879 0268 6B000000 		.4byte	0x6b
+ 880 026c 13       		.uleb128 0x13
+ 881 026d 2E010000 		.4byte	0x12e
+ 882 0271 00000000 		.4byte	.LBB15
+ 883 0275 06000000 		.4byte	.LBE15-.LBB15
+ 884 0279 01       		.byte	0x1
+ 885 027a A501     		.2byte	0x1a5
+ 886 027c 13       		.uleb128 0x13
+ 887 027d 3B010000 		.4byte	0x13b
+ 888 0281 06000000 		.4byte	.LBB17
+ 889 0285 04000000 		.4byte	.LBE17-.LBB17
+ 890 0289 01       		.byte	0x1
+ 891 028a A601     		.2byte	0x1a6
+ 892 028c 00       		.byte	0
+ 893 028d 0E       		.uleb128 0xe
+ 894 028e 3B010000 		.4byte	0x13b
+ 895 0292 00000000 		.4byte	.LFB10
+ 896 0296 10000000 		.4byte	.LFE10-.LFB10
+ 897 029a 01       		.uleb128 0x1
+ 898 029b 9C       		.byte	0x9c
+ 899 029c 00       		.byte	0
+ 900              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 26
+
+
+ 901              	.Ldebug_abbrev0:
+ 902 0000 01       		.uleb128 0x1
+ 903 0001 11       		.uleb128 0x11
+ 904 0002 01       		.byte	0x1
+ 905 0003 25       		.uleb128 0x25
+ 906 0004 0E       		.uleb128 0xe
+ 907 0005 13       		.uleb128 0x13
+ 908 0006 0B       		.uleb128 0xb
+ 909 0007 03       		.uleb128 0x3
+ 910 0008 0E       		.uleb128 0xe
+ 911 0009 1B       		.uleb128 0x1b
+ 912 000a 0E       		.uleb128 0xe
+ 913 000b 55       		.uleb128 0x55
+ 914 000c 17       		.uleb128 0x17
+ 915 000d 11       		.uleb128 0x11
+ 916 000e 01       		.uleb128 0x1
+ 917 000f 10       		.uleb128 0x10
+ 918 0010 17       		.uleb128 0x17
+ 919 0011 00       		.byte	0
+ 920 0012 00       		.byte	0
+ 921 0013 02       		.uleb128 0x2
+ 922 0014 24       		.uleb128 0x24
+ 923 0015 00       		.byte	0
+ 924 0016 0B       		.uleb128 0xb
+ 925 0017 0B       		.uleb128 0xb
+ 926 0018 3E       		.uleb128 0x3e
+ 927 0019 0B       		.uleb128 0xb
+ 928 001a 03       		.uleb128 0x3
+ 929 001b 0E       		.uleb128 0xe
+ 930 001c 00       		.byte	0
+ 931 001d 00       		.byte	0
+ 932 001e 03       		.uleb128 0x3
+ 933 001f 24       		.uleb128 0x24
+ 934 0020 00       		.byte	0
+ 935 0021 0B       		.uleb128 0xb
+ 936 0022 0B       		.uleb128 0xb
+ 937 0023 3E       		.uleb128 0x3e
+ 938 0024 0B       		.uleb128 0xb
+ 939 0025 03       		.uleb128 0x3
+ 940 0026 08       		.uleb128 0x8
+ 941 0027 00       		.byte	0
+ 942 0028 00       		.byte	0
+ 943 0029 04       		.uleb128 0x4
+ 944 002a 16       		.uleb128 0x16
+ 945 002b 00       		.byte	0
+ 946 002c 03       		.uleb128 0x3
+ 947 002d 0E       		.uleb128 0xe
+ 948 002e 3A       		.uleb128 0x3a
+ 949 002f 0B       		.uleb128 0xb
+ 950 0030 3B       		.uleb128 0x3b
+ 951 0031 05       		.uleb128 0x5
+ 952 0032 49       		.uleb128 0x49
+ 953 0033 13       		.uleb128 0x13
+ 954 0034 00       		.byte	0
+ 955 0035 00       		.byte	0
+ 956 0036 05       		.uleb128 0x5
+ 957 0037 35       		.uleb128 0x35
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 27
+
+
+ 958 0038 00       		.byte	0
+ 959 0039 49       		.uleb128 0x49
+ 960 003a 13       		.uleb128 0x13
+ 961 003b 00       		.byte	0
+ 962 003c 00       		.byte	0
+ 963 003d 06       		.uleb128 0x6
+ 964 003e 2E       		.uleb128 0x2e
+ 965 003f 00       		.byte	0
+ 966 0040 3F       		.uleb128 0x3f
+ 967 0041 19       		.uleb128 0x19
+ 968 0042 03       		.uleb128 0x3
+ 969 0043 0E       		.uleb128 0xe
+ 970 0044 3A       		.uleb128 0x3a
+ 971 0045 0B       		.uleb128 0xb
+ 972 0046 3B       		.uleb128 0x3b
+ 973 0047 0B       		.uleb128 0xb
+ 974 0048 27       		.uleb128 0x27
+ 975 0049 19       		.uleb128 0x19
+ 976 004a 11       		.uleb128 0x11
+ 977 004b 01       		.uleb128 0x1
+ 978 004c 12       		.uleb128 0x12
+ 979 004d 06       		.uleb128 0x6
+ 980 004e 40       		.uleb128 0x40
+ 981 004f 18       		.uleb128 0x18
+ 982 0050 9742     		.uleb128 0x2117
+ 983 0052 19       		.uleb128 0x19
+ 984 0053 00       		.byte	0
+ 985 0054 00       		.byte	0
+ 986 0055 07       		.uleb128 0x7
+ 987 0056 2E       		.uleb128 0x2e
+ 988 0057 01       		.byte	0x1
+ 989 0058 3F       		.uleb128 0x3f
+ 990 0059 19       		.uleb128 0x19
+ 991 005a 03       		.uleb128 0x3
+ 992 005b 0E       		.uleb128 0xe
+ 993 005c 3A       		.uleb128 0x3a
+ 994 005d 0B       		.uleb128 0xb
+ 995 005e 3B       		.uleb128 0x3b
+ 996 005f 0B       		.uleb128 0xb
+ 997 0060 27       		.uleb128 0x27
+ 998 0061 19       		.uleb128 0x19
+ 999 0062 11       		.uleb128 0x11
+ 1000 0063 01       		.uleb128 0x1
+ 1001 0064 12       		.uleb128 0x12
+ 1002 0065 06       		.uleb128 0x6
+ 1003 0066 40       		.uleb128 0x40
+ 1004 0067 18       		.uleb128 0x18
+ 1005 0068 9742     		.uleb128 0x2117
+ 1006 006a 19       		.uleb128 0x19
+ 1007 006b 01       		.uleb128 0x1
+ 1008 006c 13       		.uleb128 0x13
+ 1009 006d 00       		.byte	0
+ 1010 006e 00       		.byte	0
+ 1011 006f 08       		.uleb128 0x8
+ 1012 0070 0B       		.uleb128 0xb
+ 1013 0071 01       		.byte	0x1
+ 1014 0072 11       		.uleb128 0x11
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 28
+
+
+ 1015 0073 01       		.uleb128 0x1
+ 1016 0074 12       		.uleb128 0x12
+ 1017 0075 06       		.uleb128 0x6
+ 1018 0076 00       		.byte	0
+ 1019 0077 00       		.byte	0
+ 1020 0078 09       		.uleb128 0x9
+ 1021 0079 34       		.uleb128 0x34
+ 1022 007a 00       		.byte	0
+ 1023 007b 03       		.uleb128 0x3
+ 1024 007c 0E       		.uleb128 0xe
+ 1025 007d 3A       		.uleb128 0x3a
+ 1026 007e 0B       		.uleb128 0xb
+ 1027 007f 3B       		.uleb128 0x3b
+ 1028 0080 0B       		.uleb128 0xb
+ 1029 0081 49       		.uleb128 0x49
+ 1030 0082 13       		.uleb128 0x13
+ 1031 0083 02       		.uleb128 0x2
+ 1032 0084 17       		.uleb128 0x17
+ 1033 0085 00       		.byte	0
+ 1034 0086 00       		.byte	0
+ 1035 0087 0A       		.uleb128 0xa
+ 1036 0088 05       		.uleb128 0x5
+ 1037 0089 00       		.byte	0
+ 1038 008a 03       		.uleb128 0x3
+ 1039 008b 0E       		.uleb128 0xe
+ 1040 008c 3A       		.uleb128 0x3a
+ 1041 008d 0B       		.uleb128 0xb
+ 1042 008e 3B       		.uleb128 0x3b
+ 1043 008f 0B       		.uleb128 0xb
+ 1044 0090 49       		.uleb128 0x49
+ 1045 0091 13       		.uleb128 0x13
+ 1046 0092 02       		.uleb128 0x2
+ 1047 0093 18       		.uleb128 0x18
+ 1048 0094 00       		.byte	0
+ 1049 0095 00       		.byte	0
+ 1050 0096 0B       		.uleb128 0xb
+ 1051 0097 2E       		.uleb128 0x2e
+ 1052 0098 00       		.byte	0
+ 1053 0099 3F       		.uleb128 0x3f
+ 1054 009a 19       		.uleb128 0x19
+ 1055 009b 03       		.uleb128 0x3
+ 1056 009c 0E       		.uleb128 0xe
+ 1057 009d 3A       		.uleb128 0x3a
+ 1058 009e 0B       		.uleb128 0xb
+ 1059 009f 3B       		.uleb128 0x3b
+ 1060 00a0 05       		.uleb128 0x5
+ 1061 00a1 27       		.uleb128 0x27
+ 1062 00a2 19       		.uleb128 0x19
+ 1063 00a3 49       		.uleb128 0x49
+ 1064 00a4 13       		.uleb128 0x13
+ 1065 00a5 20       		.uleb128 0x20
+ 1066 00a6 0B       		.uleb128 0xb
+ 1067 00a7 00       		.byte	0
+ 1068 00a8 00       		.byte	0
+ 1069 00a9 0C       		.uleb128 0xc
+ 1070 00aa 34       		.uleb128 0x34
+ 1071 00ab 00       		.byte	0
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 29
+
+
+ 1072 00ac 03       		.uleb128 0x3
+ 1073 00ad 0E       		.uleb128 0xe
+ 1074 00ae 3A       		.uleb128 0x3a
+ 1075 00af 0B       		.uleb128 0xb
+ 1076 00b0 3B       		.uleb128 0x3b
+ 1077 00b1 0B       		.uleb128 0xb
+ 1078 00b2 49       		.uleb128 0x49
+ 1079 00b3 13       		.uleb128 0x13
+ 1080 00b4 00       		.byte	0
+ 1081 00b5 00       		.byte	0
+ 1082 00b6 0D       		.uleb128 0xd
+ 1083 00b7 1D       		.uleb128 0x1d
+ 1084 00b8 00       		.byte	0
+ 1085 00b9 31       		.uleb128 0x31
+ 1086 00ba 13       		.uleb128 0x13
+ 1087 00bb 11       		.uleb128 0x11
+ 1088 00bc 01       		.uleb128 0x1
+ 1089 00bd 12       		.uleb128 0x12
+ 1090 00be 06       		.uleb128 0x6
+ 1091 00bf 58       		.uleb128 0x58
+ 1092 00c0 0B       		.uleb128 0xb
+ 1093 00c1 59       		.uleb128 0x59
+ 1094 00c2 0B       		.uleb128 0xb
+ 1095 00c3 00       		.byte	0
+ 1096 00c4 00       		.byte	0
+ 1097 00c5 0E       		.uleb128 0xe
+ 1098 00c6 2E       		.uleb128 0x2e
+ 1099 00c7 00       		.byte	0
+ 1100 00c8 31       		.uleb128 0x31
+ 1101 00c9 13       		.uleb128 0x13
+ 1102 00ca 11       		.uleb128 0x11
+ 1103 00cb 01       		.uleb128 0x1
+ 1104 00cc 12       		.uleb128 0x12
+ 1105 00cd 06       		.uleb128 0x6
+ 1106 00ce 40       		.uleb128 0x40
+ 1107 00cf 18       		.uleb128 0x18
+ 1108 00d0 9742     		.uleb128 0x2117
+ 1109 00d2 19       		.uleb128 0x19
+ 1110 00d3 00       		.byte	0
+ 1111 00d4 00       		.byte	0
+ 1112 00d5 0F       		.uleb128 0xf
+ 1113 00d6 2E       		.uleb128 0x2e
+ 1114 00d7 01       		.byte	0x1
+ 1115 00d8 3F       		.uleb128 0x3f
+ 1116 00d9 19       		.uleb128 0x19
+ 1117 00da 03       		.uleb128 0x3
+ 1118 00db 0E       		.uleb128 0xe
+ 1119 00dc 3A       		.uleb128 0x3a
+ 1120 00dd 0B       		.uleb128 0xb
+ 1121 00de 3B       		.uleb128 0x3b
+ 1122 00df 05       		.uleb128 0x5
+ 1123 00e0 27       		.uleb128 0x27
+ 1124 00e1 19       		.uleb128 0x19
+ 1125 00e2 11       		.uleb128 0x11
+ 1126 00e3 01       		.uleb128 0x1
+ 1127 00e4 12       		.uleb128 0x12
+ 1128 00e5 06       		.uleb128 0x6
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 30
+
+
+ 1129 00e6 40       		.uleb128 0x40
+ 1130 00e7 18       		.uleb128 0x18
+ 1131 00e8 9742     		.uleb128 0x2117
+ 1132 00ea 19       		.uleb128 0x19
+ 1133 00eb 01       		.uleb128 0x1
+ 1134 00ec 13       		.uleb128 0x13
+ 1135 00ed 00       		.byte	0
+ 1136 00ee 00       		.byte	0
+ 1137 00ef 10       		.uleb128 0x10
+ 1138 00f0 05       		.uleb128 0x5
+ 1139 00f1 00       		.byte	0
+ 1140 00f2 03       		.uleb128 0x3
+ 1141 00f3 0E       		.uleb128 0xe
+ 1142 00f4 3A       		.uleb128 0x3a
+ 1143 00f5 0B       		.uleb128 0xb
+ 1144 00f6 3B       		.uleb128 0x3b
+ 1145 00f7 05       		.uleb128 0x5
+ 1146 00f8 49       		.uleb128 0x49
+ 1147 00f9 13       		.uleb128 0x13
+ 1148 00fa 02       		.uleb128 0x2
+ 1149 00fb 17       		.uleb128 0x17
+ 1150 00fc 00       		.byte	0
+ 1151 00fd 00       		.byte	0
+ 1152 00fe 11       		.uleb128 0x11
+ 1153 00ff 2E       		.uleb128 0x2e
+ 1154 0100 00       		.byte	0
+ 1155 0101 3F       		.uleb128 0x3f
+ 1156 0102 19       		.uleb128 0x19
+ 1157 0103 03       		.uleb128 0x3
+ 1158 0104 0E       		.uleb128 0xe
+ 1159 0105 3A       		.uleb128 0x3a
+ 1160 0106 0B       		.uleb128 0xb
+ 1161 0107 3B       		.uleb128 0x3b
+ 1162 0108 05       		.uleb128 0x5
+ 1163 0109 27       		.uleb128 0x27
+ 1164 010a 19       		.uleb128 0x19
+ 1165 010b 49       		.uleb128 0x49
+ 1166 010c 13       		.uleb128 0x13
+ 1167 010d 11       		.uleb128 0x11
+ 1168 010e 01       		.uleb128 0x1
+ 1169 010f 12       		.uleb128 0x12
+ 1170 0110 06       		.uleb128 0x6
+ 1171 0111 40       		.uleb128 0x40
+ 1172 0112 18       		.uleb128 0x18
+ 1173 0113 9742     		.uleb128 0x2117
+ 1174 0115 19       		.uleb128 0x19
+ 1175 0116 00       		.byte	0
+ 1176 0117 00       		.byte	0
+ 1177 0118 12       		.uleb128 0x12
+ 1178 0119 34       		.uleb128 0x34
+ 1179 011a 00       		.byte	0
+ 1180 011b 03       		.uleb128 0x3
+ 1181 011c 0E       		.uleb128 0xe
+ 1182 011d 3A       		.uleb128 0x3a
+ 1183 011e 0B       		.uleb128 0xb
+ 1184 011f 3B       		.uleb128 0x3b
+ 1185 0120 05       		.uleb128 0x5
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 31
+
+
+ 1186 0121 49       		.uleb128 0x49
+ 1187 0122 13       		.uleb128 0x13
+ 1188 0123 00       		.byte	0
+ 1189 0124 00       		.byte	0
+ 1190 0125 13       		.uleb128 0x13
+ 1191 0126 1D       		.uleb128 0x1d
+ 1192 0127 00       		.byte	0
+ 1193 0128 31       		.uleb128 0x31
+ 1194 0129 13       		.uleb128 0x13
+ 1195 012a 11       		.uleb128 0x11
+ 1196 012b 01       		.uleb128 0x1
+ 1197 012c 12       		.uleb128 0x12
+ 1198 012d 06       		.uleb128 0x6
+ 1199 012e 58       		.uleb128 0x58
+ 1200 012f 0B       		.uleb128 0xb
+ 1201 0130 59       		.uleb128 0x59
+ 1202 0131 05       		.uleb128 0x5
+ 1203 0132 00       		.byte	0
+ 1204 0133 00       		.byte	0
+ 1205 0134 00       		.byte	0
+ 1206              		.section	.debug_loc,"",%progbits
+ 1207              	.Ldebug_loc0:
+ 1208              	.LLST0:
+ 1209 0000 2A000000 		.4byte	.LVL0
+ 1210 0004 58000000 		.4byte	.LVL1
+ 1211 0008 0100     		.2byte	0x1
+ 1212 000a 51       		.byte	0x51
+ 1213 000b 00000000 		.4byte	0
+ 1214 000f 00000000 		.4byte	0
+ 1215              	.LLST1:
+ 1216 0013 1A000000 		.4byte	.LVL4
+ 1217 0017 48000000 		.4byte	.LVL5
+ 1218 001b 0500     		.2byte	0x5
+ 1219 001d 74       		.byte	0x74
+ 1220 001e 00       		.sleb128 0
+ 1221 001f 31       		.byte	0x31
+ 1222 0020 1A       		.byte	0x1a
+ 1223 0021 9F       		.byte	0x9f
+ 1224 0022 00000000 		.4byte	0
+ 1225 0026 00000000 		.4byte	0
+ 1226              	.LLST2:
+ 1227 002a 00000000 		.4byte	.LVL6
+ 1228 002e 08000000 		.4byte	.LVL7
+ 1229 0032 0100     		.2byte	0x1
+ 1230 0034 50       		.byte	0x50
+ 1231 0035 08000000 		.4byte	.LVL7
+ 1232 0039 14000000 		.4byte	.LFE6
+ 1233 003d 0400     		.2byte	0x4
+ 1234 003f F3       		.byte	0xf3
+ 1235 0040 01       		.uleb128 0x1
+ 1236 0041 50       		.byte	0x50
+ 1237 0042 9F       		.byte	0x9f
+ 1238 0043 00000000 		.4byte	0
+ 1239 0047 00000000 		.4byte	0
+ 1240              	.LLST3:
+ 1241 004b 00000000 		.4byte	.LVL8
+ 1242 004f 06000000 		.4byte	.LVL9
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 32
+
+
+ 1243 0053 0100     		.2byte	0x1
+ 1244 0055 50       		.byte	0x50
+ 1245 0056 06000000 		.4byte	.LVL9
+ 1246 005a 14000000 		.4byte	.LFE7
+ 1247 005e 0400     		.2byte	0x4
+ 1248 0060 F3       		.byte	0xf3
+ 1249 0061 01       		.uleb128 0x1
+ 1250 0062 50       		.byte	0x50
+ 1251 0063 9F       		.byte	0x9f
+ 1252 0064 00000000 		.4byte	0
+ 1253 0068 00000000 		.4byte	0
+ 1254              	.LLST4:
+ 1255 006c 00000000 		.4byte	.LVL10
+ 1256 0070 36000000 		.4byte	.LVL11
+ 1257 0074 0100     		.2byte	0x1
+ 1258 0076 50       		.byte	0x50
+ 1259 0077 36000000 		.4byte	.LVL11
+ 1260 007b 42000000 		.4byte	.LVL12
+ 1261 007f 0400     		.2byte	0x4
+ 1262 0081 F3       		.byte	0xf3
+ 1263 0082 01       		.uleb128 0x1
+ 1264 0083 50       		.byte	0x50
+ 1265 0084 9F       		.byte	0x9f
+ 1266 0085 42000000 		.4byte	.LVL12
+ 1267 0089 4C000000 		.4byte	.LVL13
+ 1268 008d 0100     		.2byte	0x1
+ 1269 008f 50       		.byte	0x50
+ 1270 0090 4C000000 		.4byte	.LVL13
+ 1271 0094 58000000 		.4byte	.LFE9
+ 1272 0098 0400     		.2byte	0x4
+ 1273 009a F3       		.byte	0xf3
+ 1274 009b 01       		.uleb128 0x1
+ 1275 009c 50       		.byte	0x50
+ 1276 009d 9F       		.byte	0x9f
+ 1277 009e 00000000 		.4byte	0
+ 1278 00a2 00000000 		.4byte	0
+ 1279              		.section	.debug_aranges,"",%progbits
+ 1280 0000 6C000000 		.4byte	0x6c
+ 1281 0004 0200     		.2byte	0x2
+ 1282 0006 00000000 		.4byte	.Ldebug_info0
+ 1283 000a 04       		.byte	0x4
+ 1284 000b 00       		.byte	0
+ 1285 000c 0000     		.2byte	0
+ 1286 000e 0000     		.2byte	0
+ 1287 0010 00000000 		.4byte	.LFB0
+ 1288 0014 1C000000 		.4byte	.LFE0-.LFB0
+ 1289 0018 00000000 		.4byte	.LFB1
+ 1290 001c 1C000000 		.4byte	.LFE1-.LFB1
+ 1291 0020 00000000 		.4byte	.LFB2
+ 1292 0024 6C000000 		.4byte	.LFE2-.LFB2
+ 1293 0028 00000000 		.4byte	.LFB3
+ 1294 002c 20000000 		.4byte	.LFE3-.LFB3
+ 1295 0030 00000000 		.4byte	.LFB4
+ 1296 0034 E0000000 		.4byte	.LFE4-.LFB4
+ 1297 0038 00000000 		.4byte	.LFB5
+ 1298 003c 0C000000 		.4byte	.LFE5-.LFB5
+ 1299 0040 00000000 		.4byte	.LFB6
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 33
+
+
+ 1300 0044 14000000 		.4byte	.LFE6-.LFB6
+ 1301 0048 00000000 		.4byte	.LFB7
+ 1302 004c 14000000 		.4byte	.LFE7-.LFB7
+ 1303 0050 00000000 		.4byte	.LFB8
+ 1304 0054 10000000 		.4byte	.LFE8-.LFB8
+ 1305 0058 00000000 		.4byte	.LFB9
+ 1306 005c 58000000 		.4byte	.LFE9-.LFB9
+ 1307 0060 00000000 		.4byte	.LFB10
+ 1308 0064 10000000 		.4byte	.LFE10-.LFB10
+ 1309 0068 00000000 		.4byte	0
+ 1310 006c 00000000 		.4byte	0
+ 1311              		.section	.debug_ranges,"",%progbits
+ 1312              	.Ldebug_ranges0:
+ 1313 0000 00000000 		.4byte	.LFB0
+ 1314 0004 1C000000 		.4byte	.LFE0
+ 1315 0008 00000000 		.4byte	.LFB1
+ 1316 000c 1C000000 		.4byte	.LFE1
+ 1317 0010 00000000 		.4byte	.LFB2
+ 1318 0014 6C000000 		.4byte	.LFE2
+ 1319 0018 00000000 		.4byte	.LFB3
+ 1320 001c 20000000 		.4byte	.LFE3
+ 1321 0020 00000000 		.4byte	.LFB4
+ 1322 0024 E0000000 		.4byte	.LFE4
+ 1323 0028 00000000 		.4byte	.LFB5
+ 1324 002c 0C000000 		.4byte	.LFE5
+ 1325 0030 00000000 		.4byte	.LFB6
+ 1326 0034 14000000 		.4byte	.LFE6
+ 1327 0038 00000000 		.4byte	.LFB7
+ 1328 003c 14000000 		.4byte	.LFE7
+ 1329 0040 00000000 		.4byte	.LFB8
+ 1330 0044 10000000 		.4byte	.LFE8
+ 1331 0048 00000000 		.4byte	.LFB9
+ 1332 004c 58000000 		.4byte	.LFE9
+ 1333 0050 00000000 		.4byte	.LFB10
+ 1334 0054 10000000 		.4byte	.LFE10
+ 1335 0058 00000000 		.4byte	0
+ 1336 005c 00000000 		.4byte	0
+ 1337              		.section	.debug_line,"",%progbits
+ 1338              	.Ldebug_line0:
+ 1339 0000 82010000 		.section	.debug_str,"MS",%progbits,1
+ 1339      02004400 
+ 1339      00000201 
+ 1339      FB0E0D00 
+ 1339      01010101 
+ 1340              	.LASF21:
+ 1341 0000 436C6F63 		.ascii	"Clock_2_GetSourceRegister\000"
+ 1341      6B5F325F 
+ 1341      47657453 
+ 1341      6F757263 
+ 1341      65526567 
+ 1342              	.LASF34:
+ 1343 001a 63757272 		.ascii	"currDiv\000"
+ 1343      44697600 
+ 1344              	.LASF24:
+ 1345 0022 636C6B44 		.ascii	"clkDivider\000"
+ 1345      69766964 
+ 1345      657200
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 34
+
+
+ 1346              	.LASF15:
+ 1347 002d 72656731 		.ascii	"reg16\000"
+ 1347      3600
+ 1348              	.LASF2:
+ 1349 0033 73686F72 		.ascii	"short int\000"
+ 1349      7420696E 
+ 1349      7400
+ 1350              	.LASF20:
+ 1351 003d 436C6F63 		.ascii	"Clock_2_GetDividerRegister\000"
+ 1351      6B5F325F 
+ 1351      47657444 
+ 1351      69766964 
+ 1351      65725265 
+ 1352              	.LASF37:
+ 1353 0058 47656E65 		.ascii	"Generated_Source\\PSoC5\\Clock_2.c\000"
+ 1353      72617465 
+ 1353      645F536F 
+ 1353      75726365 
+ 1353      5C50536F 
+ 1354              	.LASF10:
+ 1355 0079 75696E74 		.ascii	"uint16\000"
+ 1355      313600
+ 1356              	.LASF25:
+ 1357 0080 72657374 		.ascii	"restart\000"
+ 1357      61727400 
+ 1358              	.LASF35:
+ 1359 0088 6F6C6453 		.ascii	"oldSrc\000"
+ 1359      726300
+ 1360              	.LASF9:
+ 1361 008f 75696E74 		.ascii	"uint8\000"
+ 1361      3800
+ 1362              	.LASF18:
+ 1363 0095 436C6F63 		.ascii	"Clock_2_StopBlock\000"
+ 1363      6B5F325F 
+ 1363      53746F70 
+ 1363      426C6F63 
+ 1363      6B00
+ 1364              	.LASF31:
+ 1365 00a7 436C6F63 		.ascii	"Clock_2_ClearModeRegister\000"
+ 1365      6B5F325F 
+ 1365      436C6561 
+ 1365      724D6F64 
+ 1365      65526567 
+ 1366              	.LASF29:
+ 1367 00c1 436C6F63 		.ascii	"Clock_2_SetModeRegister\000"
+ 1367      6B5F325F 
+ 1367      5365744D 
+ 1367      6F646552 
+ 1367      65676973 
+ 1368              	.LASF11:
+ 1369 00d9 666C6F61 		.ascii	"float\000"
+ 1369      7400
+ 1370              	.LASF6:
+ 1371 00df 6C6F6E67 		.ascii	"long long int\000"
+ 1371      206C6F6E 
+ 1371      6720696E 
+ 1371      7400
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 35
+
+
+ 1372              	.LASF4:
+ 1373 00ed 6C6F6E67 		.ascii	"long int\000"
+ 1373      20696E74 
+ 1373      00
+ 1374              	.LASF23:
+ 1375 00f6 73746174 		.ascii	"state\000"
+ 1375      6500
+ 1376              	.LASF1:
+ 1377 00fc 756E7369 		.ascii	"unsigned char\000"
+ 1377      676E6564 
+ 1377      20636861 
+ 1377      7200
+ 1378              	.LASF30:
+ 1379 010a 6D6F6465 		.ascii	"modeBitMask\000"
+ 1379      4269744D 
+ 1379      61736B00 
+ 1380              	.LASF22:
+ 1381 0116 436C6F63 		.ascii	"Clock_2_SetDividerRegister\000"
+ 1381      6B5F325F 
+ 1381      53657444 
+ 1381      69766964 
+ 1381      65725265 
+ 1382              	.LASF0:
+ 1383 0131 7369676E 		.ascii	"signed char\000"
+ 1383      65642063 
+ 1383      68617200 
+ 1384              	.LASF7:
+ 1385 013d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1385      206C6F6E 
+ 1385      6720756E 
+ 1385      7369676E 
+ 1385      65642069 
+ 1386              	.LASF8:
+ 1387 0154 756E7369 		.ascii	"unsigned int\000"
+ 1387      676E6564 
+ 1387      20696E74 
+ 1387      00
+ 1388              	.LASF16:
+ 1389 0161 436C6F63 		.ascii	"Clock_2_Start\000"
+ 1389      6B5F325F 
+ 1389      53746172 
+ 1389      7400
+ 1390              	.LASF32:
+ 1391 016f 436C6F63 		.ascii	"Clock_2_SetSourceRegister\000"
+ 1391      6B5F325F 
+ 1391      53657453 
+ 1391      6F757263 
+ 1391      65526567 
+ 1392              	.LASF3:
+ 1393 0189 73686F72 		.ascii	"short unsigned int\000"
+ 1393      7420756E 
+ 1393      7369676E 
+ 1393      65642069 
+ 1393      6E7400
+ 1394              	.LASF13:
+ 1395 019c 63686172 		.ascii	"char\000"
+ 1395      00
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 36
+
+
+ 1396              	.LASF19:
+ 1397 01a1 436C6F63 		.ascii	"Clock_2_StandbyPower\000"
+ 1397      6B5F325F 
+ 1397      5374616E 
+ 1397      64627950 
+ 1397      6F776572 
+ 1398              	.LASF33:
+ 1399 01b6 636C6B53 		.ascii	"clkSource\000"
+ 1399      6F757263 
+ 1399      6500
+ 1400              	.LASF28:
+ 1401 01c0 63757272 		.ascii	"currSrc\000"
+ 1401      53726300 
+ 1402              	.LASF26:
+ 1403 01c8 6F6C6444 		.ascii	"oldDivider\000"
+ 1403      69766964 
+ 1403      657200
+ 1404              	.LASF36:
+ 1405 01d3 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1405      43313120 
+ 1405      352E342E 
+ 1405      31203230 
+ 1405      31363036 
+ 1406 0206 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1406      20726576 
+ 1406      6973696F 
+ 1406      6E203233 
+ 1406      37373135 
+ 1407 0239 31202D66 		.ascii	"1 -ffunction-sections -ffat-lto-objects\000"
+ 1407      66756E63 
+ 1407      74696F6E 
+ 1407      2D736563 
+ 1407      74696F6E 
+ 1408              	.LASF14:
+ 1409 0261 72656738 		.ascii	"reg8\000"
+ 1409      00
+ 1410              	.LASF5:
+ 1411 0266 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1411      20756E73 
+ 1411      69676E65 
+ 1411      6420696E 
+ 1411      7400
+ 1412              	.LASF17:
+ 1413 0278 436C6F63 		.ascii	"Clock_2_Stop\000"
+ 1413      6B5F325F 
+ 1413      53746F70 
+ 1413      00
+ 1414              	.LASF39:
+ 1415 0285 436C6F63 		.ascii	"Clock_2_GetModeRegister\000"
+ 1415      6B5F325F 
+ 1415      4765744D 
+ 1415      6F646552 
+ 1415      65676973 
+ 1416              	.LASF12:
+ 1417 029d 646F7562 		.ascii	"double\000"
+ 1417      6C6500
+ 1418              	.LASF27:
+ARM GAS  C:\Users\ingan\AppData\Local\Temp\ccXm3rbZ.s 			page 37
+
+
+ 1419 02a4 656E6162 		.ascii	"enabled\000"
+ 1419      6C656400 
+ 1420              	.LASF38:
+ 1421 02ac 433A5C55 		.ascii	"C:\\Users\\ingan\\Documents\\PSoC Creator\\MegaDriv"
+ 1421      73657273 
+ 1421      5C696E67 
+ 1421      616E5C44 
+ 1421      6F63756D 
+ 1422 02da 655F706C 		.ascii	"e_player\\VGMPlayer_v0.7.cydsn\000"
+ 1422      61796572 
+ 1422      5C56474D 
+ 1422      506C6179 
+ 1422      65725F76 
+ 1423              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
