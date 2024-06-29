@@ -1237,6 +1237,7 @@
 <Unloaded />
 <OpenDocs>
 <name v=".\VGMPlayer_v0.7.cydsn\main.c" />
+<name v=".\VGMPlayer_v0.7.cydsn\VGMPlayer_v0.7.cydwr" />
 </OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
@@ -1244,7 +1245,7 @@
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="930, 494" SelectedTabbedMdiWindow="a7736ac4-4bc7-49e2-86c3-7656dc1dd3d4"><DocumentWindow Key="C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.7.cydsn\main.c" Guid="a7736ac4-4bc7-49e2-86c3-7656dc1dd3d4" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="5ccb4288-b02d-459f-8a9e-99547bf4b33c" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1189, 494" SelectedTabbedMdiWindow="de073a62-fd67-414e-81ec-19902582a70f"><DocumentWindow Key="C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.7.cydsn\main.c" Guid="a7736ac4-4bc7-49e2-86c3-7656dc1dd3d4" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="5ccb4288-b02d-459f-8a9e-99547bf4b33c" /><DocumentWindow Key="C:\Users\ingan\Documents\PSoC Creator\MegaDrive_player\VGMPlayer_v0.7.cydsn\VGMPlayer_v0.7.cydwr" Guid="de073a62-fd67-414e-81ec-19902582a70f" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="Debug" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
