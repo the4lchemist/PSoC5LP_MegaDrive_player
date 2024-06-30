@@ -21,7 +21,7 @@ USB interface for playing Sega Mega Drive/Genesis/SMS/Game Gear [VGM](https://en
 
 ## Testing
 
-coming soon...
+[![PSoniC test video](https://img.youtube.com/vi/piJl4aSTuPQ/0.jpg)](https://www.youtube.com/watch?v=piJl4aSTuPQ)
 
 ## Hardware
 
