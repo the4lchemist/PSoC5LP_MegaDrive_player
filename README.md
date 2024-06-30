@@ -29,7 +29,13 @@ schematics and photos coming soon...
 
 ### 1 - Soundchips mainboard
 
-This is the system's mainboard providing sockets for the soundchips and connectors for other modules. 
+This is the system's mainboard providing sockets for the soundchips and connectors for other modules.
+
+The connections (blue lines) between the CY8CKIT-59 eval board and the soundchip mainboard are reported in the following diagram:
+
+![pinout](./Docs/pinout.png)
+
+The LED connected to P2.1 can be safely desoldered to slightly improve power consumption.
 
 ### 2 - PSoC module
 
