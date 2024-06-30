@@ -58,7 +58,7 @@ WARNING: no power amplifier is provided! For my needs this is the most flexible 
 - VGMPlayer_v0.4    :   playback from USBFS with command buffering and manual DMA (EXPERIMENTAL, NOT TESTED)
 - VGMPlayer_v0.5    :   direct playback from USBFS with 44100 tick ISR (EXPERIMENTAL ONLY)
 - VGMPlayer_v0.6    :   playback from USBFS with 64-bytes dual-buffering algorithm, 44100 tick ISR, and manual DMA
-- VGMPlayer_v0.7    :   playback from USBFS with 64-bytes N-buffering algorithm, 44100 tick ISR, and manual DMA
+- VGMPlayer_v0.7    :   playback from USBFS with 64-bytes N-buffering algorithm, 44100 tick ISR, and manual DMA - **Recommended version**
 
 ## Software
 
