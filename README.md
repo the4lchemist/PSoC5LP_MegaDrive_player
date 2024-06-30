@@ -1,6 +1,6 @@
 # PSoniC Mega Drive Player
 
-USB interface for playing Sega Mega Drive/Genesis/SMS/Game Gear [VGM](https://en.wikipedia.org/wiki/Video_game_music) music files with real sound chips (YM2612/YM3438 + SN76489). The project is based on the PSoC5LP integrated device by Cypress Semiconductor (now Infineon Technologies). Specifically, the provided code is designed for the [CY8CKIT-59](https://www.infineon.com/cms/en/product/evaluation-boards/cy8ckit-059/) prototyping board.
+PSoniC Mega Drive Player is a USB hardware interface for playing Sega Mega Drive/Genesis/SMS/Game Gear [VGM](https://en.wikipedia.org/wiki/Video_game_music) music files with real sound chips (YM2612/YM3438 + SN76489). The project is based on the PSoC5LP integrated device by Cypress Semiconductor (now Infineon Technologies). Specifically, the provided code is designed for the [CY8CKIT-59](https://www.infineon.com/cms/en/product/evaluation-boards/cy8ckit-059/) prototyping board.
 
 
 ## Features
